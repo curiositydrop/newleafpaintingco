@@ -1,0 +1,367 @@
+/* General Styles */
+body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  margin: 0;
+  background-color: #f8f8f8;
+  color: #1c1c1c;
+}
+
+header {
+  text-align: center;
+  padding: 20px 0;
+  background-color: #0b6831; /* match logo background */
+}
+
+.logo {
+  width: 160px;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+/* Navigation */
+.nav-links {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #ffffff;
+  font-weight: bold;
+  position: relative;
+
+  /* Hide links until JS runs to prevent flicker */
+  visibility: hidden;
+}
+
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 0;
+  height: 2px;
+  background-color: #1a7b42;
+  transition: width 0.3s ease;
+}
+
+.nav-links a:hover::after {
+  width: 100%;
+}
+
+nav a.active {
+  border-bottom: 2px solid #6fcf97; /* underline highlight */
+  padding-bottom: 3px; /* space between text and underline */
+}
+
+/* Hero Section */
+.hero {
+  text-align: center;
+  padding: 60px 20px 20px 20px;
+  background: white;
+}
+
+.hero h1 {
+  color: #0b6831;
+  font-size: 2em;
+  margin-bottom: 10px;
+}
+
+.hero p {
+  font-size: 1.2em;
+  margin-bottom: 20px;
+}
+
+.cta-button {
+  display: inline-block;
+  background-color: #0b6831;
+  color: white;
+  padding: 12px 25px;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: bold;
+  margin-bottom: 40px;
+}
+
+.cta-button:hover {
+  background-color: #1a7b42;
+}
+
+/* About Section */
+.about, .services, .testimonial {
+  padding: 30px 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.about h2, .services h2 {
+  color: #0b6831;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Lists */
+.about ul, .services ul {
+  list-style: none;
+  padding: 0;
+}
+
+.about li, .services li {
+  padding: 8px 0;
+}
+
+/* Testimonial */
+.testimonial {
+  text-align: center;
+  font-style: italic;
+}
+
+/* Contact Floating Button */
+#contact-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #0b6831;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 15px 25px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+#contact-btn:hover {
+  background-color: #1a7b42;
+}
+
+/* Popup background */
+.img-modal {
+  display: none; 
+  position: fixed; 
+  z-index: 1000; 
+  padding-top: 60px; 
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%; 
+  overflow: auto; 
+  background-color: rgba(0,0,0,0.8);
+}
+
+.modal-content {
+  margin: auto;
+  display: block;
+  max-width: 90%;
+  max-height: 80%;
+  border-radius: 6px;
+}
+
+.img-modal .close {
+  position: absolute;
+  top: 20px;
+  right: 40px;
+  color: #fff;
+  font-size: 40px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Optional fade-in animation */
+.img-modal img {
+  animation: zoomIn 0.3s;
+}
+
+@keyframes zoomIn {
+  from {transform: scale(0.8); opacity: 0;}
+  to {transform: scale(1); opacity: 1;}
+}
+
+/* Popup Form */
+.popup {
+  display: none;
+  position: fixed;
+  z-index: 100;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.4);
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-content {
+  background-color: white;
+  padding: 25px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  position: relative;
+}
+
+.popup-content h2 {
+  margin-top: 0;
+  color: #0b6831;
+  text-align: center;
+}
+
+.popup-content label {
+  display: block;
+  margin-top: 10px;
+}
+
+.popup-content input,
+.popup-content textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.popup-content button {
+  background-color: #0b6831;
+  color: white;
+  border: none;
+  padding: 10px;
+  width: 100%;
+  margin-top: 15px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.popup-content button:hover {
+  background-color: #1a7b42;
+}
+
+.close {
+  position: absolute;
+  right: 12px;
+  top: 10px;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.about-owner {
+  background-color: #f9f9f9;
+  padding: 40px 20px;
+  text-align: center;
+  border-top: 1px solid #ddd;
+}
+
+.about-owner h2 {
+  color: #0b6831;
+  text-align: center;
+}
+
+.about-owner p {
+  max-width: 700px;
+  margin: 0 auto;
+  font-size: 1.1em;
+  line-height: 1.6;
+}
+
+.service-area {
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.service-area h2 {
+  color: #0b6831;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 30px;
+  background-color: #0b6831;
+  color: white;
+}
+
+.footer-logo {
+  width: 100px;
+  display: block;
+  margin: 0 auto 10px;
+}
+
+.project-card {
+  text-align: center;
+}
+
+.project-card img {
+  width: 32%;
+  height: auto;
+  margin-right: 1%;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+.project-card img:last-child {
+  margin-right: 0;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .nav-links {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+/* Curiosity Drop Banner */
+#drop-banner {
+  background-color: #0b6831;
+  color: white;
+  text-align: center;
+  padding: 12px 20px;
+  font-weight: bold;
+  font-size: 1em;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 200;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+/* Redeem Reward Button */
+#redeem-reward {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  background-color: #0b6831;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 15px 25px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  z-index: 150;
+}
+
+#redeem-reward:hover {
+  background-color: #1a7b42;
+}
+
+.partner-btn {
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 600;
+  display: inline-block;
+  text-decoration: none;
+  transition: 0.2s ease;
+  border: 2px solid #4a7f3f; /* feel free to match your palette */
+}
+
+.partner-btn:hover {
+  background: #4a7f3f;
+  color: #fff;
+}

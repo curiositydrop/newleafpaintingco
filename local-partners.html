@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trusted Painting Partners | New Leaf Painting Co. Maine</title>
+<meta name="description" content="New Leaf Painting Co. works with local partners to deliver exceptional interior painting services for homes in Cumberland, Falmouth, Cape Elizabeth, Yarmouth, Kennebunkport, and across Southern Maine. Walls, trim, baseboards, cabinets, and doors handled with care and precision.">
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    #partnerModal {
+  display: none; /* Hides modal until openPartnerModal triggers it */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+#partnerModal .modal-content {
+  background: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+
+  /* Match popup-content styling */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+#partnerModal input,
+#partnerModal textarea {
+  width: 100%;
+  margin: 8px 0;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+#partnerModal button {
+  background: #116530;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+#partnerModal button:hover {
+  background: #0d4d26;
+}
+#partnerModal .close {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 22px;
+  cursor: pointer;
+}
+    .partners {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .partners h1 {
+      font-size: 2em;
+      color: #116530;
+      margin-bottom: 10px;
+    }
+
+    .partners p {
+      margin-bottom: 40px;
+      color: #333;
+    }
+
+    .partner-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 40px;
+    }
+
+    .partner-card {
+      width: 250px;
+      background: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .partner-card img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 15px;
+    }
+
+    .partner-card h3 {
+      color: #116530;
+      margin-bottom: 10px;
+    }
+
+    .partner-card button {
+      background: #116530;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 15px;
+      cursor: pointer;
+    }
+
+    .partner-card button:hover {
+      background: #0d4d26;
+    }
+
+    /* Popup Styles */
+    #partner-popup {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .popup-content {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .popup-content h2 {
+      color: #116530;
+      margin-bottom: 15px;
+    }
+
+    .popup-content input,
+    .popup-content textarea {
+      width: 100%;
+      margin: 8px 0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .popup-content button {
+      background: #116530;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 15px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    .popup-content button:hover {
+      background: #0d4d26;
+    }
+  </style>
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZFESYBBBWD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-ZFESYBBBWD');
+</script>
+</head>
+<body>
+
+  <!-- GLOBAL HEADER -->
+  <div id="global-header"></div>
+
+  <!-- PAGE CONTENT -->
+  <section class="partners">
+    
+    <h1>Local Partners</h1>
+    <p>We proudly partner with trusted local businesses who share our commitment to quality, honesty, and community.
+These partners may receive referral compensation when recommending New Leaf Painting Co., and we also recommend their services to our clients when they’re a strong fit.</p>
+    <button type="button" onclick="openPartnerModal()" class="cta-button">
+  Apply to Become a Trusted Partner
+</button>
+    <br/>
+
+    <div class="partner-grid">
+      <div class="partner-card" data-email="info@curiositydrop.com" data-name="Curiosity Drop">
+        <img src="IMG_8039.png" alt="Curiosity Drop">
+        <h3>Curiosity Drop</h3>
+        <button>Contact</button>
+      </div>
+
+      <div class="partner-card" data-email="Deja@TopMaineHomes.com" data-name="Deja Lett">
+        <img src="IMG_8327.jpeg" alt="Deja Lett">
+        <h3>Deja Lett<br>Keller Williams Realty</h3>
+        <button>Contact</button>
+      </div>
+      
+      <div class="partner-card" data-email="Jane@beangroup.com" data-name="Jane Frankland">
+        <img src="jane-new-working_1.png" alt="Jane Frankland">
+        <h3>Jane Frankland<br/>
+          Bean Group Team at eXp Realty</h3>
+        <button>Contact</button>
+      </div>
+
+      <div class="partner-card" data-email="mbergeron79@gmail.com" data-name="MBG Digital">
+        <img src="E29EFBD5-92E9-4BC9-9C66-87A081850CCE.png" alt="MBG Digitsl">
+        <h3>MBG Digital</h3>
+        <button>Contact</button>
+      </div>
+
+      <div class="partner-card" data-email="partner5@email.com" data-name="Partner 5">
+        <img src="partner5.png" alt="Partner 5">
+        <h3>Partner 5</h3>
+        <button>Contact</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- POPUP -->
+  <div id="partner-popup">
+    <div class="popup-content">
+      <h2>Contact <span id="partner-name"></span></h2>
+      <input type="text" id="user-name" placeholder="Your Name" required>
+      <input type="email" id="user-email" placeholder="Your Email" required>
+      <textarea id="user-message" placeholder="Your Message" rows="4"></textarea>
+      <button id="send-message">Send Message</button>
+      <button id="close-popup" style="background:#999;">Cancel</button>
+    </div>
+  </div>
+
+  <!-- GLOBAL FOOTER -->
+  <div id="global-footer"></div>
+
+  <!-- GLOBAL + PARTNER LOGIC -->
+  <script src="global.js"></script>
+  <!-- Partner Contact Script + Popup -->
+<script>
+  // Elements
+  const popup = document.getElementById('partner-popup');
+  const partnerNameSpan = document.getElementById('partner-name');
+  const sendBtn = document.getElementById('send-message');
+  const closeBtn = document.getElementById('close-popup');
+
+  let currentPartnerEmail = '';
+
+  // Open contact popup when partner card button is clicked
+  document.querySelectorAll('.partner-card button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const card = btn.closest('.partner-card');
+      currentPartnerEmail = card.dataset.email;
+      partnerNameSpan.textContent = card.dataset.name;
+
+      // Add or update hidden referrer field
+      let refField = document.querySelector('#partner-popup form input[name="referrer"]');
+      if (!refField) {
+        refField = document.createElement('input');
+        refField.type = 'hidden';
+        refField.name = 'referrer';
+        document.querySelector('#partner-popup form').appendChild(refField);
+      }
+      refField.value = "New Leaf Painting Co.";
+
+      popup.style.display = 'flex';
+    });
+  });
+
+  // Close popup
+  closeBtn.addEventListener('click', () => {
+    popup.style.display = 'none';
+  });
+
+  // Send message
+  sendBtn.addEventListener('click', () => {
+    const name = document.getElementById('user-name').value;
+    const email = document.getElementById('user-email').value;
+    const message = document.getElementById('user-message').value;
+    const referrer = document.querySelector('#partner-popup form input[name="referrer"]').value;
+
+    const subject = encodeURIComponent('General Inquiry - via New Leaf Painting Company');
+    const body = encodeURIComponent(
+      `Name: ${name}\nEmail: ${email}\nMessage: ${message}\nReferrer: ${referrer}`
+    );
+
+    const mailtoLink = `mailto:${currentPartnerEmail}?bcc=newleafpaintingcompany@gmail.com&subject=${subject}&body=${body}`;
+    window.location.href = mailtoLink;
+    popup.style.display = 'none';
+  });
+
+  // Functions for “Apply to Become a Trusted Partner” modal
+  function openPartnerModal() {
+    document.getElementById('partnerModal').style.display = 'flex';
+  }
+
+  function closePartnerModal() {
+    document.getElementById('partnerModal').style.display = 'none';
+  }
+
+  function sendPartnerEmail(event) {
+    event.preventDefault();
+    // Optional: handle sending email for partner application
+    alert('Partner application submitted!');
+    closePartnerModal();
+  }
+</script>
+
+<!-- Partner Contact Popup -->
+<div id="partner-popup">
+  <div class="popup-content">
+    <h2>Contact <span id="partner-name"></span></h2>
+    <form>
+      <input type="text" id="user-name" placeholder="Your Name" required>
+      <input type="email" id="user-email" placeholder="Your Email" required>
+      <textarea id="user-message" placeholder="Your Message" rows="4"></textarea>
+      <button type="button" id="send-message">Send Message</button>
+      <button type="button" id="close-popup" style="background:#999;">Cancel</button>
+    </form>
+  </div>
+</div>
+
+<!-- Partner Application Modal -->
+<div id="partnerModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closePartnerModal()">&times;</span>
+    <h2>Apply to Become a Trusted Partner</h2>
+
+    <form id="partnerForm" onsubmit="sendPartnerEmail(event)">
+      <label>Business Name</label>
+      <input type="text" id="bizName" required>
+
+      <label>Contact Name</label>
+      <input type="text" id="contactName" required>
+
+      <label>Email</label>
+      <input type="email" id="contactEmail" required>
+
+      <label>Phone</label>
+      <input type="text" id="contactPhone" required>
+
+      <label>Website / Social Link</label>
+      <input type="text" id="bizWebsite">
+
+      <label>Why would you like to partner with us?</label>
+      <textarea id="bizMessage" rows="4" required></textarea>
+
+      <button type="submit" class="estimate-button">Send Application</button>
+    </form>
+  </div>
+</div>
+</body>
+</html>

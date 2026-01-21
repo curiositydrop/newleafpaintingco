@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>New Leaf Painting Projects | Luxury & General Homes in Maine</title>
+<meta name="description" content="See past interior painting projects by New Leaf Painting Co., serving Cumberland, Falmouth, Cape Elizabeth, Yarmouth, Kennebunkport, and all of Southern Maine. High-quality painting on walls, trim, baseboards, cabinets, and doors for every home.">
+  <link rel="stylesheet" href="style.css" />
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZFESYBBBWD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-ZFESYBBBWD');
+</script>
+  <style>
+ .project-gallery {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: nowrap;
+  max-width: 900px;      /* keeps images from touching edges */
+  margin: 0 auto;        /* centers the gallery */
+}
+
+.image-wrap {
+  text-align: center;
+  flex: 1;               /* share space evenly */
+  max-width: 400px;      /* optional */
+}
+
+.project-gallery img {
+  width: 85%;
+  height: auto;
+  border-radius: 6px;
+}
+    .project-divider {
+  border: none;
+  height: 6px;            /* thicker */
+  width: 85%;             /* slightly wider */
+  margin: 10px auto 50px auto;      /* a bit more breathing room */
+  background-color: #1f6b33;  /* your site green */
+  border-radius: 6px;     /* smoother ends */
+}
+    </style> 
+</head>
+<body>
+
+  <!-- GLOBAL HEADER -->
+  <div id="global-header"></div>
+
+  <!-- PAGE CONTENT -->
+  <section class="hero">
+    <h1>Our Completed Transformations</h1>
+    <p>Take a look at some of the spaces, surfaces, and projects we’ve transformed — and the clients we’ve delighted.</p>
+  </section>
+
+  <div style="text-align: center;">
+  <h3>Kitchen Cabinet Refresh</h3>
+  <p>This cabinet respray gave this kitchen a nice new look.</p>
+</div>
+
+<div class="project-gallery">
+
+  <div class="image-wrap">
+    <img src="IMG_8428.jpeg" alt="Cabinet repaint before" class="clickable-img">
+    <p class="caption before">Before</p>
+  </div>
+
+  <div class="image-wrap">
+    <img src="IMG_8455.jpeg" alt="Cabinet repaint after" class="clickable-img">
+    <p class="caption after">After</p>
+  </div>
+
+</div>
+
+</section>
+
+<hr class="project-divider">
+  
+  <div style="text-align: center;">
+  <h3>Kitchen Cabinet painting</h3>
+  <p>This cabinet respray gave this kitchen a whole new look.</p>
+</div>
+
+<div class="project-gallery">
+
+  <div class="image-wrap">
+    <img src="IMG_7625.jpeg" alt="Cabinet repaint before" class="clickable-img">
+    <img src="IMG_7628.jpeg" alt="Cabinet repaint before" class="clickable-img">
+    <p class="caption before">Before</p>
+  </div>
+
+  <div class="image-wrap">
+    <img src="IMG_8599.jpeg" alt="Cabinet repaint after" class="clickable-img">
+    <img src="IMG_8601.jpeg" alt="Cabinet repaint after" class="clickable-img">
+    <p class="caption after">After</p>
+  </div>
+
+</div>
+
+</section>
+
+  <hr class="project-divider">
+
+  <section class="projects">
+    <div class="project-card">
+      <img src="IMG_8114.jpeg" alt="Kitchen paint" class="clickable-img">
+      <img src="IMG_8117.jpeg" alt="kitchen paint" class="clickable-img">
+      <img src="IMG_8125.jpeg" alt="kitchen paint" class="clickable-img">
+      <h3>Kitchen Refresh</h3>
+      <p>Tile backsplash and new coat of paint gave this kitchen a nice new look.</p>
+    </div>
+  </section>
+
+  <section class="projects">
+    <div class="project-card">
+      <img src="IMG_8118.jpeg" alt="Master Bedroom paint" class="clickable-img">
+      <img src="IMG_8119.jpeg" alt="Master Bedroom paint" class="clickable-img">
+      <img src="IMG_8120.jpeg" alt="Master Bedroom paint" class="clickable-img">
+      <h3>Bedroom Makeover</h3>
+      <p>Freshly painted walls and contrasting trim create a serene and elegant master bedroom space.</p>
+    </div>
+  </section>
+
+  <!-- IMAGE MODAL -->
+  <div id="imgModal" class="img-modal">
+    <span class="close">&times;</span>
+    <img class="modal-content" id="modalImage">
+  </div>
+
+  <!-- GLOBAL FOOTER -->
+  <div id="global-footer"></div>
+
+  <!-- LOCAL PROJECTS JS -->
+  <script>
+    const modal = document.getElementById("imgModal");
+    const modalImg = document.getElementById("modalImage");
+    const closeBtn = modal.querySelector(".close");
+
+    document.querySelectorAll(".clickable-img").forEach(img => {
+      img.onclick = () => {
+        modal.style.display = "flex";
+        modalImg.src = img.src;
+      };
+    });
+
+    closeBtn.onclick = () => modal.style.display = "none";
+    window.onclick = e => { if (e.target === modal) modal.style.display = "none"; };
+  </script>
+
+  <!-- GLOBAL LOGIC -->
+  <script src="global.js"></script>
+
+</body>
+</html>
