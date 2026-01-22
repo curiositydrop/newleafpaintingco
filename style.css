@@ -98,10 +98,15 @@ nav a.active {
   margin: 0 auto;
 }
 
-.services, {
+.service-list {
+  display: flex;
+  flex-direction: column
+  align-items: center;
   text-align: center;
 }
-
+.service {
+  max-width: 500px;
+}
 .about h2, .services h2 {
   color: #0b6831;
   text-align: center;
