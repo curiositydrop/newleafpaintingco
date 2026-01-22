@@ -98,6 +98,10 @@ nav a.active {
   margin: 0 auto;
 }
 
+.services, {
+  text-align: center;
+}
+
 .about h2, .services h2 {
   color: #0b6831;
   text-align: center;
