@@ -17,7 +17,7 @@
   </script>
 
   <style>
-    /* ===== Existing gallery styles ===== */
+    /* ===== Existing gallery styles (kept) ===== */
     .project-gallery {
       display: flex;
       gap: 20px;
@@ -27,19 +27,16 @@
       max-width: 900px;
       margin: 0 auto;
     }
-
     .image-wrap {
       text-align: center;
       flex: 1;
       max-width: 400px;
     }
-
     .project-gallery img {
       width: 85%;
       height: auto;
       border-radius: 6px;
     }
-
     .project-divider {
       border: none;
       height: 6px;
@@ -55,7 +52,6 @@
       margin: 0 auto 10px auto;
       padding: 0 10px;
     }
-
     .ba-slider {
       position: relative;
       width: 100%;
@@ -68,16 +64,16 @@
       user-select: none;
       touch-action: pan-y;
     }
-
-    .ba-slider img {
+    /* base image = AFTER (full width) */
+    .ba-slider img.ba-base {
       display: block;
       width: 100%;
       height: auto;
       max-height: 520px;
       object-fit: cover;
     }
-
-    .ba-after {
+    /* overlay = BEFORE (revealed by slider) */
+    .ba-before {
       position: absolute;
       top: 0;
       left: 0;
@@ -85,8 +81,7 @@
       width: 50%;
       overflow: hidden;
     }
-
-    .ba-after img {
+    .ba-before img {
       height: 100%;
       width: 100%;
       object-fit: cover;
@@ -103,9 +98,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      pointer-events: none; /* pointer handled by slider */
+      pointer-events: none;
     }
-
     .ba-handle::before {
       content: "";
       position: absolute;
@@ -114,7 +108,6 @@
       background: rgba(255,255,255,.9);
       border-radius: 4px;
     }
-
     .ba-knob {
       position: relative;
       width: 38px;
@@ -126,7 +119,6 @@
       place-items: center;
       box-shadow: 0 6px 16px rgba(0,0,0,.25);
     }
-
     .ba-knob span {
       display: inline-block;
       font-size: 18px;
@@ -147,7 +139,8 @@
       color: #fff;
       backdrop-filter: blur(6px);
     }
-
+    /* labels now match images correctly:
+       left = BEFORE overlay, right = AFTER base */
     .ba-label.before { left: 12px; }
     .ba-label.after  { right: 12px; }
 
@@ -159,7 +152,7 @@
     }
 
     @media (max-width: 640px) {
-      .ba-slider img { max-height: 420px; }
+      .ba-slider img.ba-base { max-height: 420px; }
     }
   </style>
 </head>
@@ -175,7 +168,7 @@
     <p>Take a look at some of the spaces, surfaces, and projects we’ve transformed — and the clients we’ve delighted.</p>
   </section>
 
-  <!-- ===== Project 1: Before/After Slider ===== -->
+  <!-- ===== Project 1: Slider (FIXED: correct before/after) ===== -->
   <div style="text-align: center;">
     <h3>Kitchen Cabinet Refresh</h3>
     <p>This cabinet respray gave this kitchen a nice new look.</p>
@@ -183,9 +176,11 @@
 
   <div class="ba">
     <div class="ba-slider" aria-label="Before and after slider">
-      <img src="IMG_8428.jpeg" alt="Cabinet repaint before" loading="lazy">
-      <div class="ba-after">
-        <img src="IMG_8455.jpeg" alt="Cabinet repaint after" loading="lazy">
+      <!-- base = AFTER -->
+      <img class="ba-base" src="IMG_8455.jpeg" alt="Cabinet repaint after" loading="lazy">
+      <!-- overlay = BEFORE -->
+      <div class="ba-before">
+        <img src="IMG_8428.jpeg" alt="Cabinet repaint before" loading="lazy">
       </div>
 
       <div class="ba-label before">BEFORE</div>
@@ -200,7 +195,7 @@
 
   <hr class="project-divider">
 
-  <!-- ===== Project 2: Before/After Slider + Extra Angles ===== -->
+  <!-- ===== Project 2: Slider + extra angles (clickable) ===== -->
   <div style="text-align: center;">
     <h3>Kitchen Cabinet Painting</h3>
     <p>This cabinet respray gave this kitchen a whole new look.</p>
@@ -208,9 +203,11 @@
 
   <div class="ba">
     <div class="ba-slider" aria-label="Before and after slider">
-      <img src="IMG_7625.jpeg" alt="Cabinet repaint before" loading="lazy">
-      <div class="ba-after">
-        <img src="IMG_8599.jpeg" alt="Cabinet repaint after" loading="lazy">
+      <!-- base = AFTER -->
+      <img class="ba-base" src="IMG_8599.jpeg" alt="Cabinet repaint after" loading="lazy">
+      <!-- overlay = BEFORE -->
+      <div class="ba-before">
+        <img src="IMG_7625.jpeg" alt="Cabinet repaint before" loading="lazy">
       </div>
 
       <div class="ba-label before">BEFORE</div>
@@ -223,7 +220,7 @@
     <div class="ba-hint">Drag the green slider to reveal the transformation.</div>
   </div>
 
-  <!-- Extra angles (click to enlarge) -->
+  <!-- Extra angles (still clickable modal) -->
   <div class="project-gallery">
     <div class="image-wrap">
       <img src="IMG_7628.jpeg" alt="Cabinet repaint before angle" class="clickable-img">
@@ -238,7 +235,12 @@
 
   <hr class="project-divider">
 
-  <!-- ===== Other Projects ===== -->
+  <!-- ===== Convert remaining “before/after” sets into sliders ===== -->
+  <!-- NOTE: Your Kitchen Refresh + Bedroom Makeover sections currently contain ONLY “after” style photos.
+       To make sliders for those, we need a matching BEFORE photo for each project.
+       For now, I’ve left them as clickable galleries.
+       If you paste the BEFORE image filenames for each of those projects, I’ll wire them into sliders immediately. -->
+
   <section class="projects">
     <div class="project-card">
       <img src="IMG_8114.jpeg" alt="Kitchen paint" class="clickable-img">
@@ -265,12 +267,11 @@
     <img class="modal-content" id="modalImage">
   </div>
 
-  <!-- SCRIPTS -->
   <script>
     // ===== Before/After slider logic =====
     function initBASliders() {
       document.querySelectorAll(".ba-slider").forEach(slider => {
-        const afterWrap = slider.querySelector(".ba-after");
+        const beforeWrap = slider.querySelector(".ba-before");
         const handle = slider.querySelector(".ba-handle");
 
         let dragging = false;
@@ -280,7 +281,7 @@
           const x = Math.min(Math.max(clientX - rect.left, 0), rect.width);
           const pct = (x / rect.width) * 100;
 
-          afterWrap.style.width = pct + "%";
+          beforeWrap.style.width = pct + "%";
           handle.style.left = pct + "%";
         };
 
