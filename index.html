@@ -201,16 +201,16 @@
       const gate = document.getElementById("nl-gate");
       if (!gate) return;
 
-      // Only show gate for first-time visitors
-      const seen = localStorage.getItem("nl_gate_seen") === "1";
-      if (seen) {
-        gate.remove();
-        return;
-      }
+      // Only show gate for first-time visitors (COMMENTED OUT FOR TESTING)
+      // const seen = localStorage.getItem("nl_gate_seen") === "1";
+      // if (seen) {
+      //   gate.remove();
+      //   return;
+      // }
 
       const enterBtn = document.getElementById("nl-enter");
       const closeGate = () => {
-        localStorage.setItem("nl_gate_seen", "1");
+        // localStorage.setItem("nl_gate_seen", "1"); // COMMENTED OUT FOR TESTING
         gate.classList.add("fade-out");
         setTimeout(() => gate.remove(), 900);
       };
