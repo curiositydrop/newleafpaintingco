@@ -17,7 +17,7 @@
   </script>
 
   <style>
-    /* ===== New Leaf Gate Overlay (first-visit only) ===== */
+    /* ===== Gate Overlay (DEV: always shows) ===== */
     #nl-gate {
       position: fixed;
       inset: 0;
@@ -26,8 +26,8 @@
       align-items: center;
       justify-content: center;
       padding: 24px;
-      background: rgba(10, 12, 10, 0.96);
-      backdrop-filter: blur(6px);
+      background: #1f6b33; /* your dark green */
+      color: #fff;
     }
     #nl-gate .gate-inner {
       text-align: center;
@@ -44,7 +44,13 @@
     #nl-gate .gate-line {
       margin: 0 auto 18px auto;
       font-size: 1.05rem;
-      opacity: 0.92;
+      opacity: 0.95;
+    }
+    #nl-gate .gate-btn-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
     }
     #nl-gate .gate-btn {
       display: inline-flex;
@@ -53,84 +59,138 @@
       gap: 10px;
       padding: 14px 18px;
       border-radius: 12px;
-      border: 2px solid rgba(255,255,255,.18);
-      background: rgba(31,107,51,.95);
-      color: #fff;
-      font-weight: 800;
+      border: 2px solid rgba(255,255,255,.25);
+      font-weight: 900;
       letter-spacing: .2px;
       cursor: pointer;
-      transition: transform .15s ease, filter .15s ease;
+      transition: transform .15s ease, filter .15s ease, opacity .15s ease;
+      white-space: nowrap;
     }
-    #nl-gate .gate-btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
-    #nl-gate .gate-btn:active { transform: translateY(0px); filter: brightness(.98); }
+    /* Primary (Enter) = white button, green text */
+    #nl-gate .gate-btn.primary {
+      background: #ffffff;
+      color: #1f6b33;
+      border-color: rgba(255,255,255,.55);
+    }
+    #nl-gate .gate-btn.primary:hover { transform: translateY(-1px); filter: brightness(1.02); }
+    #nl-gate .gate-btn.primary:active { transform: translateY(0px); filter: brightness(.98); }
 
+    /* Secondary (Skip) = transparent/outlined */
+    #nl-gate .gate-btn.secondary {
+      background: rgba(255,255,255,.08);
+      color: #fff;
+      border-color: rgba(255,255,255,.30);
+      opacity: .92;
+    }
+    #nl-gate .gate-btn.secondary:hover { transform: translateY(-1px); filter: brightness(1.05); opacity: 1; }
+    #nl-gate .gate-btn.secondary:active { transform: translateY(0px); filter: brightness(.98); }
+
+    /* Slower, more dramatic fade */
     #nl-gate.fade-out {
       opacity: 0;
       pointer-events: none;
-      transition: opacity 850ms ease; /* slow-medium fade */
+      transition: opacity 1400ms ease;
     }
 
-    /* ===== New CTA strip (adds options without breaking existing CTA) ===== */
-    .nl-cta-row {
+    /* ===== Hub button grid ===== */
+    .nl-hub {
       max-width: 980px;
-      margin: 14px auto 6px auto;
+      margin: 18px auto 8px auto;
+      padding: 0 14px;
+      text-align: center;
+    }
+    .nl-hub .hub-logo-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+    .nl-hub .hub-logo {
+      width: min(520px, 88vw);
+      height: auto;
+      display: block;
+    }
+
+    .nl-hub-grid {
+      max-width: 980px;
+      margin: 12px auto 12px auto;
       padding: 0 14px;
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
       justify-content: center;
     }
-    .nl-cta-row a,
-    .nl-cta-row button {
+    .nl-hub-grid a,
+    .nl-hub-grid button {
       border-radius: 12px;
       padding: 12px 14px;
-      font-weight: 800;
+      font-weight: 900;
       border: 2px solid rgba(31,107,51,.25);
       background: rgba(255,255,255,.06);
       color: inherit;
       cursor: pointer;
       text-decoration: none;
       transition: transform .12s ease, background .12s ease, border-color .12s ease, filter .12s ease;
+      white-space: nowrap;
     }
-    .nl-cta-row a:hover,
-    .nl-cta-row button:hover {
+    .nl-hub-grid a:hover,
+    .nl-hub-grid button:hover {
       transform: translateY(-1px);
-      border-color: rgba(31,107,51,.6);
+      border-color: rgba(31,107,51,.65);
       background: rgba(31,107,51,.10);
     }
-    .nl-cta-row .spinwin {
+    .nl-hub-grid .spinwin {
       background: rgba(31,107,51,.95);
       color: #fff;
       border-color: rgba(255,255,255,.18);
     }
-    .nl-cta-row .spinwin:hover { filter: brightness(1.05); }
+    .nl-hub-grid .spinwin:hover { filter: brightness(1.05); }
+
+    /* Quick Overview panel (Option B: hidden until clicked) */
+    .nl-overview {
+      max-width: 980px;
+      margin: 10px auto 0 auto;
+      padding: 0 14px;
+      display: none;
+      text-align: left;
+    }
+    .nl-overview.show { display: block; }
+
+    /* Utility */
+    .nl-hidden { display: none !important; }
   </style>
 </head>
 
 <body>
 
-  <!-- ===== Gate Overlay (first visit only) ===== -->
-  <!-- IMPORTANT: Replace src="YOUR_LOGO_FILE.png" with your actual logo filename used on the site -->
+  <!-- ===== Gate Overlay (DEV: always show gate while testing) ===== -->
   <div id="nl-gate" aria-label="Enter the New Leaf experience" role="dialog" aria-modal="true">
     <div class="gate-inner">
       <img class="gate-logo" src="7D16A71A-2AF9-4EBB-863A-09C24D4F6662.png" alt="New Leaf Painting Co.">
       <p class="gate-line">Not your typical painter website.</p>
-      <button id="nl-enter" class="gate-btn" type="button">
-        Enter the New Leaf Experience <span aria-hidden="true">→</span>
-      </button>
+
+      <div class="gate-btn-row">
+        <button id="nl-enter-experience" class="gate-btn primary" type="button">
+          Enter the New Leaf Experience <span aria-hidden="true">→</span>
+        </button>
+
+        <button id="nl-skip-standard" class="gate-btn secondary" type="button">
+          Skip (I hate fun)
+        </button>
+      </div>
     </div>
   </div>
 
   <!-- GLOBAL HEADER -->
   <div id="global-header"></div>
 
-  <!-- PAGE CONTENT -->
-  <section class="hero">
-    <h1>Turn over a New Leaf — With a fresh new coat, one room at a time.</h1>
-    <p>Professional interior painting built on trust, quality, and care.</p>
+  <!-- ===== HUB MODE (logo + buttons only) ===== -->
+  <section id="nl-hub" class="nl-hub nl-hidden" aria-label="New Leaf Hub">
+    <div class="hub-logo-wrap">
+      <img class="hub-logo" src="7D16A71A-2AF9-4EBB-863A-09C24D4F6662.png" alt="New Leaf Painting Co.">
+    </div>
 
-    <!-- NEW: More control up front (doesn't replace your existing CTA below) -->
-    <div class="nl-cta-row" aria-label="Quick actions">
+    <!-- Row 1: Experience -->
+    <div class="nl-hub-grid" aria-label="Experience actions">
       <a href="#games" aria-label="Play a game">Play a Game</a>
       <a class="spinwin" href="#spinwin" aria-label="Spin and win">Spin &amp; Win ✨</a>
       <a href="projects.html" aria-label="See transformations">See Transformations</a>
@@ -140,84 +200,141 @@
       </button>
     </div>
 
-    <section class="about">
-      <h2>Why Choose New Leaf Painting Co.</h2>
-      <p>New Leaf Painting Co. isn’t just another painting service — we’re dedicated to giving your home the attention and renewal it deserves. Every brush stroke matters because your space deserves more than a quick coat; it deserves craftsmanship, precision, and pride.</p>
+    <!-- Row 2: Site buttons (you can adjust these any time) -->
+    <div class="nl-hub-grid" aria-label="Site navigation">
+      <a href="projects.html" aria-label="Projects">Projects</a>
+      <a href="#services" aria-label="Services">Services</a>
+      <a href="#reviews" aria-label="Reviews">Reviews</a>
+      <button id="nl-toggle-overview" type="button" aria-label="Toggle quick overview">
+        What We Do (Quick Overview)
+      </button>
+      <a href="contact.html" aria-label="Contact">Contact</a>
+    </div>
 
+    <!-- Option B: Your original homepage info, hidden until requested -->
+    <div id="nl-overview" class="nl-overview" aria-label="Quick overview">
+      <section class="about">
+        <h2>Why Choose New Leaf Painting Co.</h2>
+        <p>New Leaf Painting Co. isn’t just another painting service — we’re dedicated to giving your home the attention and renewal it deserves. Every brush stroke matters because your space deserves more than a quick coat; it deserves craftsmanship, precision, and pride.</p>
+        <ul>
+          <li><strong>Professional quality</strong> at fair, transparent prices</li>
+          <li><strong>Respect for your home</strong> — we show up on time, protect your space, and clean up fully</li>
+          <li><strong>Attention to detail</strong> that transforms a room, not just paints it</li>
+          <li><strong>A smooth process</strong> from estimate to final walkthrough</li>
+        </ul>
+      </section>
+    </div>
+  </section>
+
+  <!-- ===== STANDARD HOMEPAGE (original content, untouched) ===== -->
+  <section id="nl-standard">
+
+    <!-- PAGE CONTENT -->
+    <section class="hero">
+      <h1>Turn over a New Leaf — With a fresh new coat, one room at a time.</h1>
+      <p>Professional interior painting built on trust, quality, and care.</p>
+      <section class="about">
+        <h2>Why Choose New Leaf Painting Co.</h2>
+        <p>New Leaf Painting Co. isn’t just another painting service — we’re dedicated to giving your home the attention and renewal it deserves. Every brush stroke matters because your space deserves more than a quick coat; it deserves craftsmanship, precision, and pride.</p>
+
+        <ul>
+          <li><strong>Professional quality</strong> at fair, transparent prices</li>
+          <li><strong>Respect for your home</strong> — we show up on time, protect your space, and clean up fully</li>
+          <li><strong>Attention to detail</strong> that transforms a room, not just paints it</li>
+          <li><strong>A smooth process</strong> from estimate to final walkthrough</li>
+        </ul>
+      </section>
+      <button
+        type="button"
+        class="cta-button"
+        onclick="document.getElementById('contact-popup').style.display='flex';">
+        Schedule a Free Estimate
+      </button>
+    </section>
+
+    <section id="services" class="services">
+      <h2>Our Services</h2>
       <ul>
-        <li><strong>Professional quality</strong> at fair, transparent prices</li>
-        <li><strong>Respect for your home</strong> — we show up on time, protect your space, and clean up fully</li>
-        <li><strong>Attention to detail</strong> that transforms a room, not just paints it</li>
-        <li><strong>A smooth process</strong> from estimate to final walkthrough</li>
+        <li>Interior Painting</li>
+        <li>Cabinet Painting & Refinishing</li>
+        <li>Drywall Repair and Surface Prep</li>
+        <li>Drop Ceiling installation</li>
+        <li>Light Carpentry</li>
+        <li>Accent walls & color matching</li>
+        <li>Eco-friendly paint options</li>
       </ul>
     </section>
 
-    <!-- Your original CTA remains (unchanged) -->
-    <button 
-      type="button" 
-      class="cta-button" 
-      onclick="document.getElementById('contact-popup').style.display='flex';">
-      Schedule a Free Estimate
-    </button>
-  </section>
+    <section id="reviews" class="testimonial">
+      <blockquote>
+        “I am absolutely thrilled with the results of my kitchen cabinets. They completely transformed my kitchen and the finish looks perfect. I highly recommend!!”
+      </blockquote>
+      <p>— John M., Old Orchard Beach, ME</p>
+    </section>
 
-  <!-- NEW: Placeholder sections so the new CTA buttons have a landing spot -->
-  <section id="games" style="max-width:980px;margin:26px auto 0 auto;padding:0 14px;text-align:center;">
-    <h2>Play a Game</h2>
-    <p>Coming soon — a quick match game to unlock a project bonus.</p>
-  </section>
+    <!-- Placeholder sections (so hub buttons have landing spots even in standard mode) -->
+    <section id="games" style="max-width:980px;margin:26px auto 0 auto;padding:0 14px;text-align:center;">
+      <h2>Play a Game</h2>
+      <p>Coming soon — a quick match game to unlock a project bonus.</p>
+    </section>
 
-  <section id="spinwin" style="max-width:980px;margin:26px auto 0 auto;padding:0 14px;text-align:center;">
-    <h2>Spin &amp; Win</h2>
-    <p>Coming soon — one spin, every spin wins.</p>
-  </section>
+    <section id="spinwin" style="max-width:980px;margin:26px auto 0 auto;padding:0 14px;text-align:center;">
+      <h2>Spin &amp; Win</h2>
+      <p>Coming soon — one spin, every spin wins.</p>
+    </section>
 
-  <section class="services">
-    <h2>Our Services</h2>
-    <ul>
-      <li>Interior Painting</li>
-      <li>Cabinet Painting & Refinishing</li>
-      <li>Drywall Repair and Surface Prep</li>
-      <li>Drop Ceiling installation</li>
-      <li>Light Carpentry</li>
-      <li>Accent walls & color matching</li>
-      <li>Eco-friendly paint options</li>
-    </ul>
-  </section>
-
-  <section class="testimonial">
-    <blockquote>
-      “I am absolutely thrilled with the results of my kitchen cabinets. They completely transformed my kitchen and the finish looks perfect. I highly recommend!!”
-    </blockquote>
-    <p>— John M., Old Orchard Beach, ME</p>
   </section>
 
   <!-- GLOBAL FOOTER -->
   <div id="global-footer"></div>
 
-  <!-- Gate logic (must run before global.js is fine, either way works) -->
   <script>
-    (function initNewLeafGate(){
+    (function initNewLeafGateChoice(){
       const gate = document.getElementById("nl-gate");
       if (!gate) return;
 
-      // Only show gate for first-time visitors (COMMENTED OUT FOR TESTING)
-      // const seen = localStorage.getItem("nl_gate_seen") === "1";
-      // if (seen) {
-      //   gate.remove();
-      //   return;
-      // }
+      const hub = document.getElementById("nl-hub");
+      const standard = document.getElementById("nl-standard");
 
-      const enterBtn = document.getElementById("nl-enter");
-      const closeGate = () => {
-        // localStorage.setItem("nl_gate_seen", "1"); // COMMENTED OUT FOR TESTING
+      const btnEnter = document.getElementById("nl-enter-experience");
+      const btnSkip  = document.getElementById("nl-skip-standard");
+
+      const toggleOverviewBtn = document.getElementById("nl-toggle-overview");
+      const overview = document.getElementById("nl-overview");
+
+      const fadeAndRemoveGate = (cb) => {
         gate.classList.add("fade-out");
-        setTimeout(() => gate.remove(), 900);
+        setTimeout(() => {
+          gate.remove();
+          cb && cb();
+        }, 1450);
       };
 
-      enterBtn?.addEventListener("click", closeGate);
-      enterBtn?.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") closeGate();
+      const showHub = () => {
+        hub?.classList.remove("nl-hidden");
+        standard?.classList.add("nl-hidden");
+        // ensure overview starts closed
+        overview?.classList.remove("show");
+      };
+
+      const showStandard = () => {
+        standard?.classList.remove("nl-hidden");
+        hub?.classList.add("nl-hidden");
+      };
+
+      // Default state while gate is visible: keep both hidden until choice
+      hub?.classList.add("nl-hidden");
+      standard?.classList.add("nl-hidden");
+
+      btnEnter?.addEventListener("click", () => fadeAndRemoveGate(showHub));
+      btnSkip?.addEventListener("click", () => fadeAndRemoveGate(showStandard));
+
+      // Quick overview toggle (hub mode)
+      toggleOverviewBtn?.addEventListener("click", () => {
+        overview?.classList.toggle("show");
+        if (overview?.classList.contains("show")) {
+          overview.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
       });
     })();
   </script>
