@@ -4,19 +4,122 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>New Leaf Painting Co. | Interior Painting in Southern Maine</title>
-<meta name="description" content="New Leaf Painting Co. provides expert interior painting for high-end homes in Cumberland, Falmouth, Cape Elizabeth, Yarmouth, Kennebunkport, and throughout Southern Maine. Services include walls, trim, baseboards, cabinets, and doors. Reliable, professional results for every home.">
+  <meta name="description" content="New Leaf Painting Co. provides expert interior painting for high-end homes in Cumberland, Falmouth, Cape Elizabeth, Yarmouth, Kennebunkport, and throughout Southern Maine. Services include walls, trim, baseboards, cabinets, and doors. Reliable, professional results for every home.">
   <link rel="stylesheet" href="style.css" />
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZFESYBBBWD"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
 
-  gtag('config', 'G-ZFESYBBBWD');
-</script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZFESYBBBWD"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-ZFESYBBBWD');
+  </script>
+
+  <style>
+    /* ===== New Leaf Gate Overlay (first-visit only) ===== */
+    #nl-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(10, 12, 10, 0.96);
+      backdrop-filter: blur(6px);
+    }
+    #nl-gate .gate-inner {
+      text-align: center;
+      max-width: 760px;
+      width: 100%;
+      padding: 28px 18px;
+    }
+    #nl-gate .gate-logo {
+      width: min(420px, 80vw);
+      height: auto;
+      margin: 0 auto 14px auto;
+      display: block;
+    }
+    #nl-gate .gate-line {
+      margin: 0 auto 18px auto;
+      font-size: 1.05rem;
+      opacity: 0.92;
+    }
+    #nl-gate .gate-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 18px;
+      border-radius: 12px;
+      border: 2px solid rgba(255,255,255,.18);
+      background: rgba(31,107,51,.95);
+      color: #fff;
+      font-weight: 800;
+      letter-spacing: .2px;
+      cursor: pointer;
+      transition: transform .15s ease, filter .15s ease;
+    }
+    #nl-gate .gate-btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
+    #nl-gate .gate-btn:active { transform: translateY(0px); filter: brightness(.98); }
+
+    #nl-gate.fade-out {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 850ms ease; /* slow-medium fade */
+    }
+
+    /* ===== New CTA strip (adds options without breaking existing CTA) ===== */
+    .nl-cta-row {
+      max-width: 980px;
+      margin: 14px auto 6px auto;
+      padding: 0 14px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .nl-cta-row a,
+    .nl-cta-row button {
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-weight: 800;
+      border: 2px solid rgba(31,107,51,.25);
+      background: rgba(255,255,255,.06);
+      color: inherit;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease, filter .12s ease;
+    }
+    .nl-cta-row a:hover,
+    .nl-cta-row button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(31,107,51,.6);
+      background: rgba(31,107,51,.10);
+    }
+    .nl-cta-row .spinwin {
+      background: rgba(31,107,51,.95);
+      color: #fff;
+      border-color: rgba(255,255,255,.18);
+    }
+    .nl-cta-row .spinwin:hover { filter: brightness(1.05); }
+  </style>
 </head>
+
 <body>
+
+  <!-- ===== Gate Overlay (first visit only) ===== -->
+  <!-- IMPORTANT: Replace src="YOUR_LOGO_FILE.png" with your actual logo filename used on the site -->
+  <div id="nl-gate" aria-label="Enter the New Leaf experience" role="dialog" aria-modal="true">
+    <div class="gate-inner">
+      <img class="gate-logo" src="YOUR_LOGO_FILE.png" alt="New Leaf Painting Co.">
+      <p class="gate-line">Not your typical painter website.</p>
+      <button id="nl-enter" class="gate-btn" type="button">
+        Enter the New Leaf Experience <span aria-hidden="true">→</span>
+      </button>
+    </div>
+  </div>
 
   <!-- GLOBAL HEADER -->
   <div id="global-header"></div>
@@ -25,25 +128,49 @@
   <section class="hero">
     <h1>Turn over a New Leaf — With a fresh new coat, one room at a time.</h1>
     <p>Professional interior painting built on trust, quality, and care.</p>
+
+    <!-- NEW: More control up front (doesn't replace your existing CTA below) -->
+    <div class="nl-cta-row" aria-label="Quick actions">
+      <a href="#games" aria-label="Play a game">Play a Game</a>
+      <a class="spinwin" href="#spinwin" aria-label="Spin and win">Spin &amp; Win ✨</a>
+      <a href="projects.html" aria-label="See transformations">See Transformations</a>
+      <button type="button" aria-label="Schedule a free estimate"
+        onclick="document.getElementById('contact-popup').style.display='flex';">
+        Schedule a Free Estimate
+      </button>
+    </div>
+
     <section class="about">
       <h2>Why Choose New Leaf Painting Co.</h2>
-    <p>New Leaf Painting Co. isn’t just another painting service — we’re dedicated to giving your home the attention and renewal it deserves. Every brush stroke matters because your space deserves more than a quick coat; it deserves craftsmanship, precision, and pride.</p>
+      <p>New Leaf Painting Co. isn’t just another painting service — we’re dedicated to giving your home the attention and renewal it deserves. Every brush stroke matters because your space deserves more than a quick coat; it deserves craftsmanship, precision, and pride.</p>
 
-    <ul>
-      <li><strong>Professional quality</strong> at fair, transparent prices</li>
-      <li><strong>Respect for your home</strong> — we show up on time, protect your space, and clean up fully</li>
-      <li><strong>Attention to detail</strong> that transforms a room, not just paints it</li>
-      <li><strong>A smooth process</strong> from estimate to final walkthrough</li>
-    </ul>
+      <ul>
+        <li><strong>Professional quality</strong> at fair, transparent prices</li>
+        <li><strong>Respect for your home</strong> — we show up on time, protect your space, and clean up fully</li>
+        <li><strong>Attention to detail</strong> that transforms a room, not just paints it</li>
+        <li><strong>A smooth process</strong> from estimate to final walkthrough</li>
+      </ul>
     </section>
+
+    <!-- Your original CTA remains (unchanged) -->
     <button 
-  type="button" 
-  class="cta-button" 
-  onclick="document.getElementById('contact-popup').style.display='flex';">
-  Schedule a Free Estimate
-</button>
+      type="button" 
+      class="cta-button" 
+      onclick="document.getElementById('contact-popup').style.display='flex';">
+      Schedule a Free Estimate
+    </button>
   </section>
-    
+
+  <!-- NEW: Placeholder sections so the new CTA buttons have a landing spot -->
+  <section id="games" style="max-width:980px;margin:26px auto 0 auto;padding:0 14px;text-align:center;">
+    <h2>Play a Game</h2>
+    <p>Coming soon — a quick match game to unlock a project bonus.</p>
+  </section>
+
+  <section id="spinwin" style="max-width:980px;margin:26px auto 0 auto;padding:0 14px;text-align:center;">
+    <h2>Spin &amp; Win</h2>
+    <p>Coming soon — one spin, every spin wins.</p>
+  </section>
 
   <section class="services">
     <h2>Our Services</h2>
@@ -67,6 +194,33 @@
 
   <!-- GLOBAL FOOTER -->
   <div id="global-footer"></div>
+
+  <!-- Gate logic (must run before global.js is fine, either way works) -->
+  <script>
+    (function initNewLeafGate(){
+      const gate = document.getElementById("nl-gate");
+      if (!gate) return;
+
+      // Only show gate for first-time visitors
+      const seen = localStorage.getItem("nl_gate_seen") === "1";
+      if (seen) {
+        gate.remove();
+        return;
+      }
+
+      const enterBtn = document.getElementById("nl-enter");
+      const closeGate = () => {
+        localStorage.setItem("nl_gate_seen", "1");
+        gate.classList.add("fade-out");
+        setTimeout(() => gate.remove(), 900);
+      };
+
+      enterBtn?.addEventListener("click", closeGate);
+      enterBtn?.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") closeGate();
+      });
+    })();
+  </script>
 
   <!-- GLOBAL LOGIC -->
   <script src="global.js"></script>
