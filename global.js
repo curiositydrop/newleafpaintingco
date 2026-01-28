@@ -120,7 +120,7 @@ function highlightActiveLink() {
 }
 
 /* --------------------
-   SETUP POPUP
+   SETUP POPUP (FORCE OVERRIDE)
 ---------------------*/
 function setupPopup() {
   const popup = document.getElementById("contact-popup");
@@ -128,9 +128,12 @@ function setupPopup() {
   const popupClose = document.querySelector("#contact-popup .close");
   if (!popup || !btnDefault || !popupClose) return;
 
-  btnDefault.onclick = () => popup.style.display = "flex";
-  popupClose.onclick = () => popup.style.display = "none";
-  window.addEventListener("click", e => { if (e.target === popup) popup.style.display = "none"; });
+  btnDefault.onclick = () => popup.style.setProperty("display", "flex", "important");
+  popupClose.onclick = () => popup.style.setProperty("display", "none", "important");
+
+  window.addEventListener("click", e => {
+    if (e.target === popup) popup.style.setProperty("display", "none", "important");
+  });
 }
 
 /* --------------------
@@ -187,6 +190,29 @@ function applyNLMode() {
 }
 
 /* --------------------
+   FORCE GLOBALS VISIBLE ON INNER PAGES (HUB MODE)
+   Fixes: no-nav/no-button on Past Projects/Testimonials in experience flow.
+---------------------*/
+function forceGlobalsVisibleOnInnerPages() {
+  const mode = getNLModeFromURL();
+
+  // Only do this for inner pages (NOT index), and only in hub mode
+  if (mode !== "hub" || isHomePage) return;
+
+  const headerWrap = document.getElementById("global-header");
+  const footerWrap = document.getElementById("global-footer");
+  const contactBtn = document.getElementById("contact-btn");
+  const contactPop = document.getElementById("contact-popup");
+
+  if (headerWrap) headerWrap.style.setProperty("display", "block", "important");
+  if (footerWrap) footerWrap.style.setProperty("display", "block", "important");
+  if (contactBtn) contactBtn.style.setProperty("display", "block", "important");
+
+  // Keep popup closed by default, but ensure it can open when clicked
+  if (contactPop) contactPop.style.setProperty("display", "none", "important");
+}
+
+/* --------------------
    LOAD GLOBAL HTML (SAFE)
    If a page already injected header/footer/popup/button,
    this will NOT inject again.
@@ -201,7 +227,6 @@ async function loadGlobalHTML(refData = {}) {
     const popupAlready  = !!document.querySelector("#contact-popup");
     const btnAlready    = !!document.querySelector("#contact-btn");
 
-    // If page already did the injection, skip fetching global.html
     const alreadyInjected = headerAlready && footerAlready && popupAlready && btnAlready;
 
     if (!alreadyInjected) {
@@ -224,12 +249,10 @@ async function loadGlobalHTML(refData = {}) {
         if (refData.buttontext) btn.textContent = refData.buttontext;
       }
     } else {
-      // If button exists already, still apply referral button text
       const btn = document.getElementById("contact-btn");
       if (btn && refData.buttontext) btn.textContent = refData.buttontext;
     }
 
-    // Now run the behavior consistently, regardless of injection source
     forceHomeLinkToMode();
 
     requestAnimationFrame(() => {
@@ -280,10 +303,13 @@ async function init() {
     return;
   }
 
-  // Important: apply mode class early for styling
+  // Apply mode class early for styling
   applyNLMode();
 
   await loadGlobalHTML(refData);
+
+  // ✅ KEY FIX: make sure globals show on inner pages in hub mode
+  forceGlobalsVisibleOnInnerPages();
 
   if (refData.bannertext) createBanner(refData.bannertext);
   updatePopupHeading();
