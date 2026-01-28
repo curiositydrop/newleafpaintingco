@@ -26,14 +26,38 @@
       align-items: center;
       justify-content: center;
       padding: 24px;
-      background: #0f5f33;
+
+      /* ✅ CHANGED: black background */
+      background: #000;
+      overflow: hidden; /* keeps fireworks clean */
     }
+
     #nl-gate .gate-inner {
       text-align: center;
       max-width: 760px;
       width: 100%;
       padding: 28px 18px;
+      position: relative;
+      z-index: 2; /* above fireworks */
     }
+
+    /* ✅ NEW: fireworks canvas */
+    #nl-fireworks {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+      opacity: 1;
+    }
+
+    /* ✅ NEW: fireworks fade-out */
+    #nl-fireworks.fade-out {
+      opacity: 0;
+      transition: opacity 1200ms ease;
+    }
+
     #nl-gate .gate-logo {
       width: min(420px, 80vw);
       height: auto;
@@ -43,11 +67,13 @@
       border-radius: 14px;
       padding: 10px;
     }
+
     #nl-gate .gate-line {
       margin: 0 auto 18px auto;
       font-size: 1.05rem;
       color: rgba(255,255,255,.92);
     }
+
     .gate-btn-row{
       display:flex;
       gap:12px;
@@ -55,6 +81,7 @@
       flex-wrap:wrap;
       margin-top: 10px;
     }
+
     #nl-gate .gate-btn {
       display: inline-flex;
       align-items: center;
@@ -79,6 +106,35 @@
       color: #fff;
       border-color: rgba(255,255,255,.18);
       font-weight: 800;
+    }
+
+    /* ✅ NEW: glowing heartbeat for ENTER button only */
+    #nl-enter {
+      animation: nlPulseGlow 2.1s ease-in-out infinite;
+      box-shadow:
+        0 0 0 rgba(0,0,0,0),
+        0 0 18px rgba(0,0,0,0);
+    }
+
+    @keyframes nlPulseGlow {
+      0% {
+        box-shadow:
+          0 0 0 0 rgba(0,0,0,0),
+          0 0 10px rgba(15,95,51,.55);
+        filter: brightness(1.00);
+      }
+      50% {
+        box-shadow:
+          0 0 0 6px rgba(79, 255, 146, .18),
+          0 0 34px rgba(79, 255, 146, .85);
+        filter: brightness(1.08);
+      }
+      100% {
+        box-shadow:
+          0 0 0 0 rgba(0,0,0,0),
+          0 0 10px rgba(15,95,51,.55);
+        filter: brightness(1.00);
+      }
     }
 
     #nl-gate.fade-out {
@@ -199,6 +255,9 @@
 
   <!-- ===== Gate Overlay ===== -->
   <div id="nl-gate" aria-label="New Leaf Gate" role="dialog" aria-modal="true">
+    <!-- ✅ NEW: fireworks canvas layer -->
+    <canvas id="nl-fireworks" aria-hidden="true"></canvas>
+
     <div class="gate-inner">
       <img class="gate-logo" src="7D16A71A-2AF9-4EBB-863A-09C24D4F6662.png" alt="New Leaf Painting Co.">
       <p class="gate-line">Not your typical painter website.</p>
@@ -220,13 +279,11 @@
     <div class="nl-hub-inner">
       <img class="nl-hub-logo" src="7D16A71A-2AF9-4EBB-863A-09C24D4F6662.png" alt="New Leaf Painting Co.">
 
-      <!-- NEW: crystal-clear line under logo -->
       <p class="nl-hub-line">
         You’re already here. Proven work, real reviews — and rewards you won’t find on any other painter’s site.
       </p>
 
       <div class="nl-hub-grid">
-        <!-- UPDATED CTA copy -->
         <a class="nl-btn" href="#games">Play for Rewards</a>
         <a class="nl-btn spin" href="#spinwin">Spin &amp; Win (Everyone Wins) ✨</a>
 
@@ -248,15 +305,12 @@
 
   <!-- ===== STANDARD MODE (Normal site) ===== -->
   <div id="nl-standard">
-    <!-- GLOBAL HEADER -->
     <div id="global-header"></div>
 
-    <!-- PAGE CONTENT -->
     <section class="hero">
       <h1>Turn over a New Leaf — With a fresh new coat, one room at a time.</h1>
       <p>Professional interior painting built on trust, quality, and care.</p>
 
-      <!-- NEW: boring → experience upgrade link -->
       <p>
         <a class="nl-upgrade-link" id="nl-upgrade" href="index.html?nav=1&mode=hub">
           I want the full experience →
@@ -303,7 +357,6 @@
       <p>— John M., Old Orchard Beach, ME</p>
     </section>
 
-    <!-- GLOBAL FOOTER -->
     <div id="global-footer"></div>
   </div>
 
@@ -342,25 +395,14 @@
 
       // Ensure internal links carry nav=1&mode=...
       function decorateLinks(mode){
-        const qs = buildModeQuery(mode);
-
         document.querySelectorAll('a[href]').forEach(a => {
           const href = a.getAttribute("href");
           if (!href) return;
-
-          // keep in-page anchors as-is (#games, #spinwin)
           if (href.startsWith("#")) return;
-
-          // ignore external
           if (isExternalHref(href)) return;
-
-          // ignore javascript: links
           if (href.startsWith("javascript:")) return;
-
-          // if already has nav=1, leave it
           if (href.includes("nav=1")) return;
 
-          // append query
           const joiner = href.includes("?") ? "&" : "?";
           a.setAttribute("href", href + joiner + `nav=1&mode=${encodeURIComponent(mode)}`);
         });
@@ -396,11 +438,9 @@
           document.body.insertAdjacentElement("beforeend", btn);
         }
 
-        // Hide FUN row on skip side (if it exists in global.html)
         const funRow = document.getElementById("nl-experience-nav");
         if (funRow) funRow.style.display = "none";
 
-        // Setup popup close/open
         const popupEl = document.getElementById("contact-popup");
         const btnEl = document.getElementById("contact-btn");
         const popupClose = document.querySelector("#contact-popup .close");
@@ -410,7 +450,6 @@
           window.addEventListener("click", e => { if (e.target === popupEl) popupEl.style.display = "none"; });
         }
 
-        // Make sure nav links become visible and preserve active state
         requestAnimationFrame(() => {
           document.querySelectorAll(".nav-links a").forEach(a => a.style.visibility = "visible");
 
@@ -421,7 +460,6 @@
             link.style.visibility = "visible";
           });
 
-          // Decorate all internal links so they keep nav=1&mode=standard
           decorateLinks(mode);
         });
       }
@@ -444,32 +482,131 @@
         window.scrollTo(0,0);
       }
 
+      // ===== Fireworks (gate only) =====
+      (function initFireworks(){
+        const canvas = document.getElementById("nl-fireworks");
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        let w = 0, h = 0, dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+
+        const colors = ["#ff4d4d","#ffd24d","#4dff88","#4dd2ff","#b84dff","#ff4dd2"];
+        const bursts = [];
+        const particles = [];
+
+        function resize(){
+          w = canvas.clientWidth;
+          h = canvas.clientHeight;
+          canvas.width = Math.floor(w * dpr);
+          canvas.height = Math.floor(h * dpr);
+          ctx.setTransform(dpr,0,0,dpr,0,0);
+        }
+        resize();
+        window.addEventListener("resize", resize);
+
+        function rand(min,max){ return Math.random()*(max-min)+min; }
+
+        function spawnBurst(){
+          bursts.push({
+            x: rand(w*0.15, w*0.85),
+            y: rand(h*0.12, h*0.55),
+            color: colors[(Math.random()*colors.length)|0],
+            life: 0
+          });
+        }
+
+        function explode(b){
+          const count = (Math.random() < 0.35) ? 120 : 80;
+          for(let i=0;i<count;i++){
+            const a = (Math.PI*2) * (i/count) + rand(-0.08,0.08);
+            const sp = rand(1.4, 4.6);
+            particles.push({
+              x: b.x, y: b.y,
+              vx: Math.cos(a)*sp,
+              vy: Math.sin(a)*sp,
+              g: rand(0.012,0.03),
+              drag: rand(0.985,0.992),
+              alpha: 1,
+              fade: rand(0.008,0.02),
+              r: rand(1.1,2.2),
+              color: b.color
+            });
+          }
+        }
+
+        let t = 0;
+        function tick(){
+          t++;
+
+          // spawn bursts for the first ~8 seconds at 60fps (≈480 frames)
+          if (t < 480 && t % 18 === 0) spawnBurst();
+
+          ctx.clearRect(0,0,w,h);
+
+          // bursts pop quickly into particles
+          for(let i=bursts.length-1;i>=0;i--){
+            const b = bursts[i];
+            b.life++;
+            if(b.life === 1) explode(b);
+            if(b.life > 2) bursts.splice(i,1);
+          }
+
+          // draw particles
+          for(let i=particles.length-1;i>=0;i--){
+            const p = particles[i];
+            p.vx *= p.drag;
+            p.vy *= p.drag;
+            p.vy += p.g;
+            p.x += p.vx;
+            p.y += p.vy;
+            p.alpha -= p.fade;
+
+            if(p.alpha <= 0 || p.x < -50 || p.x > w+50 || p.y > h+80){
+              particles.splice(i,1);
+              continue;
+            }
+
+            ctx.globalAlpha = Math.max(0, p.alpha);
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+            ctx.fill();
+          }
+
+          ctx.globalAlpha = 1;
+
+          // continue anim while gate exists
+          if (document.getElementById("nl-gate")) {
+            requestAnimationFrame(tick);
+          }
+        }
+
+        requestAnimationFrame(tick);
+
+        // Fade fireworks layer out after 8 seconds (still gate stays)
+        setTimeout(() => {
+          canvas.classList.add("fade-out");
+        }, 8000);
+      })();
+
       // ===== GATE RULE =====
-      // If nav=1, this is internal navigation: DO NOT show the gate.
-      // If nav is missing, ALWAYS show the gate (even for returning visitors).
       const isInternalNav = (nav === "1");
 
       if (isInternalNav) {
-        // Remove gate instantly
         if (gate) gate.remove();
 
-        // Choose mode from URL, default to standard if missing/invalid
         const initialMode = (modeParam === "hub" || modeParam === "standard") ? modeParam : "standard";
         setMode(initialMode);
 
-        // If standard, ensure global loads automatically
         if (initialMode === "standard") {
           loadGlobalForStandard("standard");
         }
       } else {
-        // Direct entry: show ONLY gate until they choose
         hub.style.display = "none";
         standard.style.display = "none";
       }
 
       // ===== BUTTONS =====
       enterBtn.addEventListener("click", () => {
-        // switch to hub and update URL so internal browsing won’t re-trigger gate
         history.replaceState({}, "", "index.html" + buildModeQuery("hub"));
         setMode("hub");
         closeGate();
