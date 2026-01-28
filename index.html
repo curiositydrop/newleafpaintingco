@@ -88,49 +88,13 @@
     }
 
     /* ===== Modes ===== */
-    /* Start hidden until user chooses */
     #nl-hub, #nl-standard { display: none; }
 
-    body.mode-hub #nl-hub { display: block; }
-    body.mode-standard #nl-standard { display: block; }
-
-    /* Hide the OTHER mode so nothing repeats when scrolling */
-    body.mode-hub #nl-standard { display: none !important; }
-    body.mode-standard #nl-hub { display: none !important; }
-
-    /* In HUB mode, hide global header/footer so nothing repeats */
+    /* In HUB mode, hide anything global if it exists */
     body.mode-hub #global-header,
-    body.mode-hub #global-footer { display: none; }
-
-    /* ✅ CRITICAL: On SKIP mode, force header nav to use the normal global spacing
-       (Prevents “stacked CTA-style nav” from leaking onto the skip homepage) */
-    body.mode-standard header .nav-links {
-      display: flex !important;
-      flex-direction: row !important;
-      justify-content: center !important;
-      gap: 40px !important;
-      padding: 0 !important;
-      margin: 0 !important;
-      align-items: center !important;
-    }
-    body.mode-standard header .nav-links a {
-      display: inline-block !important;
-      width: auto !important;
-      max-width: none !important;
-      padding: 0 !important;
-      background: transparent !important;
-      border: none !important;
-      border-radius: 0 !important;
-      text-decoration: none !important;
-    }
-
-    /* Mobile stays stacked (matches your global @media rule in style.css) */
-    @media (max-width: 600px) {
-      body.mode-standard header .nav-links {
-        flex-direction: column !important;
-        gap: 15px !important;
-      }
-    }
+    body.mode-hub #global-footer,
+    body.mode-hub #contact-btn,
+    body.mode-hub #contact-popup { display: none !important; }
 
     /* ===== HUB layout ===== */
     #nl-hub {
@@ -171,7 +135,7 @@
       width: 100%;
     }
 
-    /* ✅ Scoped to HUB only, so it can never style skip content */
+    /* ✅ Scoped to HUB only */
     #nl-hub .nl-btn{
       border-radius: 14px;
       padding: 14px 16px;
@@ -239,7 +203,7 @@
         <button
           type="button"
           class="nl-btn primary"
-          onclick="document.getElementById('contact-popup').style.display='flex';">
+          onclick="document.getElementById('contact-popup')?.style && (document.getElementById('contact-popup').style.display='flex');">
           Schedule a Free Estimate
         </button>
 
@@ -306,53 +270,109 @@
 
     <!-- GLOBAL FOOTER -->
     <div id="global-footer"></div>
-
-    <!-- GLOBAL LOGIC -->
-    <script src="global.js"></script>
   </div>
 
-  <!-- ===== Gate Logic (Gate always shows on refresh) ===== -->
+  <!-- ===== Gate + Load Global ONLY IF SKIP ===== -->
   <script>
-  (function initNewLeafGateModes(){
-    const gate = document.getElementById("nl-gate");
-    const enterBtn = document.getElementById("nl-enter");
-    const skipBtn  = document.getElementById("nl-skip");
+    (function initNewLeafGateModes(){
+      const gate = document.getElementById("nl-gate");
+      const enterBtn = document.getElementById("nl-enter");
+      const skipBtn  = document.getElementById("nl-skip");
 
-    const hub = document.getElementById("nl-hub");
-    const standard = document.getElementById("nl-standard");
+      const hub = document.getElementById("nl-hub");
+      const standard = document.getElementById("nl-standard");
 
-    // Start state: ONLY gate visible
-    hub.style.display = "none";
-    standard.style.display = "none";
+      // Start state: ONLY gate visible
+      hub.style.display = "none";
+      standard.style.display = "none";
 
-    function setMode(mode){
-      // Remove both modes first
-      document.body.classList.remove("mode-hub", "mode-standard");
-
-      if (mode === "hub") {
-        document.body.classList.add("mode-hub");
-        hub.style.display = "block";
-        standard.style.display = "none";
-      } else {
-        document.body.classList.add("mode-standard");
-        hub.style.display = "none";
-        standard.style.display = "block";
+      function closeGate(){
+        gate.classList.add("fade-out");
+        setTimeout(() => gate.remove(), 1250);
       }
 
-      // keep scroll sane
-      window.scrollTo(0,0);
-    }
+      async function loadGlobalForStandard(){
+        // Fetch global.html and inject header/footer/popup/button
+        const res = await fetch("global.html");
+        const html = await res.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
 
-    function closeGate(){
-      gate.classList.add("fade-out");
-      setTimeout(() => gate.remove(), 1250);
-    }
+        const header = doc.querySelector("header");
+        const footer = doc.querySelector("footer");
+        const popup  = doc.querySelector("#contact-popup");
+        const btn    = doc.querySelector("#contact-btn");
 
-    enterBtn.addEventListener("click", () => { setMode("hub"); closeGate(); });
-    skipBtn.addEventListener("click",  () => { setMode("standard"); closeGate(); });
+        const headerTarget = document.getElementById("global-header");
+        const footerTarget = document.getElementById("global-footer");
 
-  })();
-</script>
+        if (headerTarget && header) headerTarget.replaceChildren(header);
+        if (footerTarget && footer) footerTarget.replaceChildren(footer);
+
+        // Add popup + floating button once
+        if (popup && !document.querySelector("#contact-popup")) {
+          document.body.insertAdjacentElement("beforeend", popup);
+        }
+        if (btn && !document.querySelector("#contact-btn")) {
+          document.body.insertAdjacentElement("beforeend", btn);
+        }
+
+        // Hide the FUN row on skip home (you asked: work links only on skip side)
+        const funRow = document.getElementById("nl-experience-nav");
+        if (funRow) funRow.style.display = "none";
+
+        // Setup popup close/open
+        const popupEl = document.getElementById("contact-popup");
+        const btnEl = document.getElementById("contact-btn");
+        const popupClose = document.querySelector("#contact-popup .close");
+        if (popupEl && btnEl && popupClose) {
+          btnEl.onclick = () => popupEl.style.display = "flex";
+          popupClose.onclick = () => popupEl.style.display = "none";
+          window.addEventListener("click", e => { if (e.target === popupEl) popupEl.style.display = "none"; });
+        }
+
+        // Reveal nav links + highlight active
+        requestAnimationFrame(() => {
+          document.querySelectorAll(".nav-links a").forEach(a => a.style.visibility = "visible");
+          // Active highlight (basic)
+          let currentPage = window.location.pathname.split("/").pop().toLowerCase() || "index.html";
+          document.querySelectorAll("nav a").forEach(link => {
+            const href = (link.getAttribute("href") || "").split("?")[0].split("/").pop().toLowerCase() || "index.html";
+            link.classList.toggle("active", href === currentPage);
+            link.style.visibility = "visible";
+          });
+        });
+      }
+
+      function setMode(mode){
+        document.body.classList.remove("mode-hub", "mode-standard");
+
+        if (mode === "hub") {
+          document.body.classList.add("mode-hub");
+          hub.style.display = "block";
+          standard.style.display = "none";
+        } else {
+          document.body.classList.add("mode-standard");
+          hub.style.display = "none";
+          standard.style.display = "block";
+        }
+
+        window.scrollTo(0,0);
+      }
+
+      enterBtn.addEventListener("click", () => {
+        setMode("hub");
+        closeGate();
+      });
+
+      skipBtn.addEventListener("click", async () => {
+        setMode("standard");
+        await loadGlobalForStandard();
+        closeGate();
+      });
+
+    })();
+  </script>
 
 </body>
 </html>
