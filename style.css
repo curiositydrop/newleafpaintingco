@@ -365,7 +365,6 @@ footer {
   border: 2px solid #4a7f3f; /* feel free to match your palette */
 }
 
-/* ✅ FIXED: this block was broken and was eating the rest of your CSS */
 .partner-btn:hover {
   background: #4a7f3f;
   color: #fff;
@@ -379,25 +378,20 @@ footer {
 
 /* ----------------------------------
    SKIP SIDE (mode-standard)
-   Keep your current "boring link" look
+   ✅ IMPORTANT: KEEP HEADER NAV SAME ACROSS ALL PAGES
+   - Desktop stays horizontal (same as global default)
+   - Mobile stacks (handled by your @media rule)
 ----------------------------------- */
 body.mode-standard header .nav-links {
-  flex-direction: column;
-  gap: 15px;
-  align-items: center;
+  /* DO NOT force column here */
+  /* Keep same as .nav-links default so home matches other pages */
+  gap: 40px;
 }
 
 body.mode-standard header .nav-links a {
-  display: block;
-  width: 100%;
-  max-width: 520px;
-  padding: 10px 0;
-  text-align: center;
-
   background: transparent !important;
   border: none !important;
   border-radius: 0 !important;
-
   color: #ffffff !important;
   font-weight: 700;
   text-decoration: none;
@@ -417,7 +411,7 @@ body.mode-standard header .nav-links a.active {
 
 /* ----------------------------------
    EXPERIENCE SIDE (mode-hub)
-   Only matters if header is shown in hub later
+   (Header is hidden in hub, but leaving this in case you ever show it)
 ----------------------------------- */
 body.mode-hub header .nav-links {
   flex-direction: column;
@@ -451,7 +445,8 @@ body.mode-hub header .nav-links a.active {
   background: rgba(255,255,255,0.95);
   color: #0f5f33;
 }
-/* Normalize spacing between header and content */
+
+/* Normalize spacing between header and content (skip side) */
 body.mode-standard .hero {
   padding-top: 30px; /* was 60px */
 }
