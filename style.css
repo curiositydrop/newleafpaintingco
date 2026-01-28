@@ -366,3 +366,52 @@ footer {
   background: #4a7f3f;
   color: #fff;
 }
+/* --- New Leaf button-hub nav --- */
+.nl-cta-links {
+  list-style: none;
+  padding: 0;
+  margin: 14px auto 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+.nl-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: 2px solid rgba(255,255,255,.28);
+  background: rgba(255,255,255,.08);
+  color: #fff;
+  font-weight: 800;
+  text-decoration: none;
+  transition: transform .12s ease, filter .12s ease, background .12s ease, border-color .12s ease;
+}
+
+.nl-btn:hover {
+  transform: translateY(-1px);
+  background: rgba(255,255,255,.12);
+  border-color: rgba(255,255,255,.45);
+}
+
+.nl-btn-primary {
+  background: rgba(31,107,51,.95);
+  border-color: rgba(255,255,255,.18);
+}
+
+.nl-btn-primary:hover {
+  filter: brightness(1.05);
+}
+
+/* Active page highlight still works (your JS adds .active) */
+.nav-links a.active {
+  outline: 3px solid rgba(255,255,255,.35);
+}
+
+/* Optional: hide fun row when in boring mode */
+body.nl-boring .nl-fun-row {
+  display: none;
+}
