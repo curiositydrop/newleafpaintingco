@@ -78,10 +78,32 @@
   <!-- Referral Email Script -->
   <script>
     function openReferPopup() {
+      // Pull through any tracking param on the current page (ref/drop/sample)
+      const urlParams = new URLSearchParams(window.location.search);
+      const refParam = urlParams.get('ref') || urlParams.get('drop') || urlParams.get('sample') || "";
+
       const subject = encodeURIComponent("Referral - via New Leaf Painting Co.");
-      const body = encodeURIComponent(
-        "Hi New Leaf,\\n\\nI’d like to refer someone:\\n\\nName:\\nPhone:\\nEmail:\\nService Needed:\\n\\nThank you!"
-      );
+
+      const lines = [
+        "Hi New Leaf,",
+        "",
+        "I’d like to refer someone:",
+        "",
+        "Name:",
+        "Phone:",
+        "Email:",
+        "Service Needed:",
+        ""
+      ];
+
+      // Add tracking line only if present
+      if (refParam) lines.push(`Referral Code / Source: ${refParam}`, "");
+
+      lines.push("Thank you!");
+
+      const body = encodeURIComponent(lines.join("\n"));
+
+      // (keeping your domain email here exactly as you had it)
       window.location.href = `mailto:info@newleafpaintingco.com?subject=${subject}&body=${body}`;
     }
   </script>
