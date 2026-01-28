@@ -313,49 +313,46 @@
 
   <!-- ===== Gate Logic (Gate always shows on refresh) ===== -->
   <script>
-    (function initNewLeafGateModes(){
-      const gate = document.getElementById("nl-gate");
-      const enterBtn = document.getElementById("nl-enter");
-      const skipBtn  = document.getElementById("nl-skip");
+  (function initNewLeafGateModes(){
+    const gate = document.getElementById("nl-gate");
+    const enterBtn = document.getElementById("nl-enter");
+    const skipBtn  = document.getElementById("nl-skip");
 
-      // Start with NO mode so only the gate shows
+    const hub = document.getElementById("nl-hub");
+    const standard = document.getElementById("nl-standard");
+
+    // Start state: ONLY gate visible
+    hub.style.display = "none";
+    standard.style.display = "none";
+
+    function setMode(mode){
+      // Remove both modes first
       document.body.classList.remove("mode-hub", "mode-standard");
 
-      function setMode(mode){
-        document.body.classList.remove("mode-hub", "mode-standard");
-        document.body.classList.add(mode === "hub" ? "mode-hub" : "mode-standard");
-
-        // (Optional) keep for analytics or future, but we are NOT auto-skipping on refresh
-        sessionStorage.setItem("nl_mode", mode);
-
-        try { window.scrollTo({ top: 0, left: 0, behavior: "instant" }); }
-        catch { window.scrollTo(0,0); }
+      if (mode === "hub") {
+        document.body.classList.add("mode-hub");
+        hub.style.display = "block";
+        standard.style.display = "none";
+      } else {
+        document.body.classList.add("mode-standard");
+        hub.style.display = "none";
+        standard.style.display = "block";
       }
 
-      function closeGate(){
-        gate.classList.add("fade-out");
-        setTimeout(() => gate.remove(), 1250);
-      }
+      // keep scroll sane
+      window.scrollTo(0,0);
+    }
 
-      enterBtn.addEventListener("click", () => {
-        setMode("hub");
-        closeGate();
-      });
+    function closeGate(){
+      gate.classList.add("fade-out");
+      setTimeout(() => gate.remove(), 1250);
+    }
 
-      skipBtn.addEventListener("click", () => {
-        setMode("standard");
-        closeGate();
-      });
+    enterBtn.addEventListener("click", () => { setMode("hub"); closeGate(); });
+    skipBtn.addEventListener("click",  () => { setMode("standard"); closeGate(); });
 
-      [enterBtn, skipBtn].forEach(btn => {
-        btn.addEventListener("keydown", (e) => {
-          if (e.key === "Enter" || e.key === " ") btn.click();
-        });
-      });
-
-      // ✅ No auto-skip on refresh.
-    })();
-  </script>
+  })();
+</script>
 
 </body>
 </html>
