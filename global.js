@@ -196,7 +196,19 @@ async function loadReferrerData() {
     console.error("Error loading spreadsheet:", err);
   }
 }
+/* --------------------
+   APPLY EXPERIENCE / BORING MODE
+---------------------*/
+function applyNLMode() {
+  const mode = sessionStorage.getItem("nl_mode"); // "experience" or "boring" or null
+  if (!mode) return;
 
+  if (mode === "boring") {
+    document.body.classList.add("nl-boring");
+  } else {
+    document.body.classList.remove("nl-boring");
+  }
+}
 /* --------------------
    INITIALIZE PAGE
 ---------------------*/
@@ -211,7 +223,8 @@ async function init() {
     return;
   }
 
-  await loadGlobalHTML(refData); // pass refData so button text updates immediately
+ await loadGlobalHTML(refData); // pass refData so button text updates immediately
+applyNLMode();
 
   if (refData.bannertext) createBanner(refData.bannertext);
   updatePopupHeading();
