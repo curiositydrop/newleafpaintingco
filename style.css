@@ -145,15 +145,15 @@ nav a.active {
 
 /* Popup background */
 .img-modal {
-  display: none; 
-  position: fixed; 
-  z-index: 1000; 
-  padding-top: 60px; 
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  padding-top: 60px;
   left: 0;
   top: 0;
-  width: 100%; 
-  height: 100%; 
-  overflow: auto; 
+  width: 100%;
+  height: 100%;
+  overflow: auto;
   background-color: rgba(0,0,0,0.8);
 }
 
@@ -362,7 +362,7 @@ footer {
   display: inline-block;
   text-decoration: none;
   transition: 0.2s ease;
-  border: 2px solid #4a7f3f; /* feel free to match your palette */
+  border: 2px solid #4a7f3f;
 }
 
 .partner-btn:hover {
@@ -372,11 +372,12 @@ footer {
 
 /* =========================================================
    MODE STYLES
-   SKIP (mode-standard) = boring text links
-   EXPERIENCE (mode-hub) = CTA buttons
+   IMPORTANT:
+   - Global header/nav should look the SAME on every page.
+   - DO NOT let mode-hub change header layout (it persists via sessionStorage).
    ========================================================= */
 
-/* SKIP SIDE: boring links, but KEEP nav spacing/layout global */
+/* SKIP SIDE: just tweak link feel (keep same layout/gap) */
 body.mode-standard header .nav-links a {
   background: transparent !important;
   border: none !important;
@@ -398,36 +399,8 @@ body.mode-standard header .nav-links a.active {
   opacity: 1;
 }
 
-/* EXPERIENCE SIDE: only matters if you ever show header in hub */
-body.mode-hub header .nav-links {
-  flex-direction: column;
-  gap: 10px;
-  align-items: center;
-}
-
-body.mode-hub header .nav-links a {
-  display: block;
-  width: 100%;
-  max-width: 520px;
-  padding: 14px 18px;
-  text-align: center;
-
-  background: rgba(255,255,255,0.12);
-  border: 2px solid rgba(255,255,255,0.25);
-  border-radius: 14px;
-
-  color: #ffffff;
-  font-weight: 800;
-  text-decoration: none;
-  transition: transform 0.12s ease, filter 0.12s ease;
-}
-
-body.mode-hub header .nav-links a:hover {
-  transform: translateY(-1px);
-  filter: brightness(1.05);
-}
-
-body.mode-hub header .nav-links a.active {
-  background: rgba(255,255,255,0.95);
-  color: #0f5f33;
-}
+/* ✅ REMOVED:
+   body.mode-hub header .nav-links { flex-direction: column; ... }
+   because it breaks other pages when mode-hub is still stored.
+   Your "experience" buttons belong ONLY inside index.html (#nl-hub).
+*/
