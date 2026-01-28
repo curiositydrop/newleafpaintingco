@@ -206,23 +206,31 @@ async function loadReferrerData() {
 }
 
 /* --------------------
-   APPLY MODE (HOME ONLY) + FORCE BORING ON OTHER PAGES
+   APPLY MODE
+   - Non-home pages: ALWAYS boring (hide experience row)
+   - Home page: follow stored choice if present
 ---------------------*/
 function applyNLMode() {
-  // Non-home pages should never show "experience" UI
+  const experienceNav = document.getElementById("nl-experience-nav");
+
+  // ✅ Any page that is NOT index.html should never show the experience row
   if (!isHomePage) {
-    document.body.classList.add("mode-standard");
-    // also ensure any old leftover state doesn't try to do something weird
-    document.body.classList.remove("mode-hub");
+    document.body.classList.add("nl-boring");     // uses your CSS: body.nl-boring .nl-fun-row { display:none; }
+    if (experienceNav) experienceNav.style.display = "none";
     return;
   }
 
-  // Home page: honor stored choice if present
-  const stored = sessionStorage.getItem("nl_mode"); // "hub" or "standard" or null
+  // Home page: honor stored mode (set by index gate script)
+  // expected values: "hub" or "standard"
+  const stored = sessionStorage.getItem("nl_mode");
   if (!stored) return;
 
   document.body.classList.remove("mode-hub", "mode-standard");
   document.body.classList.add(stored === "hub" ? "mode-hub" : "mode-standard");
+
+  // Also toggle boring class to keep the global experience row hidden when skipped
+  if (stored === "standard") document.body.classList.add("nl-boring");
+  else document.body.classList.remove("nl-boring");
 }
 
 /* --------------------
