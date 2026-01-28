@@ -107,6 +107,14 @@ const urlParams = new URLSearchParams(window.location.search);
 const refParam = urlParams.get('ref') || urlParams.get('drop') || urlParams.get('sample');
 
 /* --------------------
+   PAGE CHECK (HOME VS OTHERS)
+---------------------*/
+const isHomePage =
+  window.location.pathname === "/" ||
+  window.location.pathname.endsWith("/index.html") ||
+  window.location.pathname.endsWith("index.html");
+
+/* --------------------
    GOOGLE SHEET (CSV)
 ---------------------*/
 const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGQaoBZ7rMgXkLt9ZvLeF9zZ5V5qv1m4mlWWowx-VskRE6hrd1rHOVAg3M4JJfXCotw8wVVK_nVasH/pub?output=csv";
@@ -196,19 +204,27 @@ async function loadReferrerData() {
     console.error("Error loading spreadsheet:", err);
   }
 }
+
 /* --------------------
-   APPLY EXPERIENCE / BORING MODE
+   APPLY MODE (HOME ONLY) + FORCE BORING ON OTHER PAGES
 ---------------------*/
 function applyNLMode() {
-  const mode = sessionStorage.getItem("nl_mode"); // "experience" or "boring" or null
-  if (!mode) return;
-
-  if (mode === "boring") {
-    document.body.classList.add("nl-boring");
-  } else {
-    document.body.classList.remove("nl-boring");
+  // Non-home pages should never show "experience" UI
+  if (!isHomePage) {
+    document.body.classList.add("mode-standard");
+    // also ensure any old leftover state doesn't try to do something weird
+    document.body.classList.remove("mode-hub");
+    return;
   }
+
+  // Home page: honor stored choice if present
+  const stored = sessionStorage.getItem("nl_mode"); // "hub" or "standard" or null
+  if (!stored) return;
+
+  document.body.classList.remove("mode-hub", "mode-standard");
+  document.body.classList.add(stored === "hub" ? "mode-hub" : "mode-standard");
 }
+
 /* --------------------
    INITIALIZE PAGE
 ---------------------*/
@@ -223,8 +239,8 @@ async function init() {
     return;
   }
 
- await loadGlobalHTML(refData); // pass refData so button text updates immediately
-applyNLMode();
+  await loadGlobalHTML(refData); // pass refData so button text updates immediately
+  applyNLMode();
 
   if (refData.bannertext) createBanner(refData.bannertext);
   updatePopupHeading();
