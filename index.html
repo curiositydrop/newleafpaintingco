@@ -285,23 +285,20 @@
     <script src="global.js"></script>
   </div>
 
-  <!-- ===== Gate Logic ===== -->
+  <!-- ===== Gate Logic (UPDATED) ===== -->
   <script>
     (function initNewLeafGateModes(){
       const gate = document.getElementById("nl-gate");
       const enterBtn = document.getElementById("nl-enter");
       const skipBtn  = document.getElementById("nl-skip");
 
-      // ✅ Home only: gate exists, other pages don't have it
-      const isHome =
-        window.location.pathname === "/" ||
-        window.location.pathname.endsWith("/index.html") ||
-        window.location.pathname.endsWith("index.html");
-
       function setMode(mode){
         document.body.classList.remove("mode-hub", "mode-standard");
         document.body.classList.add(mode === "hub" ? "mode-hub" : "mode-standard");
-        window.scrollTo({ top: 0, behavior: "instant" });
+        // store choice so other pages can stay boring
+        sessionStorage.setItem("nl_mode", mode); // "hub" or "standard"
+        try { window.scrollTo({ top: 0, left: 0, behavior: "instant" }); }
+        catch { window.scrollTo(0,0); }
       }
 
       function closeGate(){
@@ -309,20 +306,12 @@
         setTimeout(() => gate.remove(), 1250);
       }
 
-      // ✅ IMPORTANT: persist the choice so other pages can force boring
-      function persist(mode){
-        // store a simple value your global.js can read if needed
-        sessionStorage.setItem("nl_mode", mode); // "hub" or "standard"
-      }
-
       enterBtn.addEventListener("click", () => {
-        persist("hub");
         setMode("hub");
         closeGate();
       });
 
       skipBtn.addEventListener("click", () => {
-        persist("standard");
         setMode("standard");
         closeGate();
       });
@@ -333,8 +322,7 @@
         });
       });
 
-      // (Optional) If they refresh the homepage after choosing once,
-      // you can auto-skip the gate:
+      // If user already chose once, auto-apply mode and skip the gate
       const stored = sessionStorage.getItem("nl_mode");
       if (stored === "hub" || stored === "standard") {
         setMode(stored);
