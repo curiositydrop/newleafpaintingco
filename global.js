@@ -1,114 +1,40 @@
-/* --------------------
-   LOAD GLOBAL HTML (header, footer, popup)
----------------------*/
-async function loadGlobalHTML(refData = {}) {
-  try {
-    const res = await fetch("global.html");
-    const html = await res.text();
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
-
-    const header = doc.querySelector("header");
-    const footer = doc.querySelector("footer");
-    const popup = doc.querySelector("#contact-popup");
-    const btn = doc.querySelector("#contact-btn");
-
-    // Inject header/footer immediately
-    const headerTarget = document.getElementById("global-header");
-    const footerTarget = document.getElementById("global-footer");
-    if (headerTarget && header) headerTarget.replaceChildren(header);
-    if (footerTarget && footer) footerTarget.replaceChildren(footer);
-
-    // Inject popup/button once
-    if (popup && !document.querySelector("#contact-popup")) {
-      document.body.insertAdjacentElement("beforeend", popup);
-    }
-    if (btn && !document.querySelector("#contact-btn")) {
-      document.body.insertAdjacentElement("beforeend", btn);
-      // Apply referral button text immediately
-      if (refData.buttontext) btn.textContent = refData.buttontext;
-    }
-
-    // Reveal nav links and highlight active
-    requestAnimationFrame(() => {
-      document.querySelectorAll(".nav-links a").forEach(a => {
-        a.style.visibility = "visible";
-      });
-      highlightActiveLink(); // works now even with ?ref=CD-001
-    });
-
-    // Initialize other functions
-    setupPopup();
-    preserveRefAcrossLinks();
-
-  } catch (err) {
-    console.error("Error loading global.html:", err);
-  }
-}
+/* =========================================================
+   NEW LEAF GLOBAL.JS (SAFE MODE)
+   - Works even if some pages already have the inline injector
+   - Prevents double-inject of header/footer/popup/button
+   - Preserves: nav=1, mode=hub|standard, and ref/drop/sample
+   ========================================================= */
 
 /* --------------------
-   HIGHLIGHT ACTIVE LINK
+   MODE + NAV HELPERS
 ---------------------*/
-function highlightActiveLink() {
-  let currentPage = window.location.pathname.split("/").pop().toLowerCase();
-  if (!currentPage) currentPage = "index.html"; // treat root as index.html
-
-  const links = document.querySelectorAll("nav a");
-  links.forEach(link => {
-    let linkPage = link.getAttribute("href").split("?")[0].split("/").pop().toLowerCase();
-    if (!linkPage) linkPage = "index.html"; // treat empty href as index.html
-
-    if (linkPage === currentPage) link.classList.add("active");
-    else link.classList.remove("active");
-
-    // ensure visibility
-    link.style.visibility = "visible";
-  });
-}
-
-/* --------------------
-   SETUP POPUP FUNCTIONALITY
----------------------*/
-function setupPopup() {
-  const popup = document.getElementById("contact-popup");
-  const btnDefault = document.getElementById("contact-btn");
-  const popupClose = document.querySelector("#contact-popup .close");
-  if (!popup || !btnDefault || !popupClose) return;
-
-  btnDefault.onclick = () => popup.style.display = "flex";
-  popupClose.onclick = () => popup.style.display = "none";
-  window.onclick = e => { if (e.target === popup) popup.style.display = "none"; };
-}
-
-/* --------------------
-   PRESERVE REF PARAM ACROSS LINKS
----------------------*/
-function preserveRefAcrossLinks() {
+function getNLModeFromURL() {
   const urlParams = new URLSearchParams(window.location.search);
-  const refParam = urlParams.get('ref') || urlParams.get('drop') || urlParams.get('sample');
-  if (!refParam) return;
+  const mode = (urlParams.get("mode") || "standard").toLowerCase();
+  return (mode === "hub" || mode === "standard") ? mode : "standard";
+}
 
-  document.querySelectorAll("a[href]").forEach(link => {
-    const href = link.getAttribute("href");
-    if (href && !href.startsWith("#") && !href.startsWith("mailto:") && !href.includes("javascript:")) {
-      const url = new URL(href, window.location.origin);
-      if (!url.searchParams.has("ref") && !url.searchParams.has("drop") && !url.searchParams.has("sample")) {
-        url.searchParams.set("ref", refParam);
-      }
-      link.setAttribute("href", url.pathname + url.search);
-    }
-  });
+function buildNLNavQS(mode) {
+  return `nav=1&mode=${encodeURIComponent(mode)}`;
+}
+
+function isExternalHref(href) {
+  if (!href) return true;
+  return (
+    href.startsWith("http://") ||
+    href.startsWith("https://") ||
+    href.startsWith("mailto:") ||
+    href.startsWith("tel:") ||
+    href.startsWith("javascript:")
+  );
 }
 
 /* --------------------
-   URL PARAMETER
+   URL PARAMS (existing)
 ---------------------*/
 const urlParams = new URLSearchParams(window.location.search);
 const refParam = urlParams.get('ref') || urlParams.get('drop') || urlParams.get('sample');
 
-/* --------------------
-   PAGE CHECK (HOME VS OTHERS)
----------------------*/
 const isHomePage =
   window.location.pathname === "/" ||
   window.location.pathname.endsWith("/index.html") ||
@@ -165,23 +91,158 @@ function createBanner(message) {
 }
 
 /* --------------------
-   UPDATE BUTTON TEXT
----------------------*/
-function updateButtonText(text) {
-  const btnDefault = document.getElementById("contact-btn");
-  if (text && btnDefault) btnDefault.textContent = text;
-}
-
-/* --------------------
    UPDATE POPUP HEADING
 ---------------------*/
 function updatePopupHeading() {
   const popupHeading = document.querySelector('#contact-popup h2');
   if (!popupHeading) return;
 
-  if (refData.discountcode.toUpperCase().includes("DROP")) popupHeading.textContent = "Redeem Drop Reward";
-  else if (refData.discountcode.toUpperCase().includes("SAMPLE")) popupHeading.textContent = "Redeem Sample Reward";
+  if ((refData.discountcode || "").toUpperCase().includes("DROP")) popupHeading.textContent = "Redeem Drop Reward";
+  else if ((refData.discountcode || "").toUpperCase().includes("SAMPLE")) popupHeading.textContent = "Redeem Sample Reward";
   else popupHeading.textContent = "Get free estimate";
+}
+
+/* --------------------
+   HIGHLIGHT ACTIVE LINK
+---------------------*/
+function highlightActiveLink() {
+  let currentPage = window.location.pathname.split("/").pop().toLowerCase();
+  if (!currentPage) currentPage = "index.html";
+
+  const links = document.querySelectorAll("nav a");
+  links.forEach(link => {
+    let linkPage = (link.getAttribute("href") || "").split("?")[0].split("/").pop().toLowerCase();
+    if (!linkPage) linkPage = "index.html";
+
+    link.classList.toggle("active", linkPage === currentPage);
+    link.style.visibility = "visible";
+  });
+}
+
+/* --------------------
+   SETUP POPUP
+---------------------*/
+function setupPopup() {
+  const popup = document.getElementById("contact-popup");
+  const btnDefault = document.getElementById("contact-btn");
+  const popupClose = document.querySelector("#contact-popup .close");
+  if (!popup || !btnDefault || !popupClose) return;
+
+  btnDefault.onclick = () => popup.style.display = "flex";
+  popupClose.onclick = () => popup.style.display = "none";
+  window.addEventListener("click", e => { if (e.target === popup) popup.style.display = "none"; });
+}
+
+/* --------------------
+   FORCE HOME LINK TO MODE
+---------------------*/
+function forceHomeLinkToMode() {
+  const mode = getNLModeFromURL();
+  const homeLink = document.getElementById("homeLink") || document.querySelector('nav a[href^="index.html"]');
+  if (!homeLink) return;
+
+  let qs = buildNLNavQS(mode);
+  if (refParam) qs += `&ref=${encodeURIComponent(refParam)}`;
+
+  homeLink.setAttribute("href", `index.html?${qs}`);
+}
+
+/* --------------------
+   PRESERVE MODE + REF ACROSS LINKS
+---------------------*/
+function preserveParamsAcrossLinks() {
+  const mode = getNLModeFromURL();
+
+  document.querySelectorAll("a[href]").forEach(link => {
+    const href = link.getAttribute("href");
+    if (!href) return;
+    if (href.startsWith("#")) return;
+    if (isExternalHref(href)) return;
+
+    const url = new URL(href, window.location.origin);
+
+    // Always preserve nav/mode
+    url.searchParams.set("nav", "1");
+    url.searchParams.set("mode", mode);
+
+    // Preserve referral if present on current page
+    if (refParam && !url.searchParams.has("ref") && !url.searchParams.has("drop") && !url.searchParams.has("sample")) {
+      url.searchParams.set("ref", refParam);
+    }
+
+    link.setAttribute("href", url.pathname.replace(/^\//, "") + url.search);
+  });
+}
+
+/* --------------------
+   APPLY MODE CLASS
+---------------------*/
+function applyNLMode() {
+  const mode = getNLModeFromURL();
+  document.body.classList.remove("mode-hub", "mode-standard");
+  document.body.classList.add(mode === "hub" ? "mode-hub" : "mode-standard");
+
+  const experienceNav = document.getElementById("nl-experience-nav");
+  if (experienceNav && mode !== "hub") experienceNav.style.display = "none";
+}
+
+/* --------------------
+   LOAD GLOBAL HTML (SAFE)
+   If a page already injected header/footer/popup/button,
+   this will NOT inject again.
+---------------------*/
+async function loadGlobalHTML(refData = {}) {
+  try {
+    const headerTarget = document.getElementById("global-header");
+    const footerTarget = document.getElementById("global-footer");
+
+    const headerAlready = headerTarget && headerTarget.querySelector("header");
+    const footerAlready = footerTarget && footerTarget.querySelector("footer");
+    const popupAlready  = !!document.querySelector("#contact-popup");
+    const btnAlready    = !!document.querySelector("#contact-btn");
+
+    // If page already did the injection, skip fetching global.html
+    const alreadyInjected = headerAlready && footerAlready && popupAlready && btnAlready;
+
+    if (!alreadyInjected) {
+      const res = await fetch("global.html");
+      const html = await res.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, "text/html");
+
+      const header = doc.querySelector("header");
+      const footer = doc.querySelector("footer");
+      const popup  = doc.querySelector("#contact-popup");
+      const btn    = doc.querySelector("#contact-btn");
+
+      if (headerTarget && header && !headerAlready) headerTarget.replaceChildren(header);
+      if (footerTarget && footer && !footerAlready) footerTarget.replaceChildren(footer);
+
+      if (popup && !popupAlready) document.body.insertAdjacentElement("beforeend", popup);
+      if (btn && !btnAlready) {
+        document.body.insertAdjacentElement("beforeend", btn);
+        if (refData.buttontext) btn.textContent = refData.buttontext;
+      }
+    } else {
+      // If button exists already, still apply referral button text
+      const btn = document.getElementById("contact-btn");
+      if (btn && refData.buttontext) btn.textContent = refData.buttontext;
+    }
+
+    // Now run the behavior consistently, regardless of injection source
+    forceHomeLinkToMode();
+
+    requestAnimationFrame(() => {
+      document.querySelectorAll(".nav-links a").forEach(a => a.style.visibility = "visible");
+      highlightActiveLink();
+    });
+
+    setupPopup();
+    preserveParamsAcrossLinks();
+
+  } catch (err) {
+    console.error("Error loading global.html:", err);
+  }
 }
 
 /* --------------------
@@ -206,40 +267,12 @@ async function loadReferrerData() {
 }
 
 /* --------------------
-   APPLY MODE
-   - Non-home pages: ALWAYS boring (hide experience row)
-   - Home page: follow stored choice if present
----------------------*/
-function applyNLMode() {
-  const experienceNav = document.getElementById("nl-experience-nav");
-
-  // ✅ Any page that is NOT index.html should never show the experience row
-  if (!isHomePage) {
-    document.body.classList.add("nl-boring");     // uses your CSS: body.nl-boring .nl-fun-row { display:none; }
-    if (experienceNav) experienceNav.style.display = "none";
-    return;
-  }
-
-  // Home page: honor stored mode (set by index gate script)
-  // expected values: "hub" or "standard"
-  const stored = sessionStorage.getItem("nl_mode");
-  if (!stored) return;
-
-  document.body.classList.remove("mode-hub", "mode-standard");
-  document.body.classList.add(stored === "hub" ? "mode-hub" : "mode-standard");
-
-  // Also toggle boring class to keep the global experience row hidden when skipped
-  if (stored === "standard") document.body.classList.add("nl-boring");
-  else document.body.classList.remove("nl-boring");
-}
-
-/* --------------------
-   INITIALIZE PAGE
+   INITIALIZE
 ---------------------*/
 async function init() {
-  document.body.style.visibility = "hidden"; // hide until refData is ready
+  document.body.style.visibility = "hidden";
 
-  await loadReferrerData(); // fetch ref data first
+  await loadReferrerData();
 
   if (refData.activeinactive?.toLowerCase() === 'inactive') {
     document.body.innerHTML = '<h2>This referral is no longer active.</h2>';
@@ -247,13 +280,15 @@ async function init() {
     return;
   }
 
-  await loadGlobalHTML(refData); // pass refData so button text updates immediately
+  // Important: apply mode class early for styling
   applyNLMode();
+
+  await loadGlobalHTML(refData);
 
   if (refData.bannertext) createBanner(refData.bannertext);
   updatePopupHeading();
 
-  document.body.style.visibility = "visible"; // reveal page
+  document.body.style.visibility = "visible";
 }
 
 init();
@@ -300,14 +335,14 @@ document.addEventListener("click", e => {
       refField.type = 'hidden';
       refField.name = 'referrer';
       refField.id = 'referrer';
-      document.querySelector('#contact-popup form').appendChild(refField);
+      document.querySelector('#contact-popup form')?.appendChild(refField);
     }
-    refField.value = `${refData.referrername}${refData.businessname ? " at " + refData.businessname : ""}`;
+    if (refField) refField.value = `${refData.referrername}${refData.businessname ? " at " + refData.businessname : ""}`;
   }
 });
 
 /* --------------------
-   PARTNER POPUP + EMAIL
+   PARTNER POPUP + EMAIL (kept)
 ---------------------*/
 function openPartnerModal() {
   const modal = document.getElementById("partnerModal");
@@ -343,7 +378,6 @@ ${message}`
   closePartnerModal();
 }
 
-// Close modal if clicking outside
 window.addEventListener("click", e => {
   const modal = document.getElementById("partnerModal");
   if (e.target === modal) closePartnerModal();
