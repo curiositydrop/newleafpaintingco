@@ -1,16 +1,16 @@
 /* =========================================================
-   NEW LEAF GLOBAL.JS (SAFE MODE)
-   - Works even if some pages already have the inline injector
+   NEW LEAF GLOBAL.JS (SAFE MODE + HARD CSS OVERRIDES)
    - Prevents double-inject of header/footer/popup/button
    - Preserves: nav=1, mode=hub|standard, and ref/drop/sample
+   - FIX: Forces nav + CTA visible on INNER pages when mode=hub
    ========================================================= */
 
 /* --------------------
    MODE + NAV HELPERS
 ---------------------*/
 function getNLModeFromURL() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const mode = (urlParams.get("mode") || "standard").toLowerCase();
+  const p = new URLSearchParams(window.location.search);
+  const mode = (p.get("mode") || "standard").toLowerCase();
   return (mode === "hub" || mode === "standard") ? mode : "standard";
 }
 
@@ -33,7 +33,7 @@ function isExternalHref(href) {
    URL PARAMS (existing)
 ---------------------*/
 const urlParams = new URLSearchParams(window.location.search);
-const refParam = urlParams.get('ref') || urlParams.get('drop') || urlParams.get('sample');
+const refParam = urlParams.get("ref") || urlParams.get("drop") || urlParams.get("sample");
 
 const isHomePage =
   window.location.pathname === "/" ||
@@ -43,7 +43,8 @@ const isHomePage =
 /* --------------------
    GOOGLE SHEET (CSV)
 ---------------------*/
-const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGQaoBZ7rMgXkLt9ZvLeF9zZ5V5qv1m4mlWWowx-VskRE6hrd1rHOVAg3M4JJfXCotw8wVVK_nVasH/pub?output=csv";
+const sheetURL =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGQaoBZ7rMgXkLt9ZvLeF9zZ5V5qv1m4mlWWowx-VskRE6hrd1rHOVAg3M4JJfXCotw8wVVK_nVasH/pub?output=csv";
 
 /* --------------------
    DEFAULT REF DATA
@@ -63,7 +64,62 @@ let refData = {
    CLEAN VALUE
 ---------------------*/
 function cleanValue(value) {
-  return value ? value.replace(/^"|"$/g, '').trim() : '';
+  return value ? value.replace(/^"|"$/g, "").trim() : "";
+}
+
+/* --------------------
+   CSS OVERRIDES (THE FIX)
+   Forces nav/CTA visible on INNER pages when mode=hub
+---------------------*/
+function injectHubInnerPageOverrides() {
+  const mode = getNLModeFromURL();
+  if (mode !== "hub") return;
+
+  // Only apply to INNER pages (past-projects, testimonials, etc.)
+  if (isHomePage) return;
+
+  if (document.getElementById("nl-hub-inner-overrides")) return;
+
+  const style = document.createElement("style");
+  style.id = "nl-hub-inner-overrides";
+  style.textContent = `
+    /* Force global header/nav visible even if CSS tries to hide it */
+    body.mode-hub #global-header,
+    body.mode-hub #global-header header,
+    body.mode-hub #global-header nav,
+    body.mode-hub #global-header .nav-links,
+    body.mode-hub #global-header .nav-links a {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+    }
+
+    body.mode-hub #global-header .nav-links {
+      display: flex !important;
+    }
+
+    body.mode-hub #global-footer,
+    body.mode-hub #global-footer footer {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+
+    /* Contact button must exist in inner pages too */
+    body.mode-hub #contact-btn {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+    }
+
+    /* Popup stays closed until user opens */
+    body.mode-hub #contact-popup {
+      display: none !important;
+    }
+  `;
+  document.head.appendChild(style);
 }
 
 /* --------------------
@@ -72,7 +128,8 @@ function cleanValue(value) {
 function createBanner(message) {
   if (!message) return;
   if (document.querySelector("#drop-banner")) return;
-  const banner = document.createElement('div');
+
+  const banner = document.createElement("div");
   banner.id = "drop-banner";
   banner.textContent = message;
   Object.assign(banner.style, {
@@ -94,11 +151,12 @@ function createBanner(message) {
    UPDATE POPUP HEADING
 ---------------------*/
 function updatePopupHeading() {
-  const popupHeading = document.querySelector('#contact-popup h2');
+  const popupHeading = document.querySelector("#contact-popup h2");
   if (!popupHeading) return;
 
   if ((refData.discountcode || "").toUpperCase().includes("DROP")) popupHeading.textContent = "Redeem Drop Reward";
-  else if ((refData.discountcode || "").toUpperCase().includes("SAMPLE")) popupHeading.textContent = "Redeem Sample Reward";
+  else if ((refData.discountcode || "").toUpperCase().includes("SAMPLE"))
+    popupHeading.textContent = "Redeem Sample Reward";
   else popupHeading.textContent = "Get free estimate";
 }
 
@@ -109,8 +167,7 @@ function highlightActiveLink() {
   let currentPage = window.location.pathname.split("/").pop().toLowerCase();
   if (!currentPage) currentPage = "index.html";
 
-  const links = document.querySelectorAll("nav a");
-  links.forEach(link => {
+  document.querySelectorAll("nav a").forEach(link => {
     let linkPage = (link.getAttribute("href") || "").split("?")[0].split("/").pop().toLowerCase();
     if (!linkPage) linkPage = "index.html";
 
@@ -120,7 +177,7 @@ function highlightActiveLink() {
 }
 
 /* --------------------
-   SETUP POPUP (FORCE OVERRIDE)
+   SETUP POPUP (IMPORTANT OVERRIDE)
 ---------------------*/
 function setupPopup() {
   const popup = document.getElementById("contact-popup");
@@ -164,12 +221,15 @@ function preserveParamsAcrossLinks() {
 
     const url = new URL(href, window.location.origin);
 
-    // Always preserve nav/mode
     url.searchParams.set("nav", "1");
     url.searchParams.set("mode", mode);
 
-    // Preserve referral if present on current page
-    if (refParam && !url.searchParams.has("ref") && !url.searchParams.has("drop") && !url.searchParams.has("sample")) {
+    if (
+      refParam &&
+      !url.searchParams.has("ref") &&
+      !url.searchParams.has("drop") &&
+      !url.searchParams.has("sample")
+    ) {
       url.searchParams.set("ref", refParam);
     }
 
@@ -184,38 +244,10 @@ function applyNLMode() {
   const mode = getNLModeFromURL();
   document.body.classList.remove("mode-hub", "mode-standard");
   document.body.classList.add(mode === "hub" ? "mode-hub" : "mode-standard");
-
-  const experienceNav = document.getElementById("nl-experience-nav");
-  if (experienceNav && mode !== "hub") experienceNav.style.display = "none";
-}
-
-/* --------------------
-   FORCE GLOBALS VISIBLE ON INNER PAGES (HUB MODE)
-   Fixes: no-nav/no-button on Past Projects/Testimonials in experience flow.
----------------------*/
-function forceGlobalsVisibleOnInnerPages() {
-  const mode = getNLModeFromURL();
-
-  // Only do this for inner pages (NOT index), and only in hub mode
-  if (mode !== "hub" || isHomePage) return;
-
-  const headerWrap = document.getElementById("global-header");
-  const footerWrap = document.getElementById("global-footer");
-  const contactBtn = document.getElementById("contact-btn");
-  const contactPop = document.getElementById("contact-popup");
-
-  if (headerWrap) headerWrap.style.setProperty("display", "block", "important");
-  if (footerWrap) footerWrap.style.setProperty("display", "block", "important");
-  if (contactBtn) contactBtn.style.setProperty("display", "block", "important");
-
-  // Keep popup closed by default, but ensure it can open when clicked
-  if (contactPop) contactPop.style.setProperty("display", "none", "important");
 }
 
 /* --------------------
    LOAD GLOBAL HTML (SAFE)
-   If a page already injected header/footer/popup/button,
-   this will NOT inject again.
 ---------------------*/
 async function loadGlobalHTML(refData = {}) {
   try {
@@ -224,8 +256,8 @@ async function loadGlobalHTML(refData = {}) {
 
     const headerAlready = headerTarget && headerTarget.querySelector("header");
     const footerAlready = footerTarget && footerTarget.querySelector("footer");
-    const popupAlready  = !!document.querySelector("#contact-popup");
-    const btnAlready    = !!document.querySelector("#contact-btn");
+    const popupAlready = !!document.querySelector("#contact-popup");
+    const btnAlready = !!document.querySelector("#contact-btn");
 
     const alreadyInjected = headerAlready && footerAlready && popupAlready && btnAlready;
 
@@ -237,8 +269,8 @@ async function loadGlobalHTML(refData = {}) {
 
       const header = doc.querySelector("header");
       const footer = doc.querySelector("footer");
-      const popup  = doc.querySelector("#contact-popup");
-      const btn    = doc.querySelector("#contact-btn");
+      const popup = doc.querySelector("#contact-popup");
+      const btn = doc.querySelector("#contact-btn");
 
       if (headerTarget && header && !headerAlready) headerTarget.replaceChildren(header);
       if (footerTarget && footer && !footerAlready) footerTarget.replaceChildren(footer);
@@ -256,13 +288,12 @@ async function loadGlobalHTML(refData = {}) {
     forceHomeLinkToMode();
 
     requestAnimationFrame(() => {
-      document.querySelectorAll(".nav-links a").forEach(a => a.style.visibility = "visible");
+      document.querySelectorAll(".nav-links a").forEach(a => (a.style.visibility = "visible"));
       highlightActiveLink();
     });
 
     setupPopup();
     preserveParamsAcrossLinks();
-
   } catch (err) {
     console.error("Error loading global.html:", err);
   }
@@ -277,13 +308,15 @@ async function loadReferrerData() {
   try {
     const res = await fetch(sheetURL);
     const text = await res.text();
-    const rows = text.trim().split('\n').map(r => r.split(','));
+    const rows = text.trim().split("\n").map(r => r.split(","));
     const headers = rows.shift().map(h => h.trim().toLowerCase());
 
     const match = rows.find(row => row[0]?.trim().toLowerCase() === refParam.toLowerCase());
     if (!match) return;
 
-    headers.forEach((h, i) => { refData[h] = cleanValue(match[i]); });
+    headers.forEach((h, i) => {
+      refData[h] = cleanValue(match[i]);
+    });
   } catch (err) {
     console.error("Error loading spreadsheet:", err);
   }
@@ -295,21 +328,23 @@ async function loadReferrerData() {
 async function init() {
   document.body.style.visibility = "hidden";
 
+  // ✅ Inject CSS overrides ASAP (only affects hub inner pages)
+  injectHubInnerPageOverrides();
+
   await loadReferrerData();
 
-  if (refData.activeinactive?.toLowerCase() === 'inactive') {
-    document.body.innerHTML = '<h2>This referral is no longer active.</h2>';
+  if (refData.activeinactive?.toLowerCase() === "inactive") {
+    document.body.innerHTML = "<h2>This referral is no longer active.</h2>";
     document.body.style.visibility = "visible";
     return;
   }
 
-  // Apply mode class early for styling
   applyNLMode();
 
   await loadGlobalHTML(refData);
 
-  // ✅ KEY FIX: make sure globals show on inner pages in hub mode
-  forceGlobalsVisibleOnInnerPages();
+  // Run overrides again after header exists (safe no-op if already injected)
+  injectHubInnerPageOverrides();
 
   if (refData.bannertext) createBanner(refData.bannertext);
   updatePopupHeading();
@@ -326,11 +361,11 @@ document.addEventListener("submit", e => {
   if (e.target.closest("#contact-popup form")) {
     e.preventDefault();
 
-    const name = document.getElementById('name')?.value;
-    const email = document.getElementById('email')?.value;
-    const phone = document.getElementById('phone')?.value;
-    const message = document.getElementById('message')?.value;
-    const discount = document.getElementById('discount-code')?.value;
+    const name = document.getElementById("name")?.value;
+    const email = document.getElementById("email")?.value;
+    const phone = document.getElementById("phone")?.value;
+    const message = document.getElementById("message")?.value;
+    const discount = document.getElementById("discount-code")?.value;
 
     const subject = encodeURIComponent(refData.emailsubject || "New Leaf Painting Inquiry");
     const bodyLines = [
@@ -339,7 +374,9 @@ document.addEventListener("submit", e => {
       `Phone: ${phone}`,
       `Message: ${message}`,
       `Discount Code: ${discount}`,
-      refData.referrername ? `Referrer: ${refData.referrername}${refData.businessname ? " at " + refData.businessname : ""}` : ""
+      refData.referrername
+        ? `Referrer: ${refData.referrername}${refData.businessname ? " at " + refData.businessname : ""}`
+        : ""
     ];
     const body = encodeURIComponent(bodyLines.join("\n"));
 
@@ -352,16 +389,16 @@ document.addEventListener("submit", e => {
 ---------------------*/
 document.addEventListener("click", e => {
   if (e.target.id === "contact-btn") {
-    const discountField = document.getElementById('discount-code');
+    const discountField = document.getElementById("discount-code");
     if (discountField) discountField.value = refData.discountcode || "";
 
-    let refField = document.getElementById('referrer');
+    let refField = document.getElementById("referrer");
     if (!refField) {
-      refField = document.createElement('input');
-      refField.type = 'hidden';
-      refField.name = 'referrer';
-      refField.id = 'referrer';
-      document.querySelector('#contact-popup form')?.appendChild(refField);
+      refField = document.createElement("input");
+      refField.type = "hidden";
+      refField.name = "referrer";
+      refField.id = "referrer";
+      document.querySelector("#contact-popup form")?.appendChild(refField);
     }
     if (refField) refField.value = `${refData.referrername}${refData.businessname ? " at " + refData.businessname : ""}`;
   }
@@ -390,8 +427,10 @@ function sendPartnerEmail(event) {
   const website = document.getElementById("bizWebsite")?.value;
   const message = document.getElementById("bizMessage")?.value;
 
-  const mailtoLink = `mailto:newleafpaintingcompany@gmail.com?subject=Partner Application - ${encodeURIComponent(biz)}&body=${encodeURIComponent(
-`Business Name: ${biz}
+  const mailtoLink = `mailto:newleafpaintingcompany@gmail.com?subject=Partner Application - ${encodeURIComponent(
+    biz
+  )}&body=${encodeURIComponent(
+    `Business Name: ${biz}
 Contact: ${name}
 Email: ${email}
 Phone: ${phone}
