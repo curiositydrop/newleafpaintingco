@@ -88,6 +88,29 @@
       text-align: center;
       margin-bottom: 40px;
     }
+
+    /* ===== MODE SUPPORT (new) ===== */
+    body.mode-hub #global-header,
+    body.mode-hub #global-footer,
+    body.mode-hub #contact-btn,
+    body.mode-hub #contact-popup { display: none !important; }
+
+    /* If they came from the Experience, make nav look like CTA buttons */
+    body.mode-hub .nav-links a{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 2px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.10);
+      color: #fff !important;
+      font-weight: 800;
+      text-decoration: none;
+      transition: transform .12s ease, filter .12s ease;
+    }
+    body.mode-hub .nav-links a:hover{ transform: translateY(-1px); filter: brightness(1.05); }
+    body.mode-hub header{ background:#0f5f33; }
   </style>
 </head>
 
@@ -177,8 +200,84 @@
   <!-- GLOBAL FOOTER -->
   <div id="global-footer"></div>
 
-  <!-- GLOBAL LOGIC -->
-  <script src="global.js"></script>
+  <!-- ===== GLOBAL INJECT + MODE (new) ===== -->
+  <script>
+    (function(){
+      const params = new URLSearchParams(window.location.search);
+      const mode = (params.get("mode") || "standard").toLowerCase(); // hub | standard
+
+      // Apply body mode class for styling/hide rules
+      document.body.classList.remove("mode-hub","mode-standard");
+      document.body.classList.add(mode === "hub" ? "mode-hub" : "mode-standard");
+
+      function buildQS(m){ return `?nav=1&mode=${encodeURIComponent(m)}`; }
+
+      function isExternalHref(href){
+        return href.startsWith("http://") || href.startsWith("https://") || href.startsWith("mailto:") || href.startsWith("tel:");
+      }
+
+      // Decorate internal links to preserve mode + nav
+      function decorateLinks(m){
+        document.querySelectorAll('a[href]').forEach(a => {
+          const href = a.getAttribute("href");
+          if (!href) return;
+          if (href.startsWith("#")) return;
+          if (href.startsWith("javascript:")) return;
+          if (isExternalHref(href)) return;
+          if (href.includes("nav=1")) return;
+
+          const joiner = href.includes("?") ? "&" : "?";
+          a.setAttribute("href", href + joiner + `nav=1&mode=${encodeURIComponent(m)}`);
+        });
+      }
+
+      async function injectGlobal(){
+        const res = await fetch("global.html");
+        const html = await res.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+
+        const header = doc.querySelector("header");
+        const footer = doc.querySelector("footer");
+        const popup  = doc.querySelector("#contact-popup");
+        const btn    = doc.querySelector("#contact-btn");
+
+        const headerTarget = document.getElementById("global-header");
+        const footerTarget = document.getElementById("global-footer");
+
+        if (headerTarget && header) headerTarget.replaceChildren(header);
+        if (footerTarget && footer) footerTarget.replaceChildren(footer);
+
+        if (popup && !document.querySelector("#contact-popup")) document.body.insertAdjacentElement("beforeend", popup);
+        if (btn && !document.querySelector("#contact-btn")) document.body.insertAdjacentElement("beforeend", btn);
+
+        // Force HOME to return to the chosen “home” (hub or boring), NOT the gate
+        const homeLink = document.getElementById("homeLink");
+        if (homeLink){
+          homeLink.href = "index.html" + buildQS(mode === "hub" ? "hub" : "standard");
+        }
+
+        // Setup popup close/open
+        const popupEl = document.getElementById("contact-popup");
+        const btnEl = document.getElementById("contact-btn");
+        const popupClose = document.querySelector("#contact-popup .close");
+        if (popupEl && btnEl && popupClose) {
+          btnEl.onclick = () => popupEl.style.display = "flex";
+          popupClose.onclick = () => popupEl.style.display = "none";
+          window.addEventListener("click", e => { if (e.target === popupEl) popupEl.style.display = "none"; });
+        }
+
+        // Preserve mode across all links
+        decorateLinks(mode === "hub" ? "hub" : "standard");
+
+        // Optional: hide “fun row” if it exists
+        const funRow = document.getElementById("nl-experience-nav");
+        if (funRow && mode !== "hub") funRow.style.display = "none";
+      }
+
+      injectGlobal();
+    })();
+  </script>
 
 </body>
 </html>
