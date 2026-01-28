@@ -59,14 +59,19 @@
     }
 
     #nl-gate .gate-logo {
-      width: min(420px, 80vw);
-      height: auto;
-      margin: 0 auto 14px auto;
-      display: block;
-      background: rgba(255,255,255,.06);
-      border-radius: 14px;
-      padding: 10px;
-    }
+  width: min(300px, 75vw); /* slightly smaller, more premium */
+  height: auto;
+  margin: 0 auto 18px auto;
+  display: block;
+
+  /* remove white haze */
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+
+  /* subtle glow so it pops on black */
+  filter: drop-shadow(0 0 22px rgba(80, 255, 160, 0.45));
+}
 
     #nl-gate .gate-line {
       margin: 0 auto 18px auto;
@@ -259,7 +264,7 @@
     <canvas id="nl-fireworks" aria-hidden="true"></canvas>
 
     <div class="gate-inner">
-      <img class="gate-logo" src="7D16A71A-2AF9-4EBB-863A-09C24D4F6662.png" alt="New Leaf Painting Co.">
+      <img class="gate-logo" src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png" alt="New Leaf Painting Co.">
       <p class="gate-line">Not your typical painter website.</p>
 
       <div class="gate-btn-row">
