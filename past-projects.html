@@ -64,7 +64,6 @@
       user-select: none;
       touch-action: pan-y;
     }
-    /* base image = AFTER (full width) */
     .ba-slider img.ba-base {
       display: block;
       width: 100%;
@@ -72,7 +71,6 @@
       max-height: 520px;
       object-fit: cover;
     }
-    /* overlay = BEFORE (revealed by slider) */
     .ba-before {
       position: absolute;
       top: 0;
@@ -152,6 +150,29 @@
     @media (max-width: 640px) {
       .ba-slider img.ba-base { max-height: 420px; }
     }
+
+    /* ===== MODE SUPPORT (new) ===== */
+    body.mode-hub #global-header,
+    body.mode-hub #global-footer,
+    body.mode-hub #contact-btn,
+    body.mode-hub #contact-popup { display: none !important; }
+
+    /* If they came from the Experience, make nav look like CTA buttons */
+    body.mode-hub .nav-links a{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 2px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.10);
+      color: #fff !important;
+      font-weight: 800;
+      text-decoration: none;
+      transition: transform .12s ease, filter .12s ease;
+    }
+    body.mode-hub .nav-links a:hover{ transform: translateY(-1px); filter: brightness(1.05); }
+    body.mode-hub header{ background:#0f5f33; }
   </style>
 </head>
 
@@ -174,9 +195,7 @@
 
   <div class="ba">
     <div class="ba-slider" aria-label="Before and after slider">
-      <!-- base = AFTER -->
       <img class="ba-base" src="IMG_8455.jpeg" alt="Cabinet repaint after" loading="lazy">
-      <!-- overlay = BEFORE -->
       <div class="ba-before">
         <img src="IMG_8428.jpeg" alt="Cabinet repaint before" loading="lazy">
       </div>
@@ -201,9 +220,7 @@
 
   <div class="ba">
     <div class="ba-slider" aria-label="Before and after slider">
-      <!-- base = AFTER -->
       <img class="ba-base" src="IMG_8599.jpeg" alt="Cabinet repaint after" loading="lazy">
-      <!-- overlay = BEFORE -->
       <div class="ba-before">
         <img src="IMG_7625.jpeg" alt="Cabinet repaint before" loading="lazy">
       </div>
@@ -218,7 +235,6 @@
     <div class="ba-hint">Drag the green slider to reveal the transformation.</div>
   </div>
 
-  <!-- Extra angles (still clickable modal) -->
   <div class="project-gallery">
     <div class="image-wrap">
       <img src="IMG_7628.jpeg" alt="Cabinet repaint before angle" class="clickable-img">
@@ -277,7 +293,6 @@
           handle.style.left = pct + "%";
         };
 
-        // mouse
         slider.addEventListener("mousedown", (e) => {
           dragging = true;
           setPos(e.clientX);
@@ -288,7 +303,6 @@
         });
         window.addEventListener("mouseup", () => dragging = false);
 
-        // touch
         slider.addEventListener("touchstart", (e) => {
           dragging = true;
           setPos(e.touches[0].clientX);
@@ -299,7 +313,6 @@
         }, { passive: true });
         slider.addEventListener("touchend", () => dragging = false);
 
-        // start centered
         requestAnimationFrame(() => {
           const rect = slider.getBoundingClientRect();
           setPos(rect.left + rect.width / 2);
@@ -333,8 +346,87 @@
   <!-- GLOBAL FOOTER -->
   <div id="global-footer"></div>
 
-  <!-- GLOBAL LOGIC -->
-  <script src="global.js"></script>
+  <!-- ===== GLOBAL INJECT + MODE (new) ===== -->
+  <script>
+    (function(){
+      const params = new URLSearchParams(window.location.search);
+      const nav = params.get("nav"); // should be "1" for internal navigation
+      const mode = (params.get("mode") || "standard").toLowerCase(); // hub | standard
+
+      // Apply body mode class for styling/hide rules
+      document.body.classList.remove("mode-hub","mode-standard");
+      document.body.classList.add(mode === "hub" ? "mode-hub" : "mode-standard");
+
+      function buildQS(m){ return `?nav=1&mode=${encodeURIComponent(m)}`; }
+
+      function isExternalHref(href){
+        return href.startsWith("http://") || href.startsWith("https://") || href.startsWith("mailto:") || href.startsWith("tel:");
+      }
+
+      // Decorate internal links to preserve mode + nav
+      function decorateLinks(m){
+        document.querySelectorAll('a[href]').forEach(a => {
+          const href = a.getAttribute("href");
+          if (!href) return;
+          if (href.startsWith("#")) return;
+          if (href.startsWith("javascript:")) return;
+          if (isExternalHref(href)) return;
+          if (href.includes("nav=1")) return;
+
+          const joiner = href.includes("?") ? "&" : "?";
+          a.setAttribute("href", href + joiner + `nav=1&mode=${encodeURIComponent(m)}`);
+        });
+      }
+
+      async function injectGlobal(){
+        const res = await fetch("global.html");
+        const html = await res.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+
+        const header = doc.querySelector("header");
+        const footer = doc.querySelector("footer");
+        const popup  = doc.querySelector("#contact-popup");
+        const btn    = doc.querySelector("#contact-btn");
+
+        const headerTarget = document.getElementById("global-header");
+        const footerTarget = document.getElementById("global-footer");
+
+        if (headerTarget && header) headerTarget.replaceChildren(header);
+        if (footerTarget && footer) footerTarget.replaceChildren(footer);
+
+        if (popup && !document.querySelector("#contact-popup")) document.body.insertAdjacentElement("beforeend", popup);
+        if (btn && !document.querySelector("#contact-btn")) document.body.insertAdjacentElement("beforeend", btn);
+
+        // Force HOME to return to the chosen “home” (hub or boring), NOT the gate
+        const homeLink = document.getElementById("homeLink");
+        if (homeLink){
+          homeLink.href = "index.html" + buildQS(mode === "hub" ? "hub" : "standard");
+        }
+
+        // Setup popup close/open
+        const popupEl = document.getElementById("contact-popup");
+        const btnEl = document.getElementById("contact-btn");
+        const popupClose = document.querySelector("#contact-popup .close");
+        if (popupEl && btnEl && popupClose) {
+          btnEl.onclick = () => popupEl.style.display = "flex";
+          popupClose.onclick = () => popupEl.style.display = "none";
+          window.addEventListener("click", e => { if (e.target === popupEl) popupEl.style.display = "none"; });
+        }
+
+        // Preserve mode across all links
+        decorateLinks(mode === "hub" ? "hub" : "standard");
+
+        // Optional: hide “fun row” if it exists
+        const funRow = document.getElementById("nl-experience-nav");
+        if (funRow && mode !== "hub") funRow.style.display = "none";
+      }
+
+      // We do NOT force-gate on inner pages. Gate rule remains: typing the DOMAIN/root shows it.
+      // But: if someone landed here without nav=1, we still preserve styling with default mode=standard.
+      injectGlobal();
+    })();
+  </script>
 
 </body>
 </html>
