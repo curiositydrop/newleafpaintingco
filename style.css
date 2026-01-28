@@ -376,18 +376,7 @@ footer {
    EXPERIENCE (mode-hub) = CTA buttons
    ========================================================= */
 
-/* ----------------------------------
-   SKIP SIDE (mode-standard)
-   ✅ IMPORTANT: KEEP HEADER NAV SAME ACROSS ALL PAGES
-   - Desktop stays horizontal (same as global default)
-   - Mobile stacks (handled by your @media rule)
------------------------------------ */
-body.mode-standard header .nav-links {
-  /* DO NOT force column here */
-  /* Keep same as .nav-links default so home matches other pages */
-  gap: 40px;
-}
-
+/* SKIP SIDE: boring links, but KEEP nav spacing/layout global */
 body.mode-standard header .nav-links a {
   background: transparent !important;
   border: none !important;
@@ -409,10 +398,7 @@ body.mode-standard header .nav-links a.active {
   opacity: 1;
 }
 
-/* ----------------------------------
-   EXPERIENCE SIDE (mode-hub)
-   (Header is hidden in hub, but leaving this in case you ever show it)
------------------------------------ */
+/* EXPERIENCE SIDE: only matters if you ever show header in hub */
 body.mode-hub header .nav-links {
   flex-direction: column;
   gap: 10px;
@@ -444,9 +430,4 @@ body.mode-hub header .nav-links a:hover {
 body.mode-hub header .nav-links a.active {
   background: rgba(255,255,255,0.95);
   color: #0f5f33;
-}
-
-/* Normalize spacing between header and content (skip side) */
-body.mode-standard .hero {
-  padding-top: 30px; /* was 60px */
 }
