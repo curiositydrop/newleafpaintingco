@@ -130,8 +130,9 @@
   width: 100%;
   max-width: 560px;
   margin: 0 auto;
+  padding: 0 12px;          /* ✅ prevents edge collision on mobile */
+  box-sizing: border-box;   /* ✅ keeps padding inside width */
 }
-
     /* ✅ Scoped to HUB only */
     #nl-hub .nl-btn{
       border-radius: 12px;
@@ -149,6 +150,8 @@
       transition: transform .12s ease, filter .12s ease, background .12s ease;
       width: 100%;
       text-align: center;
+      box-sizing: border-box;   /* ✅ border doesn't expand width weirdly */
+      overflow: hidden;         /* ✅ kills the “seam” / overlap artifacts */
     }
 
     #nl-hub .nl-btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
