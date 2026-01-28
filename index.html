@@ -94,6 +94,10 @@
     body.mode-hub #nl-hub { display: block; }
     body.mode-standard #nl-standard { display: block; }
 
+    /* ✅ FIX: Hide the OTHER mode so nothing repeats when scrolling */
+    body.mode-hub #nl-standard { display: none !important; }
+    body.mode-standard #nl-hub { display: none !important; }
+
     /* In HUB mode, hide global header/footer so nothing repeats */
     body.mode-hub #global-header,
     body.mode-hub #global-footer { display: none; }
@@ -167,16 +171,16 @@
     }
 
     /* Keep your normal page styles untouched in nl-standard */
-  /* ===== Skip mode should be “boring normal site” ===== */
-body.mode-standard .nl-cta-row,
-body.mode-standard .nl-hub-grid,
-body.mode-standard .nl-hub-row,
-body.mode-standard .nl-btn,
-body.mode-standard #nl-hub,
-body.mode-standard #nl-experience-nav,
-body.mode-standard .experience-nav {
-  display: none !important;
-}
+    /* ===== Skip mode should be “boring normal site” ===== */
+    body.mode-standard .nl-cta-row,
+    body.mode-standard .nl-hub-grid,
+    body.mode-standard .nl-hub-row,
+    body.mode-standard .nl-btn,
+    body.mode-standard #nl-hub,
+    body.mode-standard #nl-experience-nav,
+    body.mode-standard .experience-nav {
+      display: none !important;
+    }
   </style>
 </head>
 
@@ -306,12 +310,9 @@ body.mode-standard .experience-nav {
         setTimeout(() => gate.remove(), 1250);
       }
 
-      // Default: nothing shown until choice
-      // (If you want a default, setMode("standard") here)
       enterBtn.addEventListener("click", () => { setMode("hub"); closeGate(); });
       skipBtn.addEventListener("click",  () => { setMode("standard"); closeGate(); });
 
-      // Keyboard support
       [enterBtn, skipBtn].forEach(btn => {
         btn.addEventListener("keydown", (e) => {
           if (e.key === "Enter" || e.key === " ") btn.click();
