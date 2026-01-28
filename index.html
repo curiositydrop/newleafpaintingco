@@ -285,12 +285,15 @@
     <script src="global.js"></script>
   </div>
 
-  <!-- ===== Gate Logic (UPDATED) ===== -->
+  <!-- ===== Gate Logic (FIXED: gate stays on refresh) ===== -->
   <script>
     (function initNewLeafGateModes(){
       const gate = document.getElementById("nl-gate");
       const enterBtn = document.getElementById("nl-enter");
       const skipBtn  = document.getElementById("nl-skip");
+
+      // IMPORTANT: start with NO mode applied so only the gate shows
+      document.body.classList.remove("mode-hub", "mode-standard");
 
       function setMode(mode){
         document.body.classList.remove("mode-hub", "mode-standard");
@@ -322,12 +325,8 @@
         });
       });
 
-      // If user already chose once, auto-apply mode and skip the gate
-      const stored = sessionStorage.getItem("nl_mode");
-      if (stored === "hub" || stored === "standard") {
-        setMode(stored);
-        closeGate();
-      }
+      // ✅ Removed auto-skip on refresh.
+      // Gate will always show on refresh, until they click a button.
     })();
   </script>
 
