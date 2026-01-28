@@ -451,3 +451,7 @@ body.mode-hub header .nav-links a.active {
   background: rgba(255,255,255,0.95);
   color: #0f5f33;
 }
+/* Normalize spacing between header and content */
+body.mode-standard .hero {
+  padding-top: 30px; /* was 60px */
+}
