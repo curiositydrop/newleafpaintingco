@@ -56,14 +56,17 @@
       margin-top: 0;
     }
 
+    /* ✅ include select so it matches the other fields */
     .testimonial-form input,
-    .testimonial-form textarea {
+    .testimonial-form textarea,
+    .testimonial-form select {
       width: 100%;
       padding: 12px;
       margin: 10px 0;
       border-radius: 4px;
       border: 1px solid #ccc;
       font-size: 1rem;
+      box-sizing: border-box;
     }
 
     .testimonial-form button {
@@ -85,7 +88,6 @@
       text-align: center;
       margin-bottom: 40px;
     }
-
   </style>
 </head>
 
@@ -111,7 +113,7 @@
     <div class="testimonial-card">
       <div class="stars">★★★★★</div>
       <blockquote>
-        “I am absolutely thrilled with the results of my kitchen cabinets.  They completely transformed my kitchen and the finish is looks perfect .  I highly recommend!!”
+        “I am absolutely thrilled with the results of my kitchen cabinets. They completely transformed my kitchen and the finish looks perfect. I highly recommend!!”
       </blockquote>
       <div class="client-name">— John M., Old Orchard Beach, ME</div>
     </div>
@@ -119,7 +121,7 @@
     <div class="testimonial-card">
       <div class="stars">★★★★★</div>
       <blockquote>
-        “Mike was very professional, trustworthy and was very accommodating to our short notice requests.  He completed on time and left his work area clean and tidy.  Highly recommended!”
+        “Mike was very professional, trustworthy and was very accommodating to our short notice requests. He completed on time and left his work area clean and tidy. Highly recommended!”
       </blockquote>
       <div class="client-name">— Editha T., Biddeford</div>
     </div>
@@ -138,35 +140,34 @@
       <p>Share your experience — your feedback helps local homeowners feel confident choosing New Leaf Painting Co.</p>
 
       <form action="https://formsubmit.co/newleafpaintingcompany@gmail.com" method="POST">
-  <input type="hidden" name="_subject" value="New Testimonial Submission">
-  <input type="hidden" name="_captcha" value="false">
-  <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_subject" value="New Testimonial Submission">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_template" value="table">
 
-  <input type="text" name="Name" placeholder="Your Name" required>
+        <input type="text" name="Name" placeholder="Your Name" required>
+        <input type="text" name="Location" placeholder="Your Location (optional)">
 
-  <input type="text" name="Location" placeholder="Your Location (optional)">
+        <select name="Rating" required>
+          <option value="">How would you rate your experience? (1–5 Stars)</option>
+          <option value="5">★★★★★ – 5 Stars</option>
+          <option value="4">★★★★☆ – 4 Stars</option>
+          <option value="3">★★★☆☆ – 3 Stars</option>
+          <option value="2">★★☆☆☆ – 2 Stars</option>
+          <option value="1">★☆☆☆☆ – 1 Star</option>
+        </select>
 
-  <select name="Rating" required>
-    <option value="">How would you rate your experience? (1–5 Stars)</option>
-    <option value="5">★★★★★ – 5 Stars</option>
-    <option value="4">★★★★☆ – 4 Stars</option>
-    <option value="3">★★★☆☆ – 3 Stars</option>
-    <option value="2">★★☆☆☆ – 2 Stars</option>
-    <option value="1">★☆☆☆☆ – 1 Star</option>
-  </select>
+        <textarea name="Testimonial" rows="5" placeholder="Your Testimonial" required></textarea>
 
-  <textarea name="Testimonial" rows="5" placeholder="Your Testimonial" required></textarea>
-
-  <button type="submit">Submit Testimonial</button>
-</form>
+        <button type="submit">Submit Testimonial</button>
+      </form>
     </div>
 
   </div>
 
   <!-- CTA BUTTON -->
   <section style="text-align:center; margin: 40px 0;">
-    <button 
-      type="button" 
+    <button
+      type="button"
       class="cta-button"
       onclick="document.getElementById('contact-popup').style.display='flex';">
       Schedule a Free Estimate
