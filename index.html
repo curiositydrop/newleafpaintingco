@@ -172,10 +172,20 @@
     }
 
     /* ✅ Mobile: single column so nothing gets cramped */
-    @media (max-width: 480px) {
-      .nl-hub-grid { grid-template-columns: 1fr; }
-      #nl-hub .nl-btn.primary, #nl-hub .nl-btn.full { grid-column: auto; }
-    }
+    /* ✅ Always 2 columns by default (including phones) */
+.nl-hub-grid{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+/* ✅ Only collapse to 1 column on very small screens */
+@media (max-width: 360px) {
+  .nl-hub-grid { grid-template-columns: 1fr; }
+}
   </style>
 </head>
 
