@@ -26,7 +26,7 @@
       align-items: center;
       justify-content: center;
       padding: 24px;
-      background: #0f5f33;              /* site green */
+      background: #0f5f33;
     }
     #nl-gate .gate-inner {
       text-align: center;
@@ -63,8 +63,8 @@
       padding: 14px 18px;
       border-radius: 12px;
       border: 2px solid rgba(255,255,255,.22);
-      background: rgba(255,255,255,.92); /* white button */
-      color: #0f5f33;                     /* dark green text */
+      background: rgba(255,255,255,.92);
+      color: #0f5f33;
       font-weight: 900;
       letter-spacing: .2px;
       cursor: pointer;
@@ -84,7 +84,7 @@
     #nl-gate.fade-out {
       opacity: 0;
       pointer-events: none;
-      transition: opacity 1200ms ease; /* slower fade for drama */
+      transition: opacity 1200ms ease;
     }
 
     /* ===== Modes ===== */
@@ -94,7 +94,7 @@
     body.mode-hub #nl-hub { display: block; }
     body.mode-standard #nl-standard { display: block; }
 
-    /* ✅ FIX: Hide the OTHER mode so nothing repeats when scrolling */
+    /* Hide the OTHER mode so nothing repeats when scrolling */
     body.mode-hub #nl-standard { display: none !important; }
     body.mode-standard #nl-hub { display: none !important; }
 
@@ -169,8 +169,6 @@
       color: #fff;
       border-color: rgba(255,255,255,.18);
     }
-
-    /* Keep your normal page styles untouched in nl-standard */
 
     /* ===== Skip mode: hide ONLY the experience row (keep normal nav links) ===== */
     body.mode-standard #nl-experience-nav {
@@ -294,6 +292,12 @@
       const enterBtn = document.getElementById("nl-enter");
       const skipBtn  = document.getElementById("nl-skip");
 
+      // ✅ Home only: gate exists, other pages don't have it
+      const isHome =
+        window.location.pathname === "/" ||
+        window.location.pathname.endsWith("/index.html") ||
+        window.location.pathname.endsWith("index.html");
+
       function setMode(mode){
         document.body.classList.remove("mode-hub", "mode-standard");
         document.body.classList.add(mode === "hub" ? "mode-hub" : "mode-standard");
@@ -305,14 +309,37 @@
         setTimeout(() => gate.remove(), 1250);
       }
 
-      enterBtn.addEventListener("click", () => { setMode("hub"); closeGate(); });
-      skipBtn.addEventListener("click",  () => { setMode("standard"); closeGate(); });
+      // ✅ IMPORTANT: persist the choice so other pages can force boring
+      function persist(mode){
+        // store a simple value your global.js can read if needed
+        sessionStorage.setItem("nl_mode", mode); // "hub" or "standard"
+      }
+
+      enterBtn.addEventListener("click", () => {
+        persist("hub");
+        setMode("hub");
+        closeGate();
+      });
+
+      skipBtn.addEventListener("click", () => {
+        persist("standard");
+        setMode("standard");
+        closeGate();
+      });
 
       [enterBtn, skipBtn].forEach(btn => {
         btn.addEventListener("keydown", (e) => {
           if (e.key === "Enter" || e.key === " ") btn.click();
         });
       });
+
+      // (Optional) If they refresh the homepage after choosing once,
+      // you can auto-skip the gate:
+      const stored = sessionStorage.getItem("nl_mode");
+      if (stored === "hub" || stored === "standard") {
+        setMode(stored);
+        closeGate();
+      }
     })();
   </script>
 
