@@ -404,3 +404,37 @@ body.mode-standard header .nav-links a.active {
    because it breaks other pages when mode-hub is still stored.
    Your "experience" buttons belong ONLY inside index.html (#nl-hub).
 */
+/* =========================================================
+   HUB MODE NAV LOOK (CTA BUTTON STYLE)
+   - Only changes NAV appearance when mode=hub
+   - DOES NOT hide header/footer/contact button
+   ========================================================= */
+
+body.mode-hub header {
+  background: #0f5f33; /* matches your gate/hub green */
+}
+
+body.mode-hub header .nav-links a {
+  visibility: visible !important; /* your CSS hides until JS runs */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 2px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.10);
+  color: #fff !important;
+  font-weight: 800;
+  text-decoration: none;
+  transition: transform .12s ease, filter .12s ease;
+}
+
+body.mode-hub header .nav-links a:hover{
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+body.mode-hub header .nav-links a.active {
+  border-bottom: none !important;
+  outline: 2px solid rgba(255,255,255,.25);
+}
