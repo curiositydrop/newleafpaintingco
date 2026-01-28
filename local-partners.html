@@ -46,6 +46,7 @@
       padding: 10px;
       border: 1px solid #ccc;
       border-radius: 5px;
+      box-sizing: border-box;
     }
     #partnerModal button {
       background: #116530;
@@ -153,6 +154,7 @@
       padding: 10px;
       border: 1px solid #ccc;
       border-radius: 5px;
+      box-sizing: border-box;
     }
     #partner-popup button {
       background: #116530;
@@ -220,7 +222,7 @@
     </div>
   </section>
 
-  <!-- Partner Contact Popup (SINGLE copy, with a form) -->
+  <!-- Partner Contact Popup -->
   <div id="partner-popup">
     <div class="popup-content">
       <h2>Contact <span id="partner-name"></span></h2>
@@ -273,6 +275,41 @@
 
   <!-- PARTNER PAGE LOGIC -->
   <script>
+    // ===== Partner Application Modal functions (defined first) =====
+    function openPartnerModal() {
+      document.getElementById('partnerModal').style.display = 'flex';
+    }
+
+    function closePartnerModal() {
+      document.getElementById('partnerModal').style.display = 'none';
+    }
+
+    function sendPartnerEmail(event) {
+      event.preventDefault();
+
+      const biz = document.getElementById("bizName")?.value?.trim() || "";
+      const name = document.getElementById("contactName")?.value?.trim() || "";
+      const email = document.getElementById("contactEmail")?.value?.trim() || "";
+      const phone = document.getElementById("contactPhone")?.value?.trim() || "";
+      const website = document.getElementById("bizWebsite")?.value?.trim() || "";
+      const message = document.getElementById("bizMessage")?.value?.trim() || "";
+
+      const subject = encodeURIComponent(`Partner Application - ${biz || "New Partner"}`);
+      const body = encodeURIComponent(
+`Business Name: ${biz}
+Contact Name: ${name}
+Email: ${email}
+Phone: ${phone}
+Website/Social: ${website}
+
+Why they'd like to partner:
+${message}`
+      );
+
+      window.location.href = `mailto:newleafpaintingcompany@gmail.com?subject=${subject}&body=${body}`;
+      closePartnerModal();
+    }
+
     // ===== Partner Contact Popup =====
     const partnerPopup = document.getElementById('partner-popup');
     const partnerNameSpan = document.getElementById('partner-name');
@@ -281,14 +318,12 @@
 
     let currentPartnerEmail = '';
 
-    // Open contact popup when partner card button is clicked
     document.querySelectorAll('.partner-card button').forEach(btn => {
       btn.addEventListener('click', () => {
         const card = btn.closest('.partner-card');
         currentPartnerEmail = card.dataset.email;
         partnerNameSpan.textContent = card.dataset.name;
 
-        // Ensure hidden referrer field exists (inside THIS popup form)
         const form = partnerPopup.querySelector('form');
         let refField = form.querySelector('input[name="referrer"]');
         if (!refField) {
@@ -303,19 +338,18 @@
       });
     });
 
-    // Close popup
     closeBtn.addEventListener('click', () => {
       partnerPopup.style.display = 'none';
     });
 
-    // Click outside closes popup
+    // Click outside closes popup or modal
     window.addEventListener('click', (e) => {
       if (e.target === partnerPopup) partnerPopup.style.display = 'none';
+
       const modal = document.getElementById("partnerModal");
       if (e.target === modal) closePartnerModal();
     });
 
-    // Send message (mailto to partner + bcc to you)
     sendBtn.addEventListener('click', () => {
       const name = document.getElementById('user-name').value.trim();
       const email = document.getElementById('user-email').value.trim();
@@ -334,15 +368,6 @@
 
       partnerPopup.style.display = 'none';
     });
-
-    // ===== Partner Application Modal functions =====
-    function openPartnerModal() {
-      document.getElementById('partnerModal').style.display = 'flex';
-    }
-
-    function closePartnerModal() {
-      document.getElementById('partnerModal').style.display = 'none';
-    }
   </script>
 
 </body>
