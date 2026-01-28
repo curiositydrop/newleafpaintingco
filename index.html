@@ -141,39 +141,47 @@
       width: 100%;
     }
 
-    .nl-btn{
-      border-radius: 14px;
-      padding: 14px 16px;
-      font-weight: 900;
-      border: 2px solid rgba(255,255,255,.20);
-      background: rgba(255,255,255,.10);
-      color: #fff;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      justify-content:center;
-      align-items:center;
-      transition: transform .12s ease, filter .12s ease, background .12s ease;
-      width: min(560px, 92vw);
-    }
+    #nl-hub .nl-btn{
+  border-radius: 14px;
+  padding: 14px 16px;
+  font-weight: 900;
+  border: 2px solid rgba(255,255,255,.20);
+  background: rgba(255,255,255,.10);
+  color: #fff;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  justify-content:center;
+  align-items:center;
+  transition: transform .12s ease, filter .12s ease, background .12s ease;
+  width: min(560px, 92vw);
+}
 
-    .nl-btn.small { width: min(240px, 44vw); }
-    .nl-btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
-    .nl-btn.primary{
-      background: rgba(255,255,255,.92);
-      color: #0f5f33;
-      border-color: rgba(255,255,255,.22);
-    }
-    .nl-btn.spin{
-      background: rgba(31,107,51,.95);
-      color: #fff;
-      border-color: rgba(255,255,255,.18);
-    }
+#nl-hub .nl-btn.small {
+  width: min(240px, 44vw);
+}
 
-    /* ===== Skip mode: hide ONLY the experience row (keep normal nav links) ===== */
-    body.mode-standard #nl-experience-nav {
-      display: none !important;
-    }
+#nl-hub .nl-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+#nl-hub .nl-btn.primary{
+  background: rgba(255,255,255,.92);
+  color: #0f5f33;
+  border-color: rgba(255,255,255,.22);
+}
+
+#nl-hub .nl-btn.spin{
+  background: rgba(31,107,51,.95);
+  color: #fff;
+  border-color: rgba(255,255,255,.18);
+}
+
+/* ===== Skip mode: hide ONLY the experience row (keep normal nav links) ===== */
+body.mode-standard #nl-experience-nav {
+  display: none !important;
+}
   </style>
 </head>
 
