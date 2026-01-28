@@ -102,6 +102,36 @@
     body.mode-hub #global-header,
     body.mode-hub #global-footer { display: none; }
 
+    /* ✅ CRITICAL: On SKIP mode, force header nav to use the normal global spacing
+       (Prevents “stacked CTA-style nav” from leaking onto the skip homepage) */
+    body.mode-standard header .nav-links {
+      display: flex !important;
+      flex-direction: row !important;
+      justify-content: center !important;
+      gap: 40px !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      align-items: center !important;
+    }
+    body.mode-standard header .nav-links a {
+      display: inline-block !important;
+      width: auto !important;
+      max-width: none !important;
+      padding: 0 !important;
+      background: transparent !important;
+      border: none !important;
+      border-radius: 0 !important;
+      text-decoration: none !important;
+    }
+
+    /* Mobile stays stacked (matches your global @media rule in style.css) */
+    @media (max-width: 600px) {
+      body.mode-standard header .nav-links {
+        flex-direction: column !important;
+        gap: 15px !important;
+      }
+    }
+
     /* ===== HUB layout ===== */
     #nl-hub {
       min-height: 100vh;
@@ -141,47 +171,35 @@
       width: 100%;
     }
 
+    /* ✅ Scoped to HUB only, so it can never style skip content */
     #nl-hub .nl-btn{
-  border-radius: 14px;
-  padding: 14px 16px;
-  font-weight: 900;
-  border: 2px solid rgba(255,255,255,.20);
-  background: rgba(255,255,255,.10);
-  color: #fff;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-flex;
-  justify-content:center;
-  align-items:center;
-  transition: transform .12s ease, filter .12s ease, background .12s ease;
-  width: min(560px, 92vw);
-}
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-weight: 900;
+      border: 2px solid rgba(255,255,255,.20);
+      background: rgba(255,255,255,.10);
+      color: #fff;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      justify-content:center;
+      align-items:center;
+      transition: transform .12s ease, filter .12s ease, background .12s ease;
+      width: min(560px, 92vw);
+    }
 
-#nl-hub .nl-btn.small {
-  width: min(240px, 44vw);
-}
-
-#nl-hub .nl-btn:hover {
-  transform: translateY(-1px);
-  filter: brightness(1.05);
-}
-
-#nl-hub .nl-btn.primary{
-  background: rgba(255,255,255,.92);
-  color: #0f5f33;
-  border-color: rgba(255,255,255,.22);
-}
-
-#nl-hub .nl-btn.spin{
-  background: rgba(31,107,51,.95);
-  color: #fff;
-  border-color: rgba(255,255,255,.18);
-}
-
-/* ===== Skip mode: hide ONLY the experience row (keep normal nav links) ===== */
-body.mode-standard #nl-experience-nav {
-  display: none !important;
-}
+    #nl-hub .nl-btn.small { width: min(240px, 44vw); }
+    #nl-hub .nl-btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
+    #nl-hub .nl-btn.primary{
+      background: rgba(255,255,255,.92);
+      color: #0f5f33;
+      border-color: rgba(255,255,255,.22);
+    }
+    #nl-hub .nl-btn.spin{
+      background: rgba(31,107,51,.95);
+      color: #fff;
+      border-color: rgba(255,255,255,.18);
+    }
   </style>
 </head>
 
@@ -293,21 +311,23 @@ body.mode-standard #nl-experience-nav {
     <script src="global.js"></script>
   </div>
 
-  <!-- ===== Gate Logic (FIXED: gate stays on refresh) ===== -->
+  <!-- ===== Gate Logic (Gate always shows on refresh) ===== -->
   <script>
     (function initNewLeafGateModes(){
       const gate = document.getElementById("nl-gate");
       const enterBtn = document.getElementById("nl-enter");
       const skipBtn  = document.getElementById("nl-skip");
 
-      // IMPORTANT: start with NO mode applied so only the gate shows
+      // Start with NO mode so only the gate shows
       document.body.classList.remove("mode-hub", "mode-standard");
 
       function setMode(mode){
         document.body.classList.remove("mode-hub", "mode-standard");
         document.body.classList.add(mode === "hub" ? "mode-hub" : "mode-standard");
-        // store choice so other pages can stay boring
-        sessionStorage.setItem("nl_mode", mode); // "hub" or "standard"
+
+        // (Optional) keep for analytics or future, but we are NOT auto-skipping on refresh
+        sessionStorage.setItem("nl_mode", mode);
+
         try { window.scrollTo({ top: 0, left: 0, behavior: "instant" }); }
         catch { window.scrollTo(0,0); }
       }
@@ -333,8 +353,7 @@ body.mode-standard #nl-experience-nav {
         });
       });
 
-      // ✅ Removed auto-skip on refresh.
-      // Gate will always show on refresh, until they click a button.
+      // ✅ No auto-skip on refresh.
     })();
   </script>
 
