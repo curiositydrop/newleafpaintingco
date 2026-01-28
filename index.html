@@ -109,69 +109,73 @@
       max-width: 720px;
       text-align: center;
     }
+
+    /* ✅ Logo matches skip logo sizing */
     .nl-hub-logo{
-  width: 160px;          /* matches .logo in style.css */
-  max-width: 160px;
-  height: auto;
-  display: block;
-  margin: 0 auto 18px auto;
-  background: rgba(255,255,255,.06);
-  border-radius: 16px;
-  padding: 10px;
-}
+      width: 160px;          /* matches .logo in style.css */
+      max-width: 160px;
+      height: auto;
+      display: block;
+      margin: 0 auto 18px auto;
+      background: rgba(255,255,255,.06);
+      border-radius: 16px;
+      padding: 10px;
+    }
 
+    /* ✅ OCD-friendly 2-column grid */
     .nl-hub-grid{
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  width: 100%;
-  max-width: 560px;
-  margin: 0 auto;
-}
-
-    .nl-hub-row{
-      display:flex;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
       gap: 12px;
-      flex-wrap:wrap;
-      justify-content:center;
       width: 100%;
+      max-width: 560px;
+      margin: 0 auto;
     }
 
     /* ✅ Scoped to HUB only */
     #nl-hub .nl-btn{
-  border-radius: 12px;
-  padding: 12px 14px;
-  font-weight: 800;
-  font-size: 0.95rem;
-  border: 2px solid rgba(255,255,255,.18);
-  background: rgba(255,255,255,.10);
-  color: #fff;
-  cursor: pointer;
-  text-decoration: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: transform .12s ease, filter .12s ease, background .12s ease;
-  width: 100%;
-}
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      border: 2px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.10);
+      color: #fff;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform .12s ease, filter .12s ease, background .12s ease;
+      width: 100%;
+      text-align: center;
+    }
 
-    #nl-hub .nl-btn.small { width: min(240px, 44vw); }
     #nl-hub .nl-btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
+
     #nl-hub .nl-btn.primary{
       background: rgba(255,255,255,.92);
       color: #0f5f33;
       border-color: rgba(255,255,255,.22);
     }
+
     #nl-hub .nl-btn.spin{
       background: rgba(31,107,51,.95);
       color: #fff;
       border-color: rgba(255,255,255,.18);
     }
+
     /* Full-width emphasis buttons */
-#nl-hub .nl-btn.primary,
-#nl-hub .nl-btn.full {
-  grid-column: 1 / -1;
-}
+    #nl-hub .nl-btn.primary,
+    #nl-hub .nl-btn.full {
+      grid-column: 1 / -1;
+    }
+
+    /* ✅ Mobile: single column so nothing gets cramped */
+    @media (max-width: 480px) {
+      .nl-hub-grid { grid-template-columns: 1fr; }
+      #nl-hub .nl-btn.primary, #nl-hub .nl-btn.full { grid-column: auto; }
+    }
   </style>
 </head>
 
@@ -200,13 +204,13 @@
     <div class="nl-hub-inner">
       <img class="nl-hub-logo" src="7D16A71A-2AF9-4EBB-863A-09C24D4F6662.png" alt="New Leaf Painting Co.">
 
+      <!-- ✅ FIXED: No more flex rows inside grid -->
       <div class="nl-hub-grid">
-        <div class="nl-hub-row">
-          <a class="nl-btn small" href="#games">Play a Game</a>
-          <a class="nl-btn small spin" href="#spinwin">Spin &amp; Win ✨</a>
-        </div>
+        <a class="nl-btn" href="#games">Play a Game</a>
+        <a class="nl-btn spin" href="#spinwin">Spin &amp; Win ✨</a>
 
         <a class="nl-btn" href="past-projects.html">See Transformations</a>
+        <a class="nl-btn" href="referus.html">Refer New Leaf Painting Co.</a>
 
         <button
           type="button"
@@ -215,13 +219,9 @@
           Schedule a Free Estimate
         </button>
 
-        <div class="nl-hub-row">
-          <a class="nl-btn small" href="past-projects.html">Past Projects</a>
-          <a class="nl-btn small" href="local-partners.html">Local Partners</a>
-          <a class="nl-btn small" href="testimonials.html">Testimonials</a>
-        </div>
-
-        <a class="nl-btn" href="referus.html">Refer New Leaf Painting Co.</a>
+        <a class="nl-btn" href="past-projects.html">Past Projects</a>
+        <a class="nl-btn" href="local-partners.html">Local Partners</a>
+        <a class="nl-btn" href="testimonials.html">Testimonials</a>
       </div>
     </div>
   </main>
@@ -300,7 +300,6 @@
       }
 
       async function loadGlobalForStandard(){
-        // Fetch global.html and inject header/footer/popup/button
         const res = await fetch("global.html");
         const html = await res.text();
         const parser = new DOMParser();
@@ -317,7 +316,6 @@
         if (headerTarget && header) headerTarget.replaceChildren(header);
         if (footerTarget && footer) footerTarget.replaceChildren(footer);
 
-        // Add popup + floating button once
         if (popup && !document.querySelector("#contact-popup")) {
           document.body.insertAdjacentElement("beforeend", popup);
         }
@@ -325,7 +323,7 @@
           document.body.insertAdjacentElement("beforeend", btn);
         }
 
-        // Hide the FUN row on skip home (you asked: work links only on skip side)
+        // Hide FUN row on skip side
         const funRow = document.getElementById("nl-experience-nav");
         if (funRow) funRow.style.display = "none";
 
@@ -339,10 +337,9 @@
           window.addEventListener("click", e => { if (e.target === popupEl) popupEl.style.display = "none"; });
         }
 
-        // Reveal nav links + highlight active
         requestAnimationFrame(() => {
           document.querySelectorAll(".nav-links a").forEach(a => a.style.visibility = "visible");
-          // Active highlight (basic)
+
           let currentPage = window.location.pathname.split("/").pop().toLowerCase() || "index.html";
           document.querySelectorAll("nav a").forEach(link => {
             const href = (link.getAttribute("href") || "").split("?")[0].split("/").pop().toLowerCase() || "index.html";
