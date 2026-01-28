@@ -17,7 +17,7 @@
   </script>
 
   <style>
-    /* ===== Gate Overlay (ALWAYS shows) ===== */
+    /* ===== Gate Overlay (shows on direct entry ONLY) ===== */
     #nl-gate {
       position: fixed;
       inset: 0;
@@ -110,30 +110,37 @@
       text-align: center;
     }
 
-    /* ✅ Logo matches skip logo sizing */
     .nl-hub-logo{
-      width: 160px;          /* matches .logo in style.css */
+      width: 160px;
       max-width: 160px;
       height: auto;
       display: block;
-      margin: 0 auto 18px auto;
+      margin: 0 auto 10px auto;
       background: rgba(255,255,255,.06);
       border-radius: 16px;
       padding: 10px;
     }
 
-    /* ✅ OCD-friendly 2-column grid */
+    /* NEW: clarity line under logo */
+    .nl-hub-line{
+      margin: 0 auto 18px auto;
+      max-width: 620px;
+      font-size: 1.02rem;
+      color: rgba(255,255,255,.92);
+      line-height: 1.35;
+    }
+
     .nl-hub-grid{
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  width: 100%;
-  max-width: 560px;
-  margin: 0 auto;
-  padding: 0 12px;          /* ✅ prevents edge collision on mobile */
-  box-sizing: border-box;   /* ✅ keeps padding inside width */
-}
-    /* ✅ Scoped to HUB only */
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      width: 100%;
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 0 12px;
+      box-sizing: border-box;
+    }
+
     #nl-hub .nl-btn{
       border-radius: 12px;
       padding: 12px 14px;
@@ -150,8 +157,8 @@
       transition: transform .12s ease, filter .12s ease, background .12s ease;
       width: 100%;
       text-align: center;
-      box-sizing: border-box;   /* ✅ border doesn't expand width weirdly */
-      overflow: hidden;         /* ✅ kills the “seam” / overlap artifacts */
+      box-sizing: border-box;
+      overflow: hidden;
     }
 
     #nl-hub .nl-btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
@@ -168,33 +175,29 @@
       border-color: rgba(255,255,255,.18);
     }
 
-    /* Full-width emphasis buttons */
     #nl-hub .nl-btn.primary,
     #nl-hub .nl-btn.full {
       grid-column: 1 / -1;
     }
 
-    /* ✅ Mobile: single column so nothing gets cramped */
-    /* ✅ Always 2 columns by default (including phones) */
-.nl-hub-grid{
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  width: 100%;
-  max-width: 560px;
-  margin: 0 auto;
-}
+    @media (max-width: 360px) {
+      .nl-hub-grid { grid-template-columns: 1fr; }
+    }
 
-/* ✅ Only collapse to 1 column on very small screens */
-@media (max-width: 360px) {
-  .nl-hub-grid { grid-template-columns: 1fr; }
-}
+    /* NEW: small “upgrade” link styling (boring mode) */
+    .nl-upgrade-link{
+      display:inline-block;
+      margin: 10px 0 0 0;
+      font-weight: 800;
+      text-decoration: underline;
+      cursor: pointer;
+    }
   </style>
 </head>
 
 <body>
 
-  <!-- ===== Gate Overlay (ALWAYS) ===== -->
+  <!-- ===== Gate Overlay ===== -->
   <div id="nl-gate" aria-label="New Leaf Gate" role="dialog" aria-modal="true">
     <div class="gate-inner">
       <img class="gate-logo" src="7D16A71A-2AF9-4EBB-863A-09C24D4F6662.png" alt="New Leaf Painting Co.">
@@ -217,10 +220,15 @@
     <div class="nl-hub-inner">
       <img class="nl-hub-logo" src="7D16A71A-2AF9-4EBB-863A-09C24D4F6662.png" alt="New Leaf Painting Co.">
 
-      <!-- ✅ FIXED: No more flex rows inside grid -->
+      <!-- NEW: crystal-clear line under logo -->
+      <p class="nl-hub-line">
+        You’re already here. Proven work, real reviews — and rewards you won’t find on any other painter’s site.
+      </p>
+
       <div class="nl-hub-grid">
-        <a class="nl-btn" href="#games">Play a Game</a>
-        <a class="nl-btn spin" href="#spinwin">Spin &amp; Win ✨</a>
+        <!-- UPDATED CTA copy -->
+        <a class="nl-btn" href="#games">Play for Rewards</a>
+        <a class="nl-btn spin" href="#spinwin">Spin &amp; Win (Everyone Wins) ✨</a>
 
         <a class="nl-btn" href="past-projects.html">See Transformations</a>
         <a class="nl-btn" href="referus.html">Refer New Leaf Painting Co.</a>
@@ -232,9 +240,8 @@
           Schedule a Free Estimate
         </button>
 
-        <a class="nl-btn" href="past-projects.html">Past Projects</a>
         <a class="nl-btn" href="local-partners.html">Local Partners</a>
-        <a class="nl-btn" href="testimonials.html">Testimonials</a>
+        <a class="nl-btn" href="testimonials.html">Read Reviews</a>
       </div>
     </div>
   </main>
@@ -248,6 +255,13 @@
     <section class="hero">
       <h1>Turn over a New Leaf — With a fresh new coat, one room at a time.</h1>
       <p>Professional interior painting built on trust, quality, and care.</p>
+
+      <!-- NEW: boring → experience upgrade link -->
+      <p>
+        <a class="nl-upgrade-link" id="nl-upgrade" href="index.html?nav=1&mode=hub">
+          I want the full experience →
+        </a>
+      </p>
 
       <section class="about">
         <h2>Why Choose New Leaf Painting Co.</h2>
@@ -293,7 +307,6 @@
     <div id="global-footer"></div>
   </div>
 
-  <!-- ===== Gate + Load Global ONLY IF SKIP ===== -->
   <script>
     (function initNewLeafGateModes(){
       const gate = document.getElementById("nl-gate");
@@ -303,16 +316,63 @@
       const hub = document.getElementById("nl-hub");
       const standard = document.getElementById("nl-standard");
 
-      // Start state: ONLY gate visible
+      // URL flags:
+      // - nav=1 means internal navigation (NO gate)
+      // - mode=hub or mode=standard controls which view to show
+      const params = new URLSearchParams(window.location.search);
+      const nav = params.get("nav"); // "1" when navigating internally
+      const modeParam = (params.get("mode") || "").toLowerCase(); // "hub" or "standard"
+
+      // Always start hidden; we'll show exactly what we want
       hub.style.display = "none";
       standard.style.display = "none";
 
+      function buildModeQuery(mode){
+        return `?nav=1&mode=${encodeURIComponent(mode)}`;
+      }
+
+      function isExternalHref(href){
+        return (
+          href.startsWith("http://") ||
+          href.startsWith("https://") ||
+          href.startsWith("mailto:") ||
+          href.startsWith("tel:")
+        );
+      }
+
+      // Ensure internal links carry nav=1&mode=...
+      function decorateLinks(mode){
+        const qs = buildModeQuery(mode);
+
+        document.querySelectorAll('a[href]').forEach(a => {
+          const href = a.getAttribute("href");
+          if (!href) return;
+
+          // keep in-page anchors as-is (#games, #spinwin)
+          if (href.startsWith("#")) return;
+
+          // ignore external
+          if (isExternalHref(href)) return;
+
+          // ignore javascript: links
+          if (href.startsWith("javascript:")) return;
+
+          // if already has nav=1, leave it
+          if (href.includes("nav=1")) return;
+
+          // append query
+          const joiner = href.includes("?") ? "&" : "?";
+          a.setAttribute("href", href + joiner + `nav=1&mode=${encodeURIComponent(mode)}`);
+        });
+      }
+
       function closeGate(){
+        if (!gate) return;
         gate.classList.add("fade-out");
         setTimeout(() => gate.remove(), 1250);
       }
 
-      async function loadGlobalForStandard(){
+      async function loadGlobalForStandard(mode){
         const res = await fetch("global.html");
         const html = await res.text();
         const parser = new DOMParser();
@@ -336,7 +396,7 @@
           document.body.insertAdjacentElement("beforeend", btn);
         }
 
-        // Hide FUN row on skip side
+        // Hide FUN row on skip side (if it exists in global.html)
         const funRow = document.getElementById("nl-experience-nav");
         if (funRow) funRow.style.display = "none";
 
@@ -350,6 +410,7 @@
           window.addEventListener("click", e => { if (e.target === popupEl) popupEl.style.display = "none"; });
         }
 
+        // Make sure nav links become visible and preserve active state
         requestAnimationFrame(() => {
           document.querySelectorAll(".nav-links a").forEach(a => a.style.visibility = "visible");
 
@@ -359,6 +420,9 @@
             link.classList.toggle("active", href === currentPage);
             link.style.visibility = "visible";
           });
+
+          // Decorate all internal links so they keep nav=1&mode=standard
+          decorateLinks(mode);
         });
       }
 
@@ -369,23 +433,52 @@
           document.body.classList.add("mode-hub");
           hub.style.display = "block";
           standard.style.display = "none";
+          decorateLinks("hub");
         } else {
           document.body.classList.add("mode-standard");
           hub.style.display = "none";
           standard.style.display = "block";
+          decorateLinks("standard");
         }
 
         window.scrollTo(0,0);
       }
 
+      // ===== GATE RULE =====
+      // If nav=1, this is internal navigation: DO NOT show the gate.
+      // If nav is missing, ALWAYS show the gate (even for returning visitors).
+      const isInternalNav = (nav === "1");
+
+      if (isInternalNav) {
+        // Remove gate instantly
+        if (gate) gate.remove();
+
+        // Choose mode from URL, default to standard if missing/invalid
+        const initialMode = (modeParam === "hub" || modeParam === "standard") ? modeParam : "standard";
+        setMode(initialMode);
+
+        // If standard, ensure global loads automatically
+        if (initialMode === "standard") {
+          loadGlobalForStandard("standard");
+        }
+      } else {
+        // Direct entry: show ONLY gate until they choose
+        hub.style.display = "none";
+        standard.style.display = "none";
+      }
+
+      // ===== BUTTONS =====
       enterBtn.addEventListener("click", () => {
+        // switch to hub and update URL so internal browsing won’t re-trigger gate
+        history.replaceState({}, "", "index.html" + buildModeQuery("hub"));
         setMode("hub");
         closeGate();
       });
 
       skipBtn.addEventListener("click", async () => {
+        history.replaceState({}, "", "index.html" + buildModeQuery("standard"));
         setMode("standard");
-        await loadGlobalForStandard();
+        await loadGlobalForStandard("standard");
         closeGate();
       });
 
