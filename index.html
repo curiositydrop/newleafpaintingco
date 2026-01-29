@@ -26,8 +26,6 @@
       align-items: center;
       justify-content: center;
       padding: 24px;
-
-      /* ✅ CHANGED: black background */
       background: #000;
       overflow: hidden; /* keeps fireworks clean */
     }
@@ -41,7 +39,7 @@
       z-index: 2; /* above fireworks */
     }
 
-    /* ✅ NEW: fireworks canvas */
+    /* fireworks canvas */
     #nl-fireworks {
       position: absolute;
       inset: 0;
@@ -52,26 +50,22 @@
       opacity: 1;
     }
 
-    /* ✅ NEW: fireworks fade-out */
+    /* fireworks fade-out */
     #nl-fireworks.fade-out {
       opacity: 0;
       transition: opacity 1200ms ease;
     }
 
     #nl-gate .gate-logo {
-  width: min(300px, 75vw); /* slightly smaller, more premium */
-  height: auto;
-  margin: 0 auto 18px auto;
-  display: block;
-
-  /* remove white haze */
-  background: transparent;
-  border-radius: 0;
-  padding: 0;
-
-  /* subtle glow so it pops on black */
-  filter: drop-shadow(0 0 22px rgba(80, 255, 160, 0.45));
-}
+      width: min(300px, 75vw);
+      height: auto;
+      margin: 0 auto 18px auto;
+      display: block;
+      background: transparent;
+      border-radius: 0;
+      padding: 0;
+      filter: drop-shadow(0 0 22px rgba(80, 255, 160, 0.45));
+    }
 
     #nl-gate .gate-line {
       margin: 0 auto 18px auto;
@@ -113,7 +107,7 @@
       font-weight: 800;
     }
 
-    /* ✅ NEW: glowing heartbeat for ENTER button only */
+    /* glowing heartbeat for ENTER button only */
     #nl-enter {
       animation: nlPulseGlow 2.1s ease-in-out infinite;
       box-shadow:
@@ -159,125 +153,114 @@
 
     /* ===== HUB layout ===== */
     #nl-hub{
-  min-height: 100vh;
-  background: #000;  /* pure black like gate */
-  display: grid;
-  place-items: center;
-  padding: 26px 14px;
-}
+      min-height: 100vh;
+      background: #000;  /* pure black like gate */
+      display: grid;
+      place-items: center;
+      padding: 26px 14px;
+      position: relative; /* important if you ever re-enable ::before glow */
+    }
 
-/* subtle green glow “atmosphere” behind content */
-/*
+    /* subtle green glow “atmosphere” behind content (currently OFF) */
+    /*
     #nl-hub::before{
-  content:"";
-  position:absolute;
-  inset:-40px;
-  background:
-    radial-gradient(circle at 50% 12%,
-      rgba(46,255,140,.18),
-      rgba(0,0,0,0) 55%);
-  filter: blur(10px);
-  pointer-events:none;
-  z-index: 0;
-}*/
+      content:"";
+      position:absolute;
+      inset:-40px;
+      background:
+        radial-gradient(circle at 50% 12%,
+          rgba(46,255,140,.18),
+          rgba(0,0,0,0) 55%);
+      filter: blur(10px);
+      pointer-events:none;
+      z-index: 0;
+    }
+    */
 
-/* keeps your hub content above the glow */
-#nl-hub .nl-hub-inner{
-  position: relative;
-  z-index: 1;
-}
+    /* keeps your hub content above the glow */
+    #nl-hub .nl-hub-inner{
+      position: relative;
+      z-index: 1;
+    }
+
     .nl-hub-inner{
       width: 100%;
       max-width: 720px;
       text-align: center;
     }
 
+    /* HUB logo (MATCH gate glow) */
     .nl-hub-logo{
-  width: min(300px, 75vw);   /* same size logic as gate */
-  height: auto;
-  margin: 0 auto 2px auto;
-  display: block;
-  background: transparent;
-  border-radius: 0;
-  padding: 0;
+      width: min(300px, 75vw);
+      height: auto;
+      margin: 0 auto 2px auto;
+      display: block;
+      background: transparent;
+      border-radius: 0;
+      padding: 0;
+      filter: drop-shadow(0 0 22px rgba(80,255,160,.45));
+    }
 
-  /* exact same glow as gate */
-  filter: drop-shadow(0 0 22px rgba(80,255,160,./* ===== Spray reveal effect (keeps logo GREEN) ===== */
-.nl-hub-logo-wrap{
-  position: relative;
-  display: inline-block;
-  overflow: hidden;
-}
+    /* ===== Spray reveal effect (keeps logo GREEN) ===== */
+    .nl-hub-logo-wrap{
+      position: relative;
+      display: inline-block;
+      overflow: hidden;
+    }
 
-/* keep your glow on the base logo */
-#nl-hub .nl-hub-logo{
-  display:block;
-  height:auto;
-}
+    #nl-hub .nl-hub-logo.logo-spray{
+      -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 45%, transparent 55%, transparent 100%);
+      -webkit-mask-size: 250% 100%;
+      -webkit-mask-position: 120% 0;
+      -webkit-mask-repeat: no-repeat;
 
-/* reveal the logo from left to right using a mask */
-#nl-hub .nl-hub-logo.logo-spray{
-  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 45%, transparent 55%, transparent 100%);
-  -webkit-mask-size: 250% 100%;
-  -webkit-mask-position: 120% 0;
-  -webkit-mask-repeat: no-repeat;
+      mask-image: linear-gradient(90deg, #000 0%, #000 45%, transparent 55%, transparent 100%);
+      mask-size: 250% 100%;
+      mask-position: 120% 0;
+      mask-repeat: no-repeat;
 
-  mask-image: linear-gradient(90deg, #000 0%, #000 45%, transparent 55%, transparent 100%);
-  mask-size: 250% 100%;
-  mask-position: 120% 0;
-  mask-repeat: no-repeat;
+      animation: sprayReveal 2.2s ease-out forwards;
+      animation-delay: .35s;
+    }
 
-  animation: sprayReveal 2.2s ease-out forwards;
-  animation-delay: .35s;
-}
+    /* mist sweep */
+    .nl-hub-logo-wrap::before{
+      content:"";
+      position:absolute;
+      top:0;
+      left:-140%;
+      width:140%;
+      height:100%;
+      background: radial-gradient(circle,
+        rgba(255,255,255,.85),
+        rgba(255,255,255,.22),
+        rgba(255,255,255,0) 70%);
+      filter: blur(18px);
+      opacity: .9;
+      animation: sprayPass 2.2s ease-out forwards;
+      animation-delay: .35s;
+      pointer-events:none;
+    }
 
-/* mist sweep (flashlight-looking layer, but it doesn't change logo color) */
-.nl-hub-logo-wrap::before{
-  content:"";
-  position:absolute;
-  top:0;
-  left:-140%;
-  width:140%;
-  height:100%;
-  background:
-    radial-gradient(circle,
-      rgba(255,255,255,.85),
-      rgba(255,255,255,.22),
-      rgba(255,255,255,0) 70%);
-  filter: blur(18px);
-  opacity: .9;
-  animation: sprayPass 2.2s ease-out forwards;
-  animation-delay: .35s;
-  pointer-events:none;
-}
+    @keyframes sprayPass{
+      from{ left:-140%; }
+      to{ left:140%; }
+    }
 
-@keyframes sprayPass{
-  from{ left:-140%; }
-  to{ left:140%; }
-}
+    @keyframes sprayReveal{
+      from{
+        -webkit-mask-position: 120% 0;
+        mask-position: 120% 0;
+      }
+      to{
+        -webkit-mask-position: -20% 0;
+        mask-position: -20% 0;
+      }
+    }
 
-@keyframes sprayReveal{
-  from{
-    -webkit-mask-position: 120% 0;
-    mask-position: 120% 0;
-  }
-  to{
-    -webkit-mask-position: -20% 0;
-    mask-position: -20% 0;
-  }
-}
-   /*
-    #nl-hub .nl-hub-logo.logo-white{
-  filter:
-    grayscale(1)
-    brightness(0)
-    invert(1)
-    drop-shadow(0 0 22px rgba(80,255,160,.45));
-}
-    */
-    /* NEW: clarity line under logo */
+    /* clarity line under logo */
     .nl-hub-line{
-      margin: 6 auto 8px auto;
+      margin: 6px auto 8px auto;
       max-width: 620px;
       font-size: 1.02rem;
       color: rgba(255,255,255,.92);
@@ -338,7 +321,7 @@
       .nl-hub-grid { grid-template-columns: 1fr; }
     }
 
-    /* NEW: small “upgrade” link styling (boring mode) */
+    /* “upgrade” link styling (boring mode) */
     .nl-upgrade-link{
       display:inline-block;
       margin: 10px 0 0 0;
@@ -346,19 +329,20 @@
       text-decoration: underline;
       cursor: pointer;
     }
+
     /* pulse animation */
-@keyframes nlPulse {
-  0%,100% { box-shadow: 0 0 0 rgba(46,255,140,0); transform: translateY(0); }
-  50%     { box-shadow: 0 0 22px rgba(46,255,140,.45); transform: translateY(-1px); }
-}
+    @keyframes nlPulse {
+      0%,100% { box-shadow: 0 0 0 rgba(46,255,140,0); transform: translateY(0); }
+      50%     { box-shadow: 0 0 22px rgba(46,255,140,.45); transform: translateY(-1px); }
+    }
 
-#nl-hub .nl-btn.pulse{
-  animation: nlPulse 1.8s ease-in-out infinite;
-}
+    #nl-hub .nl-btn.pulse{
+      animation: nlPulse 1.8s ease-in-out infinite;
+    }
 
-#nl-hub .nl-btn.pulse:hover{
-  animation: none;
-}
+    #nl-hub .nl-btn.pulse:hover{
+      animation: none;
+    }
   </style>
 </head>
 
@@ -366,7 +350,6 @@
 
   <!-- ===== Gate Overlay ===== -->
   <div id="nl-gate" aria-label="New Leaf Gate" role="dialog" aria-modal="true">
-    <!-- ✅ NEW: fireworks canvas layer -->
     <canvas id="nl-fireworks" aria-hidden="true"></canvas>
 
     <div class="gate-inner">
@@ -388,12 +371,12 @@
   <!-- ===== HUB MODE (Experience) ===== -->
   <main id="nl-hub" aria-label="New Leaf Experience Hub">
     <div class="nl-hub-inner">
+
       <div class="nl-hub-logo-wrap">
-  <img class="nl-hub-logo logo-spray"
-       src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png"
-       alt="New Leaf Painting Co.">
-</div>
-</div>
+        <img class="nl-hub-logo logo-spray"
+             src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png"
+             alt="New Leaf Painting Co.">
+      </div>
 
       <p class="nl-hub-line">
         You’re already here. Proven work, real reviews — and rewards you won’t find on any other painter’s site.
@@ -401,7 +384,7 @@
 
       <div class="nl-hub-grid">
         <a class="nl-btn pulse" href="#games">Play for Rewards</a>
-<a class="nl-btn spin pulse" href="#spinwin">Spin &amp; Win (Everyone Wins) ✨</a>
+        <a class="nl-btn spin pulse" href="#spinwin">Spin &amp; Win (Everyone Wins) ✨</a>
 
         <a class="nl-btn" href="past-projects.html">See Transformations</a>
         <a class="nl-btn" href="referus.html">Refer New Leaf Painting Co.</a>
@@ -652,13 +635,10 @@
         let t = 0;
         function tick(){
           t++;
-
-          // spawn bursts for the first ~8 seconds at 60fps (≈480 frames)
           if (t < 480 && t % 18 === 0) spawnBurst();
 
           ctx.clearRect(0,0,w,h);
 
-          // bursts pop quickly into particles
           for(let i=bursts.length-1;i>=0;i--){
             const b = bursts[i];
             b.life++;
@@ -666,7 +646,6 @@
             if(b.life > 2) bursts.splice(i,1);
           }
 
-          // draw particles
           for(let i=particles.length-1;i>=0;i--){
             const p = particles[i];
             p.vx *= p.drag;
@@ -690,7 +669,6 @@
 
           ctx.globalAlpha = 1;
 
-          // continue anim while gate exists
           if (document.getElementById("nl-gate")) {
             requestAnimationFrame(tick);
           }
@@ -698,7 +676,6 @@
 
         requestAnimationFrame(tick);
 
-        // Fade fireworks layer out after 8 seconds (still gate stays)
         setTimeout(() => {
           canvas.classList.add("fade-out");
         }, 8000);
