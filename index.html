@@ -201,62 +201,83 @@
       filter: drop-shadow(0 0 22px rgba(80,255,160,.45));
     }
 
-    /* ===== Spray reveal effect (keeps logo GREEN) ===== */
-    .nl-hub-logo-wrap{
-      position: relative;
-      display: inline-block;
-      overflow: hidden;
-    }
+    /* ===== Spray reveal effect (WHITE -> GREEN) ===== */
+.nl-hub-logo-wrap{
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  line-height: 0;
+}
 
-    #nl-hub .nl-hub-logo.logo-spray{
-      -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 45%, transparent 55%, transparent 100%);
-      -webkit-mask-size: 250% 100%;
-      -webkit-mask-position: 120% 0;
-      -webkit-mask-repeat: no-repeat;
+/* shared */
+#nl-hub .nl-hub-logo{
+  width: min(300px, 75vw);
+  height: auto;
+  display: block;
+}
 
-      mask-image: linear-gradient(90deg, #000 0%, #000 45%, transparent 55%, transparent 100%);
-      mask-size: 250% 100%;
-      mask-position: 120% 0;
-      mask-repeat: no-repeat;
+/* top WHITE logo (shows first, then fades out) */
+#nl-hub .nl-hub-logo.logo-white{
+  position: absolute;
+  inset: 0;
+  opacity: 1;
 
-      animation: sprayReveal 2.2s ease-out forwards;
-      animation-delay: .35s;
-    }
+  /* turns your green PNG into white */
+  filter:
+    grayscale(1)
+    brightness(0)
+    invert(1)
+    drop-shadow(0 0 22px rgba(80,255,160,.45));
 
-    /* mist sweep */
-    .nl-hub-logo-wrap::before{
-      content:"";
-      position:absolute;
-      top:0;
-      left:-140%;
-      width:140%;
-      height:100%;
-      background: radial-gradient(circle,
-        rgba(255,255,255,.85),
-        rgba(255,255,255,.22),
-        rgba(255,255,255,0) 70%);
-      filter: blur(18px);
-      opacity: .9;
-      animation: sprayPass 2.2s ease-out forwards;
-      animation-delay: .35s;
-      pointer-events:none;
-    }
+  animation: whiteFade 2.2s ease-out forwards;
+  animation-delay: .35s;
+}
 
-    @keyframes sprayPass{
-      from{ left:-140%; }
-      to{ left:140%; }
-    }
+/* bottom GREEN logo (reveals left -> right) */
+#nl-hub .nl-hub-logo.logo-green{
+  filter: drop-shadow(0 0 22px rgba(80,255,160,.45));
 
-    @keyframes sprayReveal{
-      from{
-        -webkit-mask-position: 120% 0;
-        mask-position: 120% 0;
-      }
-      to{
-        -webkit-mask-position: -20% 0;
-        mask-position: -20% 0;
-      }
-    }
+  /* start hidden, reveal left->right */
+  clip-path: inset(0 100% 0 0);
+
+  animation: greenReveal 2.2s ease-out forwards;
+  animation-delay: .35s;
+}
+
+/* mist sweep */
+.nl-hub-logo-wrap::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:-140%;
+  width:140%;
+  height:100%;
+  background: radial-gradient(circle,
+    rgba(255,255,255,.85),
+    rgba(255,255,255,.18),
+    rgba(255,255,255,0) 70%);
+  filter: blur(18px);
+  opacity: .55;
+  animation: sprayPass 2.2s ease-out forwards;
+  animation-delay: .35s;
+  pointer-events:none;
+}
+
+@keyframes sprayPass{
+  from{ left:-140%; }
+  to{ left:140%; }
+}
+
+@keyframes greenReveal{
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes whiteFade{
+  0%   { opacity: 1; }
+  55%  { opacity: 1; }
+  100% { opacity: 0; }
+}
 
     /* clarity line under logo */
     .nl-hub-line{
