@@ -197,13 +197,66 @@
   height: auto;
   margin: 0 auto 2px auto;
   display: block;
-
   background: transparent;
   border-radius: 0;
   padding: 0;
 
   /* exact same glow as gate */
   filter: drop-shadow(0 0 22px rgba(80,255,160,.45));
+}
+
+/* ===== Spray reveal effect for HUB logo ===== */
+.nl-hub-logo-wrap{
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+}
+
+/* logo starts hidden, fades in + forced white */
+#nl-hub .nl-hub-logo.logo-white{
+  opacity: 0;
+  animation: logoReveal 2.2s ease-out forwards;
+  animation-delay: .4s;
+  filter:
+    grayscale(1)
+    brightness(0)
+    invert(1)
+    drop-shadow(0 0 22px rgba(80,255,160,.45));
+}
+
+/* spray mist sweep */
+.nl-hub-logo-wrap::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:-120%;
+  width:120%;
+  height:100%;
+  background:
+    radial-gradient(circle,
+      rgba(255,255,255,.9),
+      rgba(255,255,255,.25),
+      rgba(255,255,255,0) 70%);
+  filter: blur(18px);
+  animation: sprayPass 2.2s ease-out forwards;
+  pointer-events:none;
+}
+
+@keyframes sprayPass{
+  from{ left:-120%; }
+  to{ left:120%; }
+}
+
+@keyframes logoReveal{
+  from{ opacity:0; }
+  to{ opacity:1; }
+}
+    #nl-hub .nl-hub-logo.logo-white{
+  filter:
+    grayscale(1)
+    brightness(0)
+    invert(1)
+    drop-shadow(0 0 22px rgba(80,255,160,.45));
 }
     /* NEW: clarity line under logo */
     .nl-hub-line{
@@ -318,7 +371,11 @@
   <!-- ===== HUB MODE (Experience) ===== -->
   <main id="nl-hub" aria-label="New Leaf Experience Hub">
     <div class="nl-hub-inner">
-      <img class="nl-hub-logo" src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png" alt="New Leaf Painting Co.">
+      <div class="nl-hub-logo-wrap">
+  <img class="nl-hub-logo logo-white"
+       src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png"
+       alt="New Leaf Painting Co.">
+</div>
 
       <p class="nl-hub-line">
         You’re already here. Proven work, real reviews — and rewards you won’t find on any other painter’s site.
