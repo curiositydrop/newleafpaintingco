@@ -160,14 +160,32 @@
     /* ===== HUB layout ===== */
     #nl-hub{
   min-height: 100vh;
-  background:
-    radial-gradient(circle at top,
-      rgba(40,255,160,.25),
-      rgba(0,0,0,.92) 60%),
-    #000;
+  background: #000;              /* true black base like the gate */
+  position: relative;
+  overflow: hidden;
   display: grid;
   place-items: center;
   padding: 26px 14px;
+}
+
+/* subtle green glow “atmosphere” behind content */
+#nl-hub::before{
+  content:"";
+  position:absolute;
+  inset:-40px;
+  background:
+    radial-gradient(circle at 50% 12%,
+      rgba(46,255,140,.18),
+      rgba(0,0,0,0) 55%);
+  filter: blur(10px);
+  pointer-events:none;
+  z-index: 0;
+}
+
+/* keeps your hub content above the glow */
+#nl-hub .nl-hub-inner{
+  position: relative;
+  z-index: 1;
 }
     .nl-hub-inner{
       width: 100%;
