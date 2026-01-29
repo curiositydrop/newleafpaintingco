@@ -153,14 +153,17 @@
 
     /* ===== HUB layout ===== */
     #nl-hub{
-      min-height: 100vh;
-      background: #000;  /* pure black like gate */
-      display: grid;
-      place-items: center;
-      padding: 26px 14px;
-      position: relative; /* important if you ever re-enable ::before glow */
-    }
+  min-height: 100vh;
+  background: #000;
+  display: grid;
+  place-items: center;
+  padding: 26px 14px;
+  position: relative;
 
+  /* spray timing */
+  --sprayDur: 3s;
+  --sprayDelay: .35s;
+}
     /* subtle green glow “atmosphere” behind content (currently OFF) */
     /*
     #nl-hub::before{
@@ -224,8 +227,8 @@
 
   /* start hidden */
   clip-path: polygon(0 0, 0 100%, 0 100%, 0 0);
-  animation: greenReveal 2.0s cubic-bezier(.15,.9,.2,1) forwards;
-  animation-delay: .20s;
+  animation: greenReveal var(--sprayDur) cubic-bezier(.22,.9,.22,1) forwards;
+animation-delay: var(--sprayDelay);
   will-change: clip-path;
 }
 
@@ -245,8 +248,8 @@
 
   /* start fully visible */
   clip-path: inset(0 0% 0 0%);
-  animation: whiteWipe 2.0s cubic-bezier(.15,.9,.2,1) forwards;
-  animation-delay: .20s;
+  animation: greenReveal var(--sprayDur) cubic-bezier(.22,.9,.22,1) forwards;
+animation-delay: var(--sprayDelay);
   will-change: clip-path;
 }
 
@@ -276,8 +279,8 @@
   opacity: .48;
   mix-blend-mode: screen;
 
-  animation: sprayPass 2.2s cubic-bezier(.22,.9,.22,1) forwards;
-  animation-delay: .35s;
+  animation: whiteFade var(--sprayDur) ease-out forwards;
+animation-delay: var(--sprayDelay);
 }
 
 /* speckle texture layer (tiny dots / overspray) */
@@ -299,8 +302,8 @@
   filter: blur(0.4px);
   mix-blend-mode: screen;
 
-  animation: sprayPass 2.0s ease-out forwards;
-  animation-delay: .20s;
+  animation: sprayPass var(--sprayDur) ease-out forwards;
+animation-delay: var(--sprayDelay);
 }
 
 @keyframes sprayPass{
