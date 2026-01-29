@@ -276,8 +276,8 @@
   filter: drop-shadow(0 0 22px rgba(80,255,160,.45));
 
   /* IMPORTANT for iOS Safari */
-  -webkit-clip-path: inset(0 100% 0 0);
-  clip-path: inset(0 100% 0 0);
+  -webkit-clip-path: inset(0 100% 0 -3%);
+clip-path: inset(0 100% 0 -3%);
 
   animation: greenReveal 2.4s cubic-bezier(.15,.9,.2,1) forwards;
   animation-delay: .20s;
@@ -339,15 +339,14 @@
   to{ left:160%; }
 }
 
-@keyframes greenReveal{
-  from{
-    -webkit-clip-path: inset(0 100% 0 0);
-    clip-path: inset(0 100% 0 0);
-  }
-  to{
-    -webkit-clip-path: inset(0 0 0 0);
-    clip-path: inset(0 0 0 0);
-  }
+from{
+  -webkit-clip-path: inset(0 100% 0 -3%);
+  clip-path: inset(0 100% 0 -3%);
+}
+to{
+  -webkit-clip-path: inset(0 0 0 -3%);
+  clip-path: inset(0 0 0 -3%);
+}
 }
 
 @keyframes whiteFade{
