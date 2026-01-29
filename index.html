@@ -202,55 +202,71 @@
   padding: 0;
 
   /* exact same glow as gate */
-  filter: drop-shadow(0 0 22px rgba(80,255,160,.45));
-}
-
-/* ===== Spray reveal effect for HUB logo ===== */
+  filter: drop-shadow(0 0 22px rgba(80,255,160,./* ===== Spray reveal effect (keeps logo GREEN) ===== */
 .nl-hub-logo-wrap{
   position: relative;
   display: inline-block;
   overflow: hidden;
 }
 
-/* logo starts hidden, fades in + forced white */
-#nl-hub .nl-hub-logo.logo-white{
-  opacity: 0;
-  animation: logoReveal 2.2s ease-out forwards;
-  animation-delay: .4s;
-  filter:
-    grayscale(1)
-    brightness(0)
-    invert(1)
-    drop-shadow(0 0 22px rgba(80,255,160,.45));
+/* keep your glow on the base logo */
+#nl-hub .nl-hub-logo{
+  display:block;
+  height:auto;
 }
 
-/* spray mist sweep */
+/* reveal the logo from left to right using a mask */
+#nl-hub .nl-hub-logo.logo-spray{
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 45%, transparent 55%, transparent 100%);
+  -webkit-mask-size: 250% 100%;
+  -webkit-mask-position: 120% 0;
+  -webkit-mask-repeat: no-repeat;
+
+  mask-image: linear-gradient(90deg, #000 0%, #000 45%, transparent 55%, transparent 100%);
+  mask-size: 250% 100%;
+  mask-position: 120% 0;
+  mask-repeat: no-repeat;
+
+  animation: sprayReveal 2.2s ease-out forwards;
+  animation-delay: .35s;
+}
+
+/* mist sweep (flashlight-looking layer, but it doesn't change logo color) */
 .nl-hub-logo-wrap::before{
   content:"";
   position:absolute;
   top:0;
-  left:-120%;
-  width:120%;
+  left:-140%;
+  width:140%;
   height:100%;
   background:
     radial-gradient(circle,
-      rgba(255,255,255,.9),
-      rgba(255,255,255,.25),
+      rgba(255,255,255,.85),
+      rgba(255,255,255,.22),
       rgba(255,255,255,0) 70%);
   filter: blur(18px);
+  opacity: .9;
   animation: sprayPass 2.2s ease-out forwards;
+  animation-delay: .35s;
   pointer-events:none;
 }
 
 @keyframes sprayPass{
-  from{ left:-120%; }
-  to{ left:120%; }
+  from{ left:-140%; }
+  to{ left:140%; }
 }
 
-@keyframes logoReveal{
-  from{ opacity:0; }
-  to{ opacity:1; }
+@keyframes sprayReveal{
+  from{
+    -webkit-mask-position: 120% 0;
+    mask-position: 120% 0;
+  }
+  to{
+    -webkit-mask-position: -20% 0;
+    mask-position: -20% 0;
+  }
 }
+   /*
     #nl-hub .nl-hub-logo.logo-white{
   filter:
     grayscale(1)
@@ -258,6 +274,7 @@
     invert(1)
     drop-shadow(0 0 22px rgba(80,255,160,.45));
 }
+    */
     /* NEW: clarity line under logo */
     .nl-hub-line{
       margin: 6 auto 8px auto;
@@ -372,9 +389,10 @@
   <main id="nl-hub" aria-label="New Leaf Experience Hub">
     <div class="nl-hub-inner">
       <div class="nl-hub-logo-wrap">
-  <img class="nl-hub-logo logo-white"
+  <img class="nl-hub-logo logo-spray"
        src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png"
        alt="New Leaf Painting Co.">
+</div>
 </div>
 
       <p class="nl-hub-line">
