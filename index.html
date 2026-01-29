@@ -253,59 +253,108 @@
       will-change: -webkit-mask-position, mask-position;
     }
 
-    /* “spray cloud” sweep — softer + less line-y */
-    .nl-hub-logo-wrap::before{
-      content:"";
-      position:absolute;
-      top:-14%;
-      left:-160%;
-      width:160%;
-      height:128%;
-      z-index: 3;
-      pointer-events:none;
+   /* ===== Spray reveal effect (WHITE -> GREEN) ===== */
+.nl-hub-logo-wrap{
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+  width: min(300px, 75vw);
+  overflow: visible; /* keep glow from clipping */
+}
 
-      background:
-        radial-gradient(circle at 28% 56%,
-          rgba(255,255,255,.38),
-          rgba(255,255,255,.12) 34%,
-          rgba(255,255,255,0) 74%),
-        radial-gradient(circle at 52% 40%,
-          rgba(255,255,255,.14),
-          rgba(255,255,255,0) 68%),
-        radial-gradient(circle at 48% 72%,
-          rgba(255,255,255,.12),
-          rgba(255,255,255,0) 72%);
+/* shared */
+#nl-hub .nl-hub-logo{
+  width: 100%;
+  height: auto;
+  display: block;
+}
 
-      filter: blur(15px);
-      opacity: .58;
-      mix-blend-mode: screen;
+/* GREEN logo (reveals left -> right) */
+#nl-hub .nl-hub-logo.logo-green{
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 0 22px rgba(80,255,160,.45));
 
-      animation: sprayPass var(--sprayDur) ease-out forwards;
-      animation-delay: var(--sprayDelay);
-      will-change: left;
-    }
+  /* IMPORTANT for iOS Safari */
+  -webkit-clip-path: inset(0 100% 0 0);
+  clip-path: inset(0 100% 0 0);
 
-    @keyframes sprayPass{
-      from{ left:-160%; }
-      to{ left:160%; }
-    }
+  animation: greenReveal 2.4s cubic-bezier(.15,.9,.2,1) forwards;
+  animation-delay: .20s;
+  will-change: clip-path;
+}
 
-    @keyframes greenMask{
-      from{
-        -webkit-mask-position: 120% 0;
-        mask-position: 120% 0;
-      }
-      to{
-        -webkit-mask-position: -20% 0;
-        mask-position: -20% 0;
-      }
-    }
+/* WHITE logo (starts visible, fades out) */
+#nl-hub .nl-hub-logo.logo-white{
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  opacity: 1;
+  pointer-events: none;
 
-    @keyframes whiteFade{
-      0%   { opacity: 1; }
-      45%  { opacity: 1; }
-      100% { opacity: 0; }
-    }
+  /* turns your green PNG into white */
+  filter:
+    grayscale(1)
+    brightness(0)
+    invert(1)
+    drop-shadow(0 0 18px rgba(255,255,255,.10));
+
+  animation: whiteFade 2.4s ease-out forwards;
+  animation-delay: .20s;
+}
+
+/* “spray cloud” sweep — softer, not a perfect beam */
+.nl-hub-logo-wrap::before{
+  content:"";
+  position:absolute;
+  top:-14%;
+  left:-160%;
+  width:160%;
+  height:128%;
+  z-index: 3;
+  pointer-events:none;
+
+  background:
+    radial-gradient(circle at 30% 55%,
+      rgba(255,255,255,.42),
+      rgba(255,255,255,.14) 38%,
+      rgba(255,255,255,0) 74%),
+    radial-gradient(circle at 52% 40%,
+      rgba(255,255,255,.18),
+      rgba(255,255,255,0) 66%),
+    radial-gradient(circle at 45% 72%,
+      rgba(255,255,255,.16),
+      rgba(255,255,255,0) 72%);
+
+  filter: blur(14px);
+  opacity: .55;
+  mix-blend-mode: screen;
+
+  animation: sprayPass 2.4s ease-out forwards;
+  animation-delay: .20s;
+}
+
+@keyframes sprayPass{
+  from{ left:-160%; }
+  to{ left:160%; }
+}
+
+@keyframes greenReveal{
+  from{
+    -webkit-clip-path: inset(0 100% 0 0);
+    clip-path: inset(0 100% 0 0);
+  }
+  to{
+    -webkit-clip-path: inset(0 0 0 0);
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes whiteFade{
+  0%   { opacity: 1; }
+  45%  { opacity: 1; } /* holds white until the spray is mid-way */
+  100% { opacity: 0; }
+}
 
     /* clarity line under logo */
     .nl-hub-line{
