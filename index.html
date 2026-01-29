@@ -153,32 +153,13 @@
 
     /* ===== HUB layout ===== */
     #nl-hub{
-  min-height: 100vh;
-  background: #000;
-  display: grid;
-  place-items: center;
-  padding: 26px 14px;
-  position: relative;
-
-  /* spray timing */
-  --sprayDur: 3s;
-  --sprayDelay: .35s;
-}
-    /* subtle green glow “atmosphere” behind content (currently OFF) */
-    /*
-    #nl-hub::before{
-      content:"";
-      position:absolute;
-      inset:-40px;
-      background:
-        radial-gradient(circle at 50% 12%,
-          rgba(46,255,140,.18),
-          rgba(0,0,0,0) 55%);
-      filter: blur(10px);
-      pointer-events:none;
-      z-index: 0;
+      min-height: 100vh;
+      background: #000;
+      display: grid;
+      place-items: center;
+      padding: 26px 14px;
+      position: relative;
     }
-    */
 
     /* keeps your hub content above the glow */
     #nl-hub .nl-hub-inner{
@@ -204,133 +185,127 @@
       filter: drop-shadow(0 0 22px rgba(80,255,160,.45));
     }
 
-   /* ===== Spray reveal effect (WHITE -> GREEN) — synced + less flashlight ===== */
-.nl-hub-logo-wrap{
-  position: relative;
-  display: inline-block;
-  line-height: 0;
-  width: min(300px, 75vw);
-  overflow: visible;
-}
+    /* ===== Spray reveal effect (WHITE -> GREEN) — Safari/iOS safe ===== */
+    :root{
+      --sprayDur: 2.25s;
+      --sprayDelay: .25s;
+    }
 
-#nl-hub .nl-hub-logo{
-  width: 100%;
-  height: auto;
-  display: block;
-}
+    .nl-hub-logo-wrap{
+      position: relative;
+      display: inline-block;
+      line-height: 0;
+      width: min(300px, 75vw);
+      overflow: visible; /* don't clip the glow */
+    }
 
-/* GREEN logo reveals left->right */
-#nl-hub .nl-hub-logo.logo-green{
-  position: relative;
-  z-index: 1;
-  filter: drop-shadow(0 0 22px rgba(80,255,160,.45));
+    /* shared sizing */
+    #nl-hub .nl-hub-logo{
+      width: 100%;
+      height: auto;
+      display: block;
+    }
 
-  /* start hidden */
-  clip-path: polygon(0 0, 0 100%, 0 100%, 0 0);
-  animation: greenReveal var(--sprayDur) cubic-bezier(.22,.9,.22,1) forwards;
-animation-delay: var(--sprayDelay);
-  will-change: clip-path;
-}
+    /* WHITE logo sits on top and fades out */
+    #nl-hub .nl-hub-logo.logo-white{
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
 
-/* WHITE logo disappears left->right (SYNCED to the same edge) */
-#nl-hub .nl-hub-logo.logo-white{
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
+      filter:
+        grayscale(1)
+        brightness(0)
+        invert(1)
+        drop-shadow(0 0 18px rgba(255,255,255,.10));
 
-  /* convert your green png to white */
-  filter:
-    grayscale(1)
-    brightness(0)
-    invert(1)
-    drop-shadow(0 0 12px rgba(255,255,255,.10));
+      animation: whiteFade var(--sprayDur) ease-out forwards;
+      animation-delay: var(--sprayDelay);
+      will-change: opacity;
+    }
 
-  /* start fully visible */
-  clip-path: inset(0 0% 0 0%);
-  animation: greenReveal var(--sprayDur) cubic-bezier(.22,.9,.22,1) forwards;
-animation-delay: var(--sprayDelay);
-  will-change: clip-path;
-}
+    /* GREEN logo reveals via moving mask (works great on iOS Safari) */
+    #nl-hub .nl-hub-logo.logo-green{
+      position: relative;
+      z-index: 1;
 
-.nl-hub-logo-wrap::before{
-  content:"";
-  position:absolute;
-  top:-6%;
-  left:-120%;
-  width:120%;
-  height:112%;
-  z-index: 3;
-  pointer-events:none;
+      /* start hidden */
+      -webkit-mask-image: linear-gradient(90deg,
+        transparent 0%,
+        transparent 42%,
+        #000 52%,
+        #000 100%);
+      -webkit-mask-size: 220% 100%;
+      -webkit-mask-position: 120% 0;
+      -webkit-mask-repeat: no-repeat;
 
-  background:
-    radial-gradient(circle at 40% 55%,
-      rgba(255,255,255,.42),
-      rgba(255,255,255,.16) 32%,
-      rgba(255,255,255,0) 60%),
-    radial-gradient(circle at 58% 42%,
-      rgba(255,255,255,.18),
-      rgba(255,255,255,0) 62%),
-    radial-gradient(circle at 50% 70%,
-      rgba(255,255,255,.14),
-      rgba(255,255,255,0) 65%);
+      mask-image: linear-gradient(90deg,
+        transparent 0%,
+        transparent 42%,
+        #000 52%,
+        #000 100%);
+      mask-size: 220% 100%;
+      mask-position: 120% 0;
+      mask-repeat: no-repeat;
 
-  filter: blur(10px);
-  opacity: .48;
-  mix-blend-mode: screen;
+      animation: greenMask var(--sprayDur) cubic-bezier(.15,.9,.2,1) forwards;
+      animation-delay: var(--sprayDelay);
+      will-change: -webkit-mask-position, mask-position;
+    }
 
-  animation: whiteFade var(--sprayDur) ease-out forwards;
-animation-delay: var(--sprayDelay);
-}
+    /* “spray cloud” sweep — softer + less line-y */
+    .nl-hub-logo-wrap::before{
+      content:"";
+      position:absolute;
+      top:-14%;
+      left:-160%;
+      width:160%;
+      height:128%;
+      z-index: 3;
+      pointer-events:none;
 
-/* speckle texture layer (tiny dots / overspray) */
-.nl-hub-logo-wrap::after{
-  content:"";
-  position:absolute;
-  top:-10%;
-  left:-160%;
-  width:160%;
-  height:120%;
-  z-index: 4;
-  pointer-events:none;
+      background:
+        radial-gradient(circle at 28% 56%,
+          rgba(255,255,255,.38),
+          rgba(255,255,255,.12) 34%,
+          rgba(255,255,255,0) 74%),
+        radial-gradient(circle at 52% 40%,
+          rgba(255,255,255,.14),
+          rgba(255,255,255,0) 68%),
+        radial-gradient(circle at 48% 72%,
+          rgba(255,255,255,.12),
+          rgba(255,255,255,0) 72%);
 
-  background:
-    radial-gradient(circle, rgba(255,255,255,.22) 0 1px, transparent 2px) 0 0/14px 14px,
-    radial-gradient(circle, rgba(255,255,255,.16) 0 1px, transparent 2px) 7px 9px/18px 18px;
+      filter: blur(15px);
+      opacity: .58;
+      mix-blend-mode: screen;
 
-  opacity: .25;
-  filter: blur(0.4px);
-  mix-blend-mode: screen;
+      animation: sprayPass var(--sprayDur) ease-out forwards;
+      animation-delay: var(--sprayDelay);
+      will-change: left;
+    }
 
-  animation: sprayPass var(--sprayDur) ease-out forwards;
-animation-delay: var(--sprayDelay);
-}
+    @keyframes sprayPass{
+      from{ left:-160%; }
+      to{ left:160%; }
+    }
 
-@keyframes sprayPass{
-  from{ left:-160%; }
-  to  { left:160%; }
-}
+    @keyframes greenMask{
+      from{
+        -webkit-mask-position: 120% 0;
+        mask-position: 120% 0;
+      }
+      to{
+        -webkit-mask-position: -20% 0;
+        mask-position: -20% 0;
+      }
+    }
 
-@keyframes greenReveal{
-  from {
-    clip-path: polygon(
-      0% 0%, 0% 100%,
-      0% 100%, 0% 0%
-    );
-  }
-  to {
-    clip-path: polygon(
-      0% 0%, 0% 100%,
-      100% 100%, 100% 0%
-    );
-  }
-}
-
-/* white wipes away EXACTLY where green is revealing */
-@keyframes whiteWipe{
-  from { clip-path: inset(0 0% 0 0%); }
-  to   { clip-path: inset(0 0% 0 102%); }
-}
+    @keyframes whiteFade{
+      0%   { opacity: 1; }
+      45%  { opacity: 1; }
+      100% { opacity: 0; }
+    }
 
     /* clarity line under logo */
     .nl-hub-line{
@@ -447,17 +422,17 @@ animation-delay: var(--sprayDelay);
     <div class="nl-hub-inner">
 
       <div class="nl-hub-logo-wrap">
-  <!-- GREEN logo (reveals) -->
-  <img class="nl-hub-logo logo-green"
-       src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png"
-       alt="New Leaf Painting Co.">
+        <!-- GREEN logo (reveals) -->
+        <img class="nl-hub-logo logo-green"
+             src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png"
+             alt="New Leaf Painting Co.">
 
-  <!-- WHITE logo (starts visible, fades out) -->
-  <img class="nl-hub-logo logo-white"
-       src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png"
-       alt=""
-       aria-hidden="true">
-</div>
+        <!-- WHITE logo (starts visible, fades out) -->
+        <img class="nl-hub-logo logo-white"
+             src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png"
+             alt=""
+             aria-hidden="true">
+      </div>
 
       <p class="nl-hub-line">
         You’re already here. Proven work, real reviews — and rewards you won’t find on any other painter’s site.
@@ -549,14 +524,10 @@ animation-delay: var(--sprayDelay);
       const hub = document.getElementById("nl-hub");
       const standard = document.getElementById("nl-standard");
 
-      // URL flags:
-      // - nav=1 means internal navigation (NO gate)
-      // - mode=hub or mode=standard controls which view to show
       const params = new URLSearchParams(window.location.search);
-      const nav = params.get("nav"); // "1" when navigating internally
-      const modeParam = (params.get("mode") || "").toLowerCase(); // "hub" or "standard"
+      const nav = params.get("nav");
+      const modeParam = (params.get("mode") || "").toLowerCase();
 
-      // Always start hidden; we'll show exactly what we want
       hub.style.display = "none";
       standard.style.display = "none";
 
@@ -573,7 +544,6 @@ animation-delay: var(--sprayDelay);
         );
       }
 
-      // Ensure internal links carry nav=1&mode=...
       function decorateLinks(mode){
         document.querySelectorAll('a[href]').forEach(a => {
           const href = a.getAttribute("href");
@@ -662,7 +632,6 @@ animation-delay: var(--sprayDelay);
         window.scrollTo(0,0);
       }
 
-      // ===== Fireworks (gate only) =====
       (function initFireworks(){
         const canvas = document.getElementById("nl-fireworks");
         if (!canvas) return;
@@ -762,7 +731,6 @@ animation-delay: var(--sprayDelay);
         }, 8000);
       })();
 
-      // ===== GATE RULE =====
       const isInternalNav = (nav === "1");
 
       if (isInternalNav) {
@@ -779,7 +747,6 @@ animation-delay: var(--sprayDelay);
         standard.style.display = "none";
       }
 
-      // ===== BUTTONS =====
       enterBtn.addEventListener("click", () => {
         history.replaceState({}, "", "index.html" + buildModeQuery("hub"));
         setMode("hub");
