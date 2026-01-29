@@ -201,100 +201,123 @@
       filter: drop-shadow(0 0 22px rgba(80,255,160,.45));
     }
 
-   /* ===== Spray reveal effect (WHITE -> GREEN) ===== */
+   /* ===== Spray reveal effect (WHITE -> GREEN) — synced + less flashlight ===== */
 .nl-hub-logo-wrap{
   position: relative;
   display: inline-block;
   line-height: 0;
-  width: min(300px, 75vw);   /* keeps wrap same as logo */
-  overflow: visible;         /* prevents glow clipping */
+  width: min(300px, 75vw);
+  overflow: visible;
 }
 
-/* shared */
 #nl-hub .nl-hub-logo{
   width: 100%;
   height: auto;
   display: block;
 }
 
-/* GREEN logo (reveals left -> right) */
+/* GREEN logo reveals left->right */
 #nl-hub .nl-hub-logo.logo-green{
   position: relative;
   z-index: 1;
   filter: drop-shadow(0 0 22px rgba(80,255,160,.45));
 
-  /* FIX: extend left slightly so it never “cuts” the first bit */
+  /* start hidden */
   clip-path: inset(0 100% 0 -2%);
-
-  animation: greenReveal 2.2s cubic-bezier(.2,.9,.2,1) forwards;
-  animation-delay: .35s;
+  animation: greenReveal 2.0s cubic-bezier(.15,.9,.2,1) forwards;
+  animation-delay: .20s;
   will-change: clip-path;
 }
 
-/* WHITE logo (starts visible, fades out) */
+/* WHITE logo disappears left->right (SYNCED to the same edge) */
 #nl-hub .nl-hub-logo.logo-white{
   position: absolute;
   inset: 0;
   z-index: 2;
-  opacity: 1;
   pointer-events: none;
 
-  /* turns your green PNG into white */
+  /* convert your green png to white */
   filter:
     grayscale(1)
     brightness(0)
     invert(1)
-    drop-shadow(0 0 18px rgba(255,255,255,.10));
+    drop-shadow(0 0 12px rgba(255,255,255,.10));
 
-  animation: whiteFade 2.2s ease-out forwards;
-  animation-delay: .35s;
+  /* start fully visible */
+  clip-path: inset(0 0% 0 0%);
+  animation: whiteWipe 2.0s cubic-bezier(.15,.9,.2,1) forwards;
+  animation-delay: .20s;
+  will-change: clip-path;
 }
 
-/* mist sweep (less flashlight, more “spray cloud”) */
+/* “spray cloud” sweep — irregular, not a perfect beam */
 .nl-hub-logo-wrap::before{
   content:"";
   position:absolute;
-  top:-12%;
-  left:-140%;
-  width:140%;
-  height:124%;
+  top:-18%;
+  left:-160%;
+  width:160%;
+  height:136%;
   z-index: 3;
   pointer-events:none;
 
   background:
-    radial-gradient(circle at 35% 55%,
-      rgba(255,255,255,.55),
-      rgba(255,255,255,.18) 38%,
+    radial-gradient(circle at 30% 55%,
+      rgba(255,255,255,.45),
+      rgba(255,255,255,.14) 35%,
       rgba(255,255,255,0) 72%),
-    radial-gradient(circle at 55% 40%,
-      rgba(255,255,255,.20),
-      rgba(255,255,255,0) 65%),
-    radial-gradient(circle at 48% 68%,
+    radial-gradient(circle at 52% 40%,
+      rgba(255,255,255,.18),
+      rgba(255,255,255,0) 66%),
+    radial-gradient(circle at 45% 72%,
       rgba(255,255,255,.16),
       rgba(255,255,255,0) 70%);
 
-  filter: blur(14px);
-  opacity: .62;
+  filter: blur(16px);
+  opacity: .65;
   mix-blend-mode: screen;
 
-  animation: sprayPass 2.2s ease-out forwards;
-  animation-delay: .35s;
+  animation: sprayPass 2.0s ease-out forwards;
+  animation-delay: .20s;
+}
+
+/* speckle texture layer (tiny dots / overspray) */
+.nl-hub-logo-wrap::after{
+  content:"";
+  position:absolute;
+  top:-10%;
+  left:-160%;
+  width:160%;
+  height:120%;
+  z-index: 4;
+  pointer-events:none;
+
+  background:
+    radial-gradient(circle, rgba(255,255,255,.22) 0 1px, transparent 2px) 0 0/14px 14px,
+    radial-gradient(circle, rgba(255,255,255,.16) 0 1px, transparent 2px) 7px 9px/18px 18px;
+
+  opacity: .25;
+  filter: blur(0.4px);
+  mix-blend-mode: screen;
+
+  animation: sprayPass 2.0s ease-out forwards;
+  animation-delay: .20s;
 }
 
 @keyframes sprayPass{
-  from{ left:-140%; }
-  to{ left:140%; }
+  from{ left:-160%; }
+  to  { left:160%; }
 }
 
 @keyframes greenReveal{
   from { clip-path: inset(0 100% 0 -2%); }
-  to   { clip-path: inset(0 0% 0 -2%); }
+  to   { clip-path: inset(0 0%   0 -2%); }
 }
 
-@keyframes whiteFade{
-  0%   { opacity: 1; }
-  55%  { opacity: 1; }
-  100% { opacity: 0; }
+/* white wipes away EXACTLY where green is revealing */
+@keyframes whiteWipe{
+  from { clip-path: inset(0 0% 0 0%); }
+  to   { clip-path: inset(0 0% 0 102%); }
 }
 
     /* clarity line under logo */
