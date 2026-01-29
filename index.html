@@ -337,19 +337,20 @@
   to{ left:160%; }
 }
 
-from{
-  -webkit-clip-path: inset(0 100% 0 -3%);
-  clip-path: inset(0 100% 0 -3%);
-}
-to{
-  -webkit-clip-path: inset(0 0 0 -3%);
-  clip-path: inset(0 0 0 -3%);
-}
+@keyframes greenReveal{
+  from{
+    -webkit-clip-path: inset(0 100% 0 -3%);
+    clip-path: inset(0 100% 0 -3%);
+  }
+  to{
+    -webkit-clip-path: inset(0 0% 0 -3%);
+    clip-path: inset(0 0% 0 -3%);
+  }
 }
 
 @keyframes whiteFade{
   0%   { opacity: 1; }
-  45%  { opacity: 1; } /* holds white until the spray is mid-way */
+  45%  { opacity: 1; } /* holds white until spray is mid-way */
   100% { opacity: 0; }
 }
 
