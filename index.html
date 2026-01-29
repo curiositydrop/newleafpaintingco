@@ -160,9 +160,7 @@
     /* ===== HUB layout ===== */
     #nl-hub{
   min-height: 100vh;
-  background: #000;              /* true black base like the gate */
-  position: relative;
-  overflow: hidden;
+  background: #000;  /* pure black like gate */
   display: grid;
   place-items: center;
   padding: 26px 14px;
@@ -194,7 +192,7 @@
     }
 
     .nl-hub-logo{
-  width: min(300px, 75vw);   /* same size behavior as gate */
+  width: min(300px, 75vw);   /* same size logic as gate */
   height: auto;
   margin: 0 auto 18px auto;
   display: block;
@@ -203,9 +201,9 @@
   border-radius: 0;
   padding: 0;
 
-  filter: drop-shadow(0 0 22px rgba(80, 255, 160, 0.45));
+  /* exact same glow as gate */
+  filter: drop-shadow(0 0 22px rgba(80,255,160,.45));
 }
-
     /* NEW: clarity line under logo */
     .nl-hub-line{
       margin: 0 auto 18px auto;
