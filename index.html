@@ -277,9 +277,9 @@
 
   /* IMPORTANT for iOS Safari */
   -webkit-clip-path: inset(0 100% 0 -3%);
-clip-path: inset(0 100% 0 -3%);
+  clip-path: inset(0 100% 0 -3%);
 
-  animation: greenReveal 2.4s cubic-bezier(.15,.9,.2,1) forwards;
+  animation: greenReveal 2.0s cubic-bezier(.15,.9,.2,1) forwards;
   animation-delay: .20s;
   will-change: clip-path;
 }
@@ -292,14 +292,12 @@ clip-path: inset(0 100% 0 -3%);
   opacity: 1;
   pointer-events: none;
 
-  /* turns your green PNG into white */
   filter:
     grayscale(1)
     brightness(0)
-    invert(1)
-    drop-shadow(0 0 18px rgba(255,255,255,.10));
+    invert(1);
 
-  animation: whiteFade 2.4s ease-out forwards;
+  animation: whiteFade 2.0s ease-out forwards;
   animation-delay: .20s;
 }
 
