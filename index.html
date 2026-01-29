@@ -159,12 +159,12 @@
 
     /* ===== HUB layout ===== */
     #nl-hub {
-      min-height: 100vh;
-      background: #0f5f33;
-      display: grid;
-      place-items: center;
-      padding: 26px 14px;
-    }
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #0f5f33 0%, #000 55%);
+  display: grid;
+  place-items: center;
+  padding: 26px 14px;
+}
     .nl-hub-inner{
       width: 100%;
       max-width: 720px;
@@ -172,15 +172,20 @@
     }
 
     .nl-hub-logo{
-      width: 160px;
-      max-width: 160px;
-      height: auto;
-      display: block;
-      margin: 0 auto 10px auto;
-      background: rgba(255,255,255,.06);
-      border-radius: 16px;
-      padding: 10px;
-    }
+  width: 160px;
+  max-width: 160px;
+  height: auto;
+  display: block;
+  margin: 0 auto 10px auto;
+
+  /* remove card look */
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+
+  /* optional: subtle glow */
+  filter: drop-shadow(0 0 18px rgba(46,255,140,.35));
+}
 
     /* NEW: clarity line under logo */
     .nl-hub-line{
@@ -253,6 +258,19 @@
       text-decoration: underline;
       cursor: pointer;
     }
+    /* pulse animation */
+@keyframes nlPulse {
+  0%,100% { box-shadow: 0 0 0 rgba(46,255,140,0); transform: translateY(0); }
+  50%     { box-shadow: 0 0 22px rgba(46,255,140,.45); transform: translateY(-1px); }
+}
+
+#nl-hub .nl-btn.pulse{
+  animation: nlPulse 1.8s ease-in-out infinite;
+}
+
+#nl-hub .nl-btn.pulse:hover{
+  animation: none;
+}
   </style>
 </head>
 
@@ -282,15 +300,15 @@
   <!-- ===== HUB MODE (Experience) ===== -->
   <main id="nl-hub" aria-label="New Leaf Experience Hub">
     <div class="nl-hub-inner">
-      <img class="nl-hub-logo" src="7D16A71A-2AF9-4EBB-863A-09C24D4F6662.png" alt="New Leaf Painting Co.">
+      <img class="nl-hub-logo" src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png" alt="New Leaf Painting Co.">
 
       <p class="nl-hub-line">
         You’re already here. Proven work, real reviews — and rewards you won’t find on any other painter’s site.
       </p>
 
       <div class="nl-hub-grid">
-        <a class="nl-btn" href="#games">Play for Rewards</a>
-        <a class="nl-btn spin" href="#spinwin">Spin &amp; Win (Everyone Wins) ✨</a>
+        <a class="nl-btn pulse" href="#games">Play for Rewards</a>
+<a class="nl-btn spin pulse" href="#spinwin">Spin &amp; Win (Everyone Wins) ✨</a>
 
         <a class="nl-btn" href="past-projects.html">See Transformations</a>
         <a class="nl-btn" href="referus.html">Refer New Leaf Painting Co.</a>
