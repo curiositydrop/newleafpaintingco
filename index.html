@@ -201,66 +201,84 @@
       filter: drop-shadow(0 0 22px rgba(80,255,160,.45));
     }
 
-    /* ===== Spray reveal effect (WHITE -> GREEN) ===== */
+   /* ===== Spray reveal effect (WHITE -> GREEN) ===== */
 .nl-hub-logo-wrap{
   position: relative;
   display: inline-block;
-  overflow: hidden;
   line-height: 0;
+  width: min(300px, 75vw);   /* keeps wrap same as logo */
+  overflow: visible;         /* prevents glow clipping */
 }
 
 /* shared */
 #nl-hub .nl-hub-logo{
-  width: min(300px, 75vw);
+  width: 100%;
   height: auto;
   display: block;
 }
 
-/* top WHITE logo (shows first, then fades out) */
+/* GREEN logo (reveals left -> right) */
+#nl-hub .nl-hub-logo.logo-green{
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 0 22px rgba(80,255,160,.45));
+
+  /* FIX: extend left slightly so it never “cuts” the first bit */
+  clip-path: inset(0 100% 0 -2%);
+
+  animation: greenReveal 2.2s cubic-bezier(.2,.9,.2,1) forwards;
+  animation-delay: .35s;
+  will-change: clip-path;
+}
+
+/* WHITE logo (starts visible, fades out) */
 #nl-hub .nl-hub-logo.logo-white{
   position: absolute;
   inset: 0;
+  z-index: 2;
   opacity: 1;
+  pointer-events: none;
 
   /* turns your green PNG into white */
   filter:
     grayscale(1)
     brightness(0)
     invert(1)
-    drop-shadow(0 0 22px rgba(80,255,160,.45));
+    drop-shadow(0 0 18px rgba(255,255,255,.10));
 
   animation: whiteFade 2.2s ease-out forwards;
   animation-delay: .35s;
 }
 
-/* bottom GREEN logo (reveals left -> right) */
-#nl-hub .nl-hub-logo.logo-green{
-  filter: drop-shadow(0 0 22px rgba(80,255,160,.45));
-
-  /* start hidden, reveal left->right */
-  clip-path: inset(0 100% 0 0);
-
-  animation: greenReveal 2.2s ease-out forwards;
-  animation-delay: .35s;
-}
-
-/* mist sweep */
+/* mist sweep (less flashlight, more “spray cloud”) */
 .nl-hub-logo-wrap::before{
   content:"";
   position:absolute;
-  top:0;
+  top:-12%;
   left:-140%;
   width:140%;
-  height:100%;
-  background: radial-gradient(circle,
-    rgba(255,255,255,.85),
-    rgba(255,255,255,.18),
-    rgba(255,255,255,0) 70%);
-  filter: blur(18px);
-  opacity: .55;
+  height:124%;
+  z-index: 3;
+  pointer-events:none;
+
+  background:
+    radial-gradient(circle at 35% 55%,
+      rgba(255,255,255,.55),
+      rgba(255,255,255,.18) 38%,
+      rgba(255,255,255,0) 72%),
+    radial-gradient(circle at 55% 40%,
+      rgba(255,255,255,.20),
+      rgba(255,255,255,0) 65%),
+    radial-gradient(circle at 48% 68%,
+      rgba(255,255,255,.16),
+      rgba(255,255,255,0) 70%);
+
+  filter: blur(14px);
+  opacity: .62;
+  mix-blend-mode: screen;
+
   animation: sprayPass 2.2s ease-out forwards;
   animation-delay: .35s;
-  pointer-events:none;
 }
 
 @keyframes sprayPass{
@@ -269,8 +287,8 @@
 }
 
 @keyframes greenReveal{
-  from { clip-path: inset(0 100% 0 0); }
-  to   { clip-path: inset(0 0 0 0); }
+  from { clip-path: inset(0 100% 0 -2%); }
+  to   { clip-path: inset(0 0% 0 -2%); }
 }
 
 @keyframes whiteFade{
