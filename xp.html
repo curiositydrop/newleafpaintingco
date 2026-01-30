@@ -9,64 +9,14 @@
   <link rel="stylesheet" href="style.css" />
 
   <style>
-    /* Fix form text inside XP overlay */
-    .nl-modal,
-    .nl-modal * {
-      color: #111 !important;
+    /* Force XP black shell */
+    body{
+      margin:0;
+      background:#000;
+      color:#fff;
     }
 
-    .nl-modal input,
-    .nl-modal textarea {
-      background: #fff !important;
-      color: #111 !important;
-    }
-
-    .nl-modal label {
-      color: #111 !important;
-      font-weight: 600;
-    }
-
-    /* === XP: force the core contact popup to display correctly === */
-    #contact-popup,
-    #contact-popup *{
-      color:#111 !important;
-    }
-
-    /* IMPORTANT: make sure "labels" show even if they're not <label> tags */
-    #contact-popup label,
-    #contact-popup .label,
-    #contact-popup .form-label,
-    #contact-popup p,
-    #contact-popup span,
-    #contact-popup strong{
-      display:block !important;
-      visibility:visible !important;
-      opacity:1 !important;
-      height:auto !important;
-      color:#111 !important;
-      font-size:16px !important;
-      line-height:1.2 !important;
-      margin:10px 0 6px !important;
-      font-weight:700 !important;
-    }
-
-    #contact-popup input,
-    #contact-popup textarea{
-      background:#fff !important;
-      color:#111 !important;
-      border:1px solid #cfcfcf !important;
-    }
-
-    #contact-popup ::placeholder{
-      color:#777 !important;
-    }
-  </style>
-
-  <style>
-    /* Force XP black background and hide any core globals if present */
-    body{ margin:0; background:#000; color:#fff; }
-
-    /* ✅ FIX: do NOT hide #contact-popup here */
+    /* Hide any globals accidentally present in the shell */
     #global-header, #global-footer, #contact-btn { display:none !important; }
 
     /* Make iframe fill the screen */
@@ -81,70 +31,121 @@
 </head>
 
 <body>
-  <!-- This loads any core page INSIDE an XP shell -->
+  <!-- This loads any page INSIDE an XP shell -->
   <iframe class="xp-frame" id="xpFrame" title="New Leaf XP"></iframe>
 
   <script>
-    // Loads whichever page you pass as ?page=...
-    // Example: xp.html?page=past-projects.html
     const params = new URLSearchParams(location.search);
     const page = params.get("page") || "index.html?nav=1&mode=hub";
-    document.getElementById("xpFrame").src = page;
-  </script>
+    const frame = document.getElementById("xpFrame");
+    frame.src = page;
 
-  <script>
-    function wireContactFormToMailto() {
-      const form = document.querySelector("#contact-popup form");
-      if (!form) return;
+    function injectXpFixesIntoFrame(){
+      const doc = frame.contentDocument || frame.contentWindow?.document;
+      if (!doc) return;
 
-      if (form.dataset.mailtoWired === "1") return;
-      form.dataset.mailtoWired = "1";
+      // 1) Inject CSS INSIDE the iframe so labels/text show properly
+      const style = doc.createElement("style");
+      style.textContent = `
+        /* ===== XP form readability fix (inside iframe) ===== */
+        #contact-popup, #contact-popup *{ color:#111 !important; }
 
-      form.addEventListener("submit", (e) => {
-        e.preventDefault();
+        /* show labels if they exist */
+        #contact-popup label{
+          display:block !important;
+          visibility:visible !important;
+          opacity:1 !important;
+          height:auto !important;
+          color:#111 !important;
+          font-weight:700 !important;
+          margin:10px 0 6px !important;
+          font-size:16px !important;
+          line-height:1.2 !important;
+        }
 
-        const getVal = (sel) => (form.querySelector(sel)?.value || "").trim();
+        /* sometimes "labels" are spans/divs/p tags */
+        #contact-popup .label,
+        #contact-popup .form-label,
+        #contact-popup p,
+        #contact-popup span,
+        #contact-popup strong{
+          display:block !important;
+          visibility:visible !important;
+          opacity:1 !important;
+          height:auto !important;
+          color:#111 !important;
+          font-weight:700 !important;
+          margin:10px 0 6px !important;
+          font-size:16px !important;
+          line-height:1.2 !important;
+        }
 
-        const name =
-          getVal('input[name="name"]') ||
-          getVal('input[name="full-name"]') ||
-          getVal('input[name="fullname"]') ||
-          getVal('input[name="your-name"]');
+        #contact-popup input,
+        #contact-popup textarea{
+          background:#fff !important;
+          color:#111 !important;
+          border:1px solid #cfcfcf !important;
+        }
 
-        const email =
-          getVal('input[name="email"]') ||
-          getVal('input[type="email"]');
+        #contact-popup ::placeholder{ color:#777 !important; }
+      `;
+      doc.head.appendChild(style);
 
-        const phone =
-          getVal('input[name="phone"]') ||
-          getVal('input[type="tel"]');
+      // 2) Wire the contact form INSIDE the iframe to mailto
+      function wireContactFormToMailto(){
+        const form = doc.querySelector("#contact-popup form");
+        if (!form) return;
 
-        const message =
-          getVal('textarea[name="message"]') ||
-          getVal('textarea') ||
-          getVal('input[name="message"]');
+        if (form.dataset.mailtoWired === "1") return;
+        form.dataset.mailtoWired = "1";
 
-        const TO_EMAIL = "newleafpaintingcompany@gmail.com";
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
 
-        const subject = encodeURIComponent("New Leaf Estimate Request");
-        const body = encodeURIComponent(
-          `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\n\nMessage:\n${message}`
-        );
+          const getVal = (sel) => (form.querySelector(sel)?.value || "").trim();
 
-        window.location.href = `mailto:${TO_EMAIL}?subject=${subject}&body=${body}`;
-      });
-    }
+          const name =
+            getVal('input[name="name"]') ||
+            getVal('input[name="full-name"]') ||
+            getVal('input[name="fullname"]') ||
+            getVal('input[name="your-name"]');
 
-    // Try once on load, and keep trying briefly (popup can be injected after load)
-    window.addEventListener("DOMContentLoaded", () => {
+          const email =
+            getVal('input[name="email"]') ||
+            getVal('input[type="email"]');
+
+          const phone =
+            getVal('input[name="phone"]') ||
+            getVal('input[type="tel"]');
+
+          const message =
+            getVal('textarea[name="message"]') ||
+            getVal('textarea') ||
+            getVal('input[name="message"]');
+
+          const TO_EMAIL = "newleafpaintingcompany@gmail.com";
+
+          const subject = encodeURIComponent("New Leaf Estimate Request");
+          const body = encodeURIComponent(
+            `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\n\nMessage:\n${message}`
+          );
+
+          doc.defaultView.location.href = `mailto:${TO_EMAIL}?subject=${subject}&body=${body}`;
+        });
+      }
+
+      // Run now + keep retrying briefly (popup gets injected after global loads)
       wireContactFormToMailto();
       let tries = 0;
       const t = setInterval(() => {
         wireContactFormToMailto();
         tries++;
-        if (document.querySelector("#contact-popup form") || tries > 30) clearInterval(t);
+        if (doc.querySelector("#contact-popup form") || tries > 40) clearInterval(t);
       }, 200);
-    });
+    }
+
+    // Run fixes every time the iframe loads a page
+    frame.addEventListener("load", injectXpFixesIntoFrame);
   </script>
 </body>
 </html>
