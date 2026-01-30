@@ -7,7 +7,24 @@
 
   <!-- reuse your same CSS -->
   <link rel="stylesheet" href="style.css" />
+  <style>
+  /* Fix form text inside XP overlay */
+  .nl-modal,
+  .nl-modal * {
+    color: #111 !important;
+  }
 
+  .nl-modal input,
+  .nl-modal textarea {
+    background: #fff !important;
+    color: #111 !important;
+  }
+
+  .nl-modal label {
+    color: #111 !important;
+    font-weight: 600;
+  }
+</style>
   <style>
     /* Force XP black background and hide any core globals if present */
     body{ margin:0; background:#000; color:#fff; }
