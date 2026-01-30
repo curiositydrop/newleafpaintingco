@@ -414,6 +414,17 @@ body.mode-hub,
 body.mode-hub #nl-hub{
   background: #000 !important;
 }
+    /* FORCE XP LOOK */
+body.mode-hub{
+  background:#000;
+  color:#fff;
+}
+
+/* FORCE CORE LOOK */
+body.mode-standard{
+  background:#f3f3f3;
+  color:#111;
+}
   </style>
 </head>
 
@@ -538,6 +549,71 @@ body.mode-hub #nl-hub{
   </div>
 
   <script>
+    // ===== FORCE MODE LOCK (XP or CORE) =====
+(function enforceModeLock(){
+  const params = new URLSearchParams(window.location.search);
+  const mode = params.get("mode");
+
+  if (!mode) return;
+
+  // If someone is in XP, never allow core UI to load
+  if (mode === "hub") {
+    document.body.classList.add("mode-hub");
+    document.body.classList.remove("mode-standard");
+  }
+
+  // If someone is in CORE, never allow XP UI to load
+  if (mode === "standard") {
+    document.body.classList.add("mode-standard");
+    document.body.classList.remove("mode-hub");
+  }
+})();
+    function wireContactFormToMailto() {
+  const form = document.querySelector("#contact-popup form");
+  if (!form) return;
+
+  // Prevent double-binding
+  if (form.dataset.mailtoWired === "1") return;
+  form.dataset.mailtoWired = "1";
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    // --- Grab common fields safely (won't error if names differ) ---
+    const getVal = (sel) => (form.querySelector(sel)?.value || "").trim();
+
+    // Try a few common input name patterns
+    const name =
+      getVal('input[name="name"]') ||
+      getVal('input[name="full-name"]') ||
+      getVal('input[name="fullname"]') ||
+      getVal('input[name="your-name"]');
+
+    const email =
+      getVal('input[name="email"]') ||
+      getVal('input[type="email"]');
+
+    const phone =
+      getVal('input[name="phone"]') ||
+      getVal('input[type="tel"]');
+
+    const message =
+      getVal('textarea[name="message"]') ||
+      getVal('textarea') ||
+      getVal('input[name="message"]');
+
+    // --- IMPORTANT: set your actual destination email here ---
+    const TO_EMAIL = "info@curiositydrop.com"; // <-- CHANGE THIS if New Leaf has a different email
+
+    const subject = encodeURIComponent("New Leaf Estimate Request");
+    const body = encodeURIComponent(
+      `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\n\nMessage:\n${message}`
+    );
+
+    // Open the email app
+    window.location.href = `mailto:${TO_EMAIL}?subject=${subject}&body=${body}`;
+  });
+}
     (function initNewLeafGateModes(){
       const gate = document.getElementById("nl-gate");
       const enterBtn = document.getElementById("nl-enter");
@@ -626,7 +702,15 @@ body.mode-hub #nl-hub{
         if (btn && !document.querySelector("#contact-btn")) {
           document.body.insertAdjacentElement("beforeend", btn);
         }
+        if (popup && !document.querySelector("#contact-popup")) {
+  document.body.insertAdjacentElement("beforeend", popup);
+}
+if (btn && !document.querySelector("#contact-btn")) {
+  document.body.insertAdjacentElement("beforeend", btn);
+}
 
+wireContactFormToMailto();
+        
         const funRow = document.getElementById("nl-experience-nav");
         if (funRow) funRow.style.display = "none";
 
