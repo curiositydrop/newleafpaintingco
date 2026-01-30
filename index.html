@@ -384,9 +384,21 @@
 
     /* pulse animation */
     @keyframes nlPulse {
-      0%,100% { box-shadow: 0 0 0 rgba(46,255,140,0); transform: translateY(0); }
-      50%     { box-shadow: 0 0 22px rgba(46,255,140,.45); transform: translateY(-1px); }
-    }
+  0%,100% {
+    box-shadow:
+      0 0 0 rgba(46,255,140,0),
+      0 0 18px rgba(46,255,140,0);
+    transform: translateY(0);
+    filter: brightness(1);
+  }
+  50% {
+    box-shadow:
+      0 0 0 8px rgba(46,255,140,.25),
+      0 0 42px rgba(46,255,140,.9);
+    transform: translateY(-2px);
+    filter: brightness(1.15);
+  }
+}
 
     #nl-hub .nl-btn.pulse{
       animation: nlPulse 1.8s ease-in-out infinite;
