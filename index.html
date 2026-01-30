@@ -560,18 +560,35 @@
       }
 
       function decorateLinks(mode){
-        document.querySelectorAll('a[href]').forEach(a => {
-          const href = a.getAttribute("href");
-          if (!href) return;
-          if (href.startsWith("#")) return;
-          if (isExternalHref(href)) return;
-          if (href.startsWith("javascript:")) return;
-          if (href.includes("nav=1")) return;
+  document.querySelectorAll('a[href]').forEach(a => {
+    const href = a.getAttribute("href");
+    if (!href) return;
 
-          const joiner = href.includes("?") ? "&" : "?";
-          a.setAttribute("href", href + joiner + `nav=1&mode=${encodeURIComponent(mode)}`);
-        });
-      }
+    // ignore in-page anchors and external links
+    if (href.startsWith("#")) return;
+    if (isExternalHref(href)) return;
+    if (href.startsWith("javascript:")) return;
+
+    // don't wrap xp.html into itself
+    const cleanPath = href.split("?")[0].split("#")[0];
+    if (cleanPath.endsWith("xp.html")) return;
+
+    // If link already has nav=1, leave it alone (prevents double-stacking params)
+    if (href.includes("nav=1")) return;
+
+    // Add nav/mode to the destination
+    const joiner = href.includes("?") ? "&" : "?";
+    const withMode = href + joiner + `nav=1&mode=${encodeURIComponent(mode)}`;
+
+    // HUB (XP) mode: open everything inside xp.html shell
+    if (mode === "hub") {
+      a.setAttribute("href", `xp.html?page=${encodeURIComponent(withMode)}`);
+    } else {
+      // STANDARD (core) mode: normal links
+      a.setAttribute("href", withMode);
+    }
+  });
+}
 
       function closeGate(){
         if (!gate) return;
