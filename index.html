@@ -149,7 +149,7 @@
     body.mode-hub #global-header,
     body.mode-hub #global-footer,
     body.mode-hub #contact-btn,
-    body.mode-hub #contact-popup { display: none !important; }
+   }
 
     /* ===== HUB layout ===== */
     #nl-hub{
@@ -655,7 +655,40 @@
 });
         
       }
+// ===== XP: load ONLY the contact popup (no core UI behind it) =====
+async function ensureContactPopupLoaded(){
+  // already in the DOM?
+  if (document.getElementById("contact-popup")) return;
 
+  const res = await fetch("global.html");
+  const html = await res.text();
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, "text/html");
+
+  const popup  = doc.querySelector("#contact-popup");
+  if (!popup) return;
+
+  // insert popup only (no header/footer)
+  document.body.insertAdjacentElement("beforeend", popup);
+
+  // wire close behavior
+  const popupEl = document.getElementById("contact-popup");
+  const popupClose = popupEl?.querySelector(".close");
+
+  if (popupEl && popupClose) {
+    popupClose.onclick = () => popupEl.style.display = "none";
+    window.addEventListener("click", (e) => {
+      if (e.target === popupEl) popupEl.style.display = "none";
+    });
+  }
+}
+
+// global function so your button onclick can call it
+window.openXpContact = async function(){
+  await ensureContactPopupLoaded();
+  const popup = document.getElementById("contact-popup");
+  if (popup) popup.style.display = "flex";
+};
       function setMode(mode){
         document.body.classList.remove("mode-hub", "mode-standard");
 
