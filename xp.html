@@ -34,5 +34,51 @@
     const page = params.get("page") || "index.html?nav=1&mode=hub";
     document.getElementById("xpFrame").src = page;
   </script>
+  <script>
+function wireContactFormToMailto() {
+  const form = document.querySelector("#contact-popup form");
+  if (!form) return;
+
+  if (form.dataset.mailtoWired === "1") return;
+  form.dataset.mailtoWired = "1";
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const getVal = (sel) => (form.querySelector(sel)?.value || "").trim();
+
+    const name =
+      getVal('input[name="name"]') ||
+      getVal('input[name="full-name"]') ||
+      getVal('input[name="fullname"]') ||
+      getVal('input[name="your-name"]');
+
+    const email =
+      getVal('input[name="email"]') ||
+      getVal('input[type="email"]');
+
+    const phone =
+      getVal('input[name="phone"]') ||
+      getVal('input[type="tel"]');
+
+    const message =
+      getVal('textarea[name="message"]') ||
+      getVal('textarea') ||
+      getVal('input[name="message"]');
+
+    const TO_EMAIL = "newleafpaintingcompany@gmail.com"; // change if needed
+
+    const subject = encodeURIComponent("New Leaf Estimate Request");
+    const body = encodeURIComponent(
+      `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\n\nMessage:\n${message}`
+    );
+
+    window.location.href = `mailto:${TO_EMAIL}?subject=${subject}&body=${body}`;
+  });
+}
+
+// run it once the page has loaded (popup is already in DOM in xp.html)
+window.addEventListener("DOMContentLoaded", wireContactFormToMailto);
+</script>
 </body>
 </html>
