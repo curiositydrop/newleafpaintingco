@@ -7,56 +7,67 @@
 
   <!-- reuse your same CSS -->
   <link rel="stylesheet" href="style.css" />
+
   <style>
-  /* Fix form text inside XP overlay */
-  .nl-modal,
-  .nl-modal * {
-    color: #111 !important;
-  }
+    /* Fix form text inside XP overlay */
+    .nl-modal,
+    .nl-modal * {
+      color: #111 !important;
+    }
 
-  .nl-modal input,
-  .nl-modal textarea {
-    background: #fff !important;
-    color: #111 !important;
-  }
+    .nl-modal input,
+    .nl-modal textarea {
+      background: #fff !important;
+      color: #111 !important;
+    }
 
-  .nl-modal label {
-    color: #111 !important;
-    font-weight: 600;
-  }
+    .nl-modal label {
+      color: #111 !important;
+      font-weight: 600;
+    }
+
     /* === XP: force the core contact popup to display correctly === */
+    #contact-popup,
+    #contact-popup *{
+      color:#111 !important;
+    }
 
-#contact-popup,
-#contact-popup *{
-  color:#111 !important;
-}
+    /* IMPORTANT: make sure "labels" show even if they're not <label> tags */
+    #contact-popup label,
+    #contact-popup .label,
+    #contact-popup .form-label,
+    #contact-popup p,
+    #contact-popup span,
+    #contact-popup strong{
+      display:block !important;
+      visibility:visible !important;
+      opacity:1 !important;
+      height:auto !important;
+      color:#111 !important;
+      font-size:16px !important;
+      line-height:1.2 !important;
+      margin:10px 0 6px !important;
+      font-weight:700 !important;
+    }
 
-#contact-popup label{
-  display:block !important;
-  visibility:visible !important;
-  opacity:1 !important;
-  font-size:16px !important;
-  line-height:1.2 !important;
-  margin:10px 0 6px !important;
-  font-weight:700 !important;
-  color:#111 !important;
-}
+    #contact-popup input,
+    #contact-popup textarea{
+      background:#fff !important;
+      color:#111 !important;
+      border:1px solid #cfcfcf !important;
+    }
 
-#contact-popup input,
-#contact-popup textarea{
-  background:#fff !important;
-  color:#111 !important;
-  border:1px solid #cfcfcf !important;
-}
+    #contact-popup ::placeholder{
+      color:#777 !important;
+    }
+  </style>
 
-#contact-popup ::placeholder{
-  color:#777 !important;
-}
-</style>
   <style>
     /* Force XP black background and hide any core globals if present */
     body{ margin:0; background:#000; color:#fff; }
-    #global-header, #global-footer, #contact-btn, #contact-popup { display:none !important; }
+
+    /* ✅ FIX: do NOT hide #contact-popup here */
+    #global-header, #global-footer, #contact-btn { display:none !important; }
 
     /* Make iframe fill the screen */
     .xp-frame{
@@ -68,6 +79,7 @@
     }
   </style>
 </head>
+
 <body>
   <!-- This loads any core page INSIDE an XP shell -->
   <iframe class="xp-frame" id="xpFrame" title="New Leaf XP"></iframe>
@@ -79,51 +91,60 @@
     const page = params.get("page") || "index.html?nav=1&mode=hub";
     document.getElementById("xpFrame").src = page;
   </script>
+
   <script>
-function wireContactFormToMailto() {
-  const form = document.querySelector("#contact-popup form");
-  if (!form) return;
+    function wireContactFormToMailto() {
+      const form = document.querySelector("#contact-popup form");
+      if (!form) return;
 
-  if (form.dataset.mailtoWired === "1") return;
-  form.dataset.mailtoWired = "1";
+      if (form.dataset.mailtoWired === "1") return;
+      form.dataset.mailtoWired = "1";
 
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
 
-    const getVal = (sel) => (form.querySelector(sel)?.value || "").trim();
+        const getVal = (sel) => (form.querySelector(sel)?.value || "").trim();
 
-    const name =
-      getVal('input[name="name"]') ||
-      getVal('input[name="full-name"]') ||
-      getVal('input[name="fullname"]') ||
-      getVal('input[name="your-name"]');
+        const name =
+          getVal('input[name="name"]') ||
+          getVal('input[name="full-name"]') ||
+          getVal('input[name="fullname"]') ||
+          getVal('input[name="your-name"]');
 
-    const email =
-      getVal('input[name="email"]') ||
-      getVal('input[type="email"]');
+        const email =
+          getVal('input[name="email"]') ||
+          getVal('input[type="email"]');
 
-    const phone =
-      getVal('input[name="phone"]') ||
-      getVal('input[type="tel"]');
+        const phone =
+          getVal('input[name="phone"]') ||
+          getVal('input[type="tel"]');
 
-    const message =
-      getVal('textarea[name="message"]') ||
-      getVal('textarea') ||
-      getVal('input[name="message"]');
+        const message =
+          getVal('textarea[name="message"]') ||
+          getVal('textarea') ||
+          getVal('input[name="message"]');
 
-    const TO_EMAIL = "newleafpaintingcompany@gmail.com"; // change if needed
+        const TO_EMAIL = "newleafpaintingcompany@gmail.com";
 
-    const subject = encodeURIComponent("New Leaf Estimate Request");
-    const body = encodeURIComponent(
-      `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\n\nMessage:\n${message}`
-    );
+        const subject = encodeURIComponent("New Leaf Estimate Request");
+        const body = encodeURIComponent(
+          `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\n\nMessage:\n${message}`
+        );
 
-    window.location.href = `mailto:${TO_EMAIL}?subject=${subject}&body=${body}`;
-  });
-}
+        window.location.href = `mailto:${TO_EMAIL}?subject=${subject}&body=${body}`;
+      });
+    }
 
-// run it once the page has loaded (popup is already in DOM in xp.html)
-window.addEventListener("DOMContentLoaded", wireContactFormToMailto);
-</script>
+    // Try once on load, and keep trying briefly (popup can be injected after load)
+    window.addEventListener("DOMContentLoaded", () => {
+      wireContactFormToMailto();
+      let tries = 0;
+      const t = setInterval(() => {
+        wireContactFormToMailto();
+        tries++;
+        if (document.querySelector("#contact-popup form") || tries > 30) clearInterval(t);
+      }, 200);
+    });
+  </script>
 </body>
 </html>
