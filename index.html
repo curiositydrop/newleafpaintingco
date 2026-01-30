@@ -616,17 +616,27 @@
         }
 
         requestAnimationFrame(() => {
-          document.querySelectorAll(".nav-links a").forEach(a => a.style.visibility = "visible");
+  document.querySelectorAll(".nav-links a").forEach(a => a.style.visibility = "visible");
 
-          let currentPage = window.location.pathname.split("/").pop().toLowerCase() || "index.html";
-          document.querySelectorAll("nav a").forEach(link => {
-            const href = (link.getAttribute("href") || "").split("?")[0].split("/").pop().toLowerCase() || "index.html";
-            link.classList.toggle("active", href === currentPage);
-            link.style.visibility = "visible";
-          });
+  let currentPage = window.location.pathname.split("/").pop().toLowerCase() || "index.html";
+  document.querySelectorAll("nav a").forEach(link => {
+    const href = (link.getAttribute("href") || "").split("?")[0].split("/").pop().toLowerCase() || "index.html";
+    link.classList.toggle("active", href === currentPage);
+    link.style.visibility = "visible";
+  });
 
-          decorateLinks(mode);
-        });
+  decorateLinks(mode);
+
+  // Auto-open contact popup if we came from hub with #contact
+  if (window.location.hash === "#contact") {
+    const popup = document.getElementById("contact-popup");
+    if (popup) popup.style.display = "flex";
+
+    // optional: remove the hash so refresh doesn't re-open
+    history.replaceState(null, "", window.location.pathname + window.location.search);
+  }
+});
+        
       }
 
       function setMode(mode){
