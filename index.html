@@ -185,125 +185,78 @@
       filter: drop-shadow(0 0 22px rgba(80,255,160,.45));
     }
 
-    /* ===== Spray reveal effect (WHITE -> GREEN) — Safari/iOS safe ===== */
-    :root{
-      --sprayDur: 2.25s;
-      --sprayDelay: .25s;
-    }
+    /* ===== Spray reveal effect (WHITE -> GREEN) — Safari/iOS safe (SINGLE version) ===== */
+:root{
+  --sprayDur: 2.25s;
+  --sprayDelay: .25s;
+}
 
-    .nl-hub-logo-wrap{
-      position: relative;
-      display: inline-block;
-      line-height: 0;
-      width: min(300px, 75vw);
-      overflow: visible; /* don't clip the glow */
-    }
-
-    /* shared sizing */
-    #nl-hub .nl-hub-logo{
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-
-    /* WHITE logo sits on top and fades out */
-    #nl-hub .nl-hub-logo.logo-white{
-      position: absolute;
-      inset: 0;
-      z-index: 2;
-      pointer-events: none;
-
-      filter:
-        grayscale(1)
-        brightness(0)
-        invert(1)
-        drop-shadow(0 0 18px rgba(255,255,255,.10));
-
-      animation: whiteFade var(--sprayDur) ease-out forwards;
-      animation-delay: var(--sprayDelay);
-      will-change: opacity;
-    }
-
-    /* GREEN logo reveals via moving mask (works great on iOS Safari) */
-    #nl-hub .nl-hub-logo.logo-green{
-      position: relative;
-      z-index: 1;
-
-      /* start hidden */
-      -webkit-mask-image: linear-gradient(90deg,
-        transparent 0%,
-        transparent 42%,
-        #000 52%,
-        #000 100%);
-      -webkit-mask-size: 220% 100%;
-      -webkit-mask-position: 120% 0;
-      -webkit-mask-repeat: no-repeat;
-
-      mask-image: linear-gradient(90deg,
-        transparent 0%,
-        transparent 42%,
-        #000 52%,
-        #000 100%);
-      mask-size: 220% 100%;
-      mask-position: 120% 0;
-      mask-repeat: no-repeat;
-
-      animation: greenMask var(--sprayDur) cubic-bezier(.15,.9,.2,1) forwards;
-      animation-delay: var(--sprayDelay);
-      will-change: -webkit-mask-position, mask-position;
-    }
-
-   /* ===== Spray reveal effect (WHITE -> GREEN) ===== */
 .nl-hub-logo-wrap{
   position: relative;
   display: inline-block;
   line-height: 0;
-  width: min(300px, 75vw);
-  overflow: visible; /* keep glow from clipping */
+  width: min(300px, 75vw);   /* keeps wrap same as logo */
+  overflow: visible;         /* prevents glow clipping */
 }
 
-/* shared */
+/* shared sizing */
 #nl-hub .nl-hub-logo{
   width: 100%;
   height: auto;
   display: block;
+  margin: 0;
 }
 
-/* GREEN logo (reveals left -> right) */
+/* WHITE logo sits on top and fades out */
+#nl-hub .nl-hub-logo.logo-white{
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+
+  /* turns your green PNG into white */
+  filter:
+    grayscale(1)
+    brightness(0)
+    invert(1)
+    drop-shadow(0 0 18px rgba(255,255,255,.10));
+
+  animation: whiteFade var(--sprayDur) ease-out forwards;
+  animation-delay: var(--sprayDelay);
+  will-change: opacity;
+}
+
+/* GREEN logo reveals via moving mask (best for iOS Safari) */
 #nl-hub .nl-hub-logo.logo-green{
   position: relative;
   z-index: 1;
   filter: drop-shadow(0 0 22px rgba(80,255,160,.45));
 
-  /* Safari-safe reveal */
-  transform: translateX(-2%);
-  -webkit-clip-path: inset(0 100% 0 0);
-  clip-path: inset(0 100% 0 0);
+  /* start hidden */
+  -webkit-mask-image: linear-gradient(90deg,
+    transparent 0%,
+    transparent 42%,
+    #000 52%,
+    #000 100%);
+  -webkit-mask-size: 220% 100%;
+  -webkit-mask-position: 120% 0;
+  -webkit-mask-repeat: no-repeat;
 
-  /* KEEP THESE (you had them before) */
-  animation: greenReveal 2.0s cubic-bezier(.15,.9,.2,1) forwards;
-  animation-delay: .20s;
-  will-change: clip-path, transform;
+  mask-image: linear-gradient(90deg,
+    transparent 0%,
+    transparent 42%,
+    #000 52%,
+    #000 100%);
+  mask-size: 220% 100%;
+  mask-position: 120% 0;
+  mask-repeat: no-repeat;
+
+  animation: greenMask var(--sprayDur) cubic-bezier(.15,.9,.2,1) forwards;
+  animation-delay: var(--sprayDelay);
+  will-change: -webkit-mask-position, mask-position;
 }
 
-/* WHITE logo (starts visible, fades out) */
-#nl-hub .nl-hub-logo.logo-white{
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  opacity: 1;
-  pointer-events: none;
-
-  filter:
-    grayscale(1)
-    brightness(0)
-    invert(1);
-
-  animation: whiteFade 2.0s ease-out forwards;
-  animation-delay: .20s;
-}
-
-/* “spray cloud” sweep — softer, not a perfect beam */
+/* spray cloud sweep (synced to same duration/delay) */
 .nl-hub-logo-wrap::before{
   content:"";
   position:absolute;
@@ -330,31 +283,30 @@
   opacity: .55;
   mix-blend-mode: screen;
 
-  animation: sprayPass 2.4s ease-out forwards;
-  animation-delay: .20s;
+  animation: sprayPass var(--sprayDur) ease-out forwards;
+  animation-delay: var(--sprayDelay);
 }
 
+/* animations */
 @keyframes sprayPass{
   from{ left:-160%; }
   to{ left:160%; }
 }
 
-@keyframes greenReveal{
+@keyframes greenMask{
   from{
-    -webkit-clip-path: inset(0 100% 0 0);
-    clip-path: inset(0 100% 0 0);
-    transform: translateX(-2%);
+    -webkit-mask-position: 120% 0;
+    mask-position: 120% 0;
   }
   to{
-    -webkit-clip-path: inset(0 0% 0 0);
-    clip-path: inset(0 0% 0 0);
-    transform: translateX(0);
+    -webkit-mask-position: -20% 0;
+    mask-position: -20% 0;
   }
 }
 
 @keyframes whiteFade{
   0%   { opacity: 1; }
-  45%  { opacity: 1; } /* holds white until spray is mid-way */
+  55%  { opacity: 1; }
   100% { opacity: 0; }
 }
 
