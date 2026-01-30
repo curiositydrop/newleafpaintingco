@@ -24,6 +24,34 @@
     color: #111 !important;
     font-weight: 600;
   }
+    /* === XP: force the core contact popup to display correctly === */
+
+#contact-popup,
+#contact-popup *{
+  color:#111 !important;
+}
+
+#contact-popup label{
+  display:block !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  font-size:16px !important;
+  line-height:1.2 !important;
+  margin:10px 0 6px !important;
+  font-weight:700 !important;
+  color:#111 !important;
+}
+
+#contact-popup input,
+#contact-popup textarea{
+  background:#fff !important;
+  color:#111 !important;
+  border:1px solid #cfcfcf !important;
+}
+
+#contact-popup ::placeholder{
+  color:#777 !important;
+}
 </style>
   <style>
     /* Force XP black background and hide any core globals if present */
