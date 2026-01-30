@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>New Leaf XP</title>
+
+  <!-- reuse your same CSS -->
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    /* Force XP black background and hide any core globals if present */
+    body{ margin:0; background:#000; color:#fff; }
+    #global-header, #global-footer, #contact-btn, #contact-popup { display:none !important; }
+
+    /* Make iframe fill the screen */
+    .xp-frame{
+      width:100vw;
+      height:100vh;
+      border:0;
+      display:block;
+      background:#000;
+    }
+  </style>
+</head>
+<body>
+  <!-- This loads any core page INSIDE an XP shell -->
+  <iframe class="xp-frame" id="xpFrame" title="New Leaf XP"></iframe>
+
+  <script>
+    // Loads whichever page you pass as ?page=...
+    // Example: xp.html?page=past-projects.html
+    const params = new URLSearchParams(location.search);
+    const page = params.get("page") || "index.html?nav=1&mode=hub";
+    document.getElementById("xpFrame").src = page;
+  </script>
+</body>
+</html>
