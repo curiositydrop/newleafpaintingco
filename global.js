@@ -94,8 +94,16 @@
     const closeBtn = document.querySelector("#contact-popup .close");
     if (!popup || !btn || !closeBtn) return;
 
-    btn.onclick = () => popup.style.display = "flex";
-    closeBtn.onclick = () => popup.style.display = "none";
+    // ✅ Prevent any default actions and open/close safely
+    btn.onclick = (e) => {
+      if (e) { e.preventDefault?.(); e.stopPropagation?.(); }
+      popup.style.display = "flex";
+    };
+
+    closeBtn.onclick = (e) => {
+      if (e) { e.preventDefault?.(); e.stopPropagation?.(); }
+      popup.style.display = "none";
+    };
 
     window.addEventListener("click", e => {
       if (e.target === popup) popup.style.display = "none";
@@ -241,31 +249,38 @@
      FORM SUBMISSION (contact popup)
   ---------------------*/
   function setupContactFormMailto() {
-    document.addEventListener("submit", e => {
-      if (e.target.closest("#contact-popup form")) {
-        e.preventDefault();
+    const popupForm = document.querySelector("#contact-popup form");
+    if (!popupForm) return;
 
-        const name = document.getElementById("name")?.value || "";
-        const email = document.getElementById("email")?.value || "";
-        const phone = document.getElementById("phone")?.value || "";
-        const message = document.getElementById("message")?.value || "";
-        const discount = document.getElementById("discount-code")?.value || "";
+    // ✅ Only wire once
+    if (popupForm.dataset.mailtoWired === "1") return;
+    popupForm.dataset.mailtoWired = "1";
 
-        const subject = encodeURIComponent(refData.emailsubject || "New Leaf Painting Inquiry");
-        const bodyLines = [
-          `Name: ${name}`,
-          `Email: ${email}`,
-          `Phone: ${phone}`,
-          `Message: ${message}`,
-          `Discount Code: ${discount}`,
-          refData.referrername
-            ? `Referrer: ${refData.referrername}${refData.businessname ? " at " + refData.businessname : ""}`
-            : ""
-        ].filter(Boolean);
+    popupForm.addEventListener("submit", (e) => {
+      // ✅ HARD STOP: prevents reload that would kick XP iframe back to hub/gate
+      e.preventDefault();
+      e.stopPropagation();
 
-        const body = encodeURIComponent(bodyLines.join("\n"));
-        window.location.href = `mailto:newleafpaintingcompany@gmail.com?subject=${subject}&body=${body}`;
-      }
+      const name = document.getElementById("name")?.value || "";
+      const email = document.getElementById("email")?.value || "";
+      const phone = document.getElementById("phone")?.value || "";
+      const message = document.getElementById("message")?.value || "";
+      const discount = document.getElementById("discount-code")?.value || "";
+
+      const subject = encodeURIComponent(refData.emailsubject || "New Leaf Painting Inquiry");
+      const bodyLines = [
+        `Name: ${name}`,
+        `Email: ${email}`,
+        `Phone: ${phone}`,
+        `Message: ${message}`,
+        `Discount Code: ${discount}`,
+        refData.referrername
+          ? `Referrer: ${refData.referrername}${refData.businessname ? " at " + refData.businessname : ""}`
+          : ""
+      ].filter(Boolean);
+
+      const body = encodeURIComponent(bodyLines.join("\n"));
+      window.location.href = `mailto:newleafpaintingcompany@gmail.com?subject=${subject}&body=${body}`;
     });
   }
 
@@ -294,6 +309,8 @@
     setupPopupHandlers();
     updatePopupHeadingAndButton(refData);
     setHiddenFieldsOnContactOpen(refData);
+
+    // ✅ Important: wire mailto AFTER popup is injected
     setupContactFormMailto();
 
     if (refData.bannertext) createBanner(refData.bannertext);
