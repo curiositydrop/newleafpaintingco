@@ -147,42 +147,73 @@
     // Run fixes every time the iframe loads a page
     frame.addEventListener("load", injectXpFixesIntoFrame);
   </script>
-  <script>
-function overrideXPContactForm() {
-  const iframe = document.getElementById("xpFrame");
-  if (!iframe || !iframe.contentWindow) return;
+ <script>
+(function () {
+  const TO_EMAIL = "newleafpaintingcompany@gmail.com";
 
-  try {
-    const doc = iframe.contentWindow.document;
-    const form = doc.querySelector("#contact-popup form");
-    if (!form) return;
+  function wireMailto(doc) {
+    const oldForm = doc.querySelector("#contact-popup form");
+    if (!oldForm) return false;
 
-    if (form.dataset.mailto === "1") return;
-    form.dataset.mailto = "1";
+    // If already rewired, stop
+    if (oldForm.dataset.xpMailto === "1") return true;
 
-    form.addEventListener("submit", function(e){
-      e.preventDefault();
-      e.stopImmediatePropagation();
+    // 🔥 Clone form to wipe any old JS listeners that cause redirects
+    const newForm = oldForm.cloneNode(true);
+    newForm.dataset.xpMailto = "1";
+    oldForm.parentNode.replaceChild(newForm, oldForm);
 
-      const name = doc.getElementById("name")?.value || "";
-      const email = doc.getElementById("email")?.value || "";
-      const phone = doc.getElementById("phone")?.value || "";
-      const message = doc.getElementById("message")?.value || "";
+    // Grab send button (if any)
+    const sendBtn = newForm.querySelector('button[type="submit"], input[type="submit"]');
 
-      const to = "newleafpaintingcompany@gmail.com";
+    const getValById = (id) => (doc.getElementById(id)?.value || "").trim();
+
+    function doMailto(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation?.();
+      }
+
+      const name = getValById("name");
+      const email = getValById("email");
+      const phone = getValById("phone");
+      const message = (doc.getElementById("message")?.value || "").trim();
+
       const subject = encodeURIComponent("New Leaf Estimate Request");
       const body = encodeURIComponent(
         `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\n\nMessage:\n${message}`
       );
 
-      window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
-    });
+      // Use top window so it opens mail app (not trapped in iframe)
+      window.top.location.href = `mailto:${TO_EMAIL}?subject=${subject}&body=${body}`;
+    }
 
-  } catch(e){}
-}
+    // Intercept BOTH submit + click
+    newForm.addEventListener("submit", doMailto, true);
+    if (sendBtn) sendBtn.addEventListener("click", doMailto, true);
 
-// keep trying until iframe loads
-setInterval(overrideXPContactForm, 500);
+    return true;
+  }
+
+  function tryWire() {
+    const iframe = document.getElementById("xpFrame");
+    if (!iframe) return;
+
+    try {
+      const doc = iframe.contentDocument || iframe.contentWindow?.document;
+      if (!doc) return;
+
+      // Wire as soon as contact popup exists in the iframe
+      wireMailto(doc);
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  // Keep trying until it’s wired (iframe + global injection timing)
+  setInterval(tryWire, 300);
+})();
 </script>
 </body>
 </html>
