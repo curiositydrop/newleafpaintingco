@@ -55,56 +55,56 @@ html, body{
   width:min(300px, 75vw);
   max-width:75vw;
   margin: 0 auto;
-  overflow:hidden;       /* clips any filter paint overflow */
-  contain: paint;        /* prevents paint overflow affecting layout */
+  overflow:hidden;
+  contain: paint;
 }
 
-@supports (overflow: clip){
-  .nl-hub-logo-wrap{ overflow: clip; }
-}
-
-.nl-hub-logo{
+/* BOTH are stacked */
+.logo-white,
+.logo-green{
+  position:absolute;
+  inset:0;
   width:100%;
+  height:auto;
   display:block;
 }
 
+/* White on top */
 .logo-white{
-  position:absolute;
-  inset:0;
   z-index:2;
   filter:
     grayscale(1)
     brightness(0)
     invert(1)
     drop-shadow(0 0 18px rgba(255,255,255,.25));
-  animation: whiteFadeLoop 6.5s ease-in-out infinite;
-  opacity: 1; /* base state */
+  animation: whiteBreath 5.5s ease-in-out infinite;
 }
 
+/* Green under it */
 .logo-green{
+  z-index:1;
   filter: drop-shadow(0 0 22px rgba(80,255,160,.65));
-  animation: greenFadeLoop 6.5s ease-in-out infinite; /* match duration */
-  opacity: 0; /* base state */
+  animation: greenBreath 5.5s ease-in-out infinite;
 }
 
-/* WHITE is never fully gone for long — it dips but doesn’t vanish */
-@keyframes whiteFadeLoop{
+/* WHITE: shows briefly, fades down to almost nothing, stays low while green is high */
+@keyframes whiteBreath{
   0%   { opacity:1; }
-  10%  { opacity:1; }     /* short hold */
-  30%  { opacity:0.18; }  /* fade down, NOT to zero */
-  55%  { opacity:0.18; }  /* stay dim while green is dominant */
-  75%  { opacity:1; }     /* fade back up */
+  12%  { opacity:1; }     /* short white hold */
+  28%  { opacity:.15; }   /* fade down (NOT to 0) */
+  72%  { opacity:.15; }   /* stay low while green lives */
+  88%  { opacity:1; }     /* fade back up */
   100% { opacity:1; }
 }
 
-/* GREEN comes in while white is dim, then leaves while white rises */
-@keyframes greenFadeLoop{
-  0%   { opacity:0; transform:scale(0.985); }
-  20%  { opacity:0; transform:scale(0.985); }
-  40%  { opacity:1; transform:scale(1); }
-  60%  { opacity:1; transform:scale(1); }
-  80%  { opacity:0; transform:scale(0.985); }
-  100% { opacity:0; transform:scale(0.985); }
+/* GREEN: rises after white starts fading, then fades DOWN before white returns */
+@keyframes greenBreath{
+  0%   { opacity:.15; }
+  20%  { opacity:.15; }   /* low while white is strong */
+  40%  { opacity:1; }     /* fade in */
+  68%  { opacity:1; }     /* hold */
+  85%  { opacity:.15; }   /* fade out BEFORE white returns */
+  100% { opacity:.15; }
 }
 .nl-hub-line{
   margin:18px auto;
