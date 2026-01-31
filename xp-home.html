@@ -55,23 +55,23 @@ html, body{
   position: relative;
   display: inline-block;
   width: min(320px, 78vw);
-  aspect-ratio: 1 / 1;     /* keeps a stable box so nothing jumps */
   margin: 0 auto;
   overflow: hidden;
+  line-height: 0; /* prevents tiny baseline gaps */
 }
 
 /* BOTH logos are absolute so they can never “separate” */
 .nl-hub-logo{
-  position: absolute;
-  inset: 0;
   width: 100%;
-  height: 100%;
-  object-fit: contain;
+  height: auto;        /* KEY: keep natural logo proportions */
   display: block;
+  object-fit: contain; /* fine to keep */
 }
 
 /* WHITE logo */
 .logo-white{
+  position: absolute;
+  inset: 0;
   z-index: 2;
   filter:
     grayscale(1)
@@ -80,9 +80,9 @@ html, body{
     drop-shadow(0 0 18px rgba(255,255,255,.25));
   animation: whiteBreath 9s ease-in-out infinite;
 }
-
 /* GREEN logo */
 .logo-green{
+  position: relative;  /* base layer */
   z-index: 1;
   filter: drop-shadow(0 0 22px rgba(80,255,160,.65));
   animation: greenBreath 9s ease-in-out infinite;
