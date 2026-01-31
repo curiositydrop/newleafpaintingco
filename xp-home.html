@@ -50,27 +50,29 @@ html, body{
 }
 
 /* LOGO REVEAL (NO SPRAY) */
-/* LOGO WRAP */
+/* LOGO WRAP (anchor for absolute overlays) */
 .nl-hub-logo-wrap{
-  position:relative;
-  width:min(300px, 75vw);
-  max-width:75vw;
-  margin: 0 auto 18px;
-  overflow:hidden;
-  contain: paint;
+  position: relative;
+  display: inline-block;
+  width: min(300px, 75vw);
+  aspect-ratio: 1 / 1;     /* keeps a stable box so nothing jumps */
+  margin: 0 auto;
+  overflow: hidden;
 }
 
-/* base logo */
+/* BOTH logos are absolute so they can never “separate” */
 .nl-hub-logo{
-  width:100%;
-  display:block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
-/* GREEN stays in normal flow so the wrapper has height */
-..logo-white{
-  position:absolute;
-  inset:0;
-  z-index:2;
+/* WHITE logo */
+.logo-white{
+  z-index: 2;
   filter:
     grayscale(1)
     brightness(0)
@@ -79,25 +81,28 @@ html, body{
   animation: whiteBreath 6.5s ease-in-out infinite;
 }
 
+/* GREEN logo */
 .logo-green{
+  z-index: 1;
   filter: drop-shadow(0 0 22px rgba(80,255,160,.65));
   animation: greenBreath 6.5s ease-in-out infinite;
 }
-/* WHITE dips but never disappears */
+
+/* BREATH — same rhythm, inverted, never disappears */
 @keyframes whiteBreath{
-  0%   { opacity:1; }
-  25%  { opacity:.25; }
-  50%  { opacity:.05; }
-  75%  { opacity:.25; }
-  100% { opacity:1; }
+  0%   { opacity: 1; }
+  25%  { opacity: .35; }
+  50%  { opacity: .12; }
+  75%  { opacity: .35; }
+  100% { opacity: 1; }
 }
 
 @keyframes greenBreath{
-  0%   { opacity:.05; transform:scale(.985); }
-  25%  { opacity:.25; transform:scale(.992); }
-  50%  { opacity:1;  transform:scale(1); }
-  75%  { opacity:.25; transform:scale(.992); }
-  100% { opacity:.05; transform:scale(.985); }
+  0%   { opacity: .12; transform: scale(.985); }
+  25%  { opacity: .35; transform: scale(.992); }
+  50%  { opacity: 1;  transform: scale(1); }
+  75%  { opacity: .35; transform: scale(.992); }
+  100% { opacity: .12; transform: scale(.985); }
 }
 .nl-hub-line{
   margin:18px auto;
