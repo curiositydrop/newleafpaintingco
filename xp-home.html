@@ -67,17 +67,8 @@ html, body{
 }
 
 /* GREEN stays in normal flow so the wrapper has height */
-.logo-green{
-  position:relative;     /* IMPORTANT */
-  z-index:1;
-  filter: drop-shadow(0 0 22px rgba(80,255,160,.65));
-  animation: greenBreath 5.5s ease-in-out infinite;
-  opacity: .15;          /* base */
-}
-
-/* WHITE overlays green */
-.logo-white{
-  position:absolute;     /* overlay */
+..logo-white{
+  position:absolute;
   inset:0;
   z-index:2;
   filter:
@@ -85,28 +76,28 @@ html, body{
     brightness(0)
     invert(1)
     drop-shadow(0 0 18px rgba(255,255,255,.25));
-  animation: whiteBreath 5.5s ease-in-out infinite;
-  opacity: 1;            /* base */
+  animation: whiteBreath 6.5s ease-in-out infinite;
 }
 
+.logo-green{
+  filter: drop-shadow(0 0 22px rgba(80,255,160,.65));
+  animation: greenBreath 6.5s ease-in-out infinite;
+}
 /* WHITE dips but never disappears */
 @keyframes whiteBreath{
   0%   { opacity:1; }
-  10%  { opacity:1; }
-  28%  { opacity:.15; }
-  72%  { opacity:.15; }
-  90%  { opacity:1; }
+  25%  { opacity:.25; }
+  50%  { opacity:.05; }
+  75%  { opacity:.25; }
   100% { opacity:1; }
 }
 
-/* GREEN rises while white is dim, then falls back */
 @keyframes greenBreath{
-  0%   { opacity:.15; }
-  20%  { opacity:.15; }
-  40%  { opacity:1; }
-  68%  { opacity:1; }
-  85%  { opacity:.15; }
-  100% { opacity:.15; }
+  0%   { opacity:.05; transform:scale(.985); }
+  25%  { opacity:.25; transform:scale(.992); }
+  50%  { opacity:1;  transform:scale(1); }
+  75%  { opacity:.25; transform:scale(.992); }
+  100% { opacity:.05; transform:scale(.985); }
 }
 .nl-hub-line{
   margin:18px auto;
