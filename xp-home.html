@@ -47,6 +47,11 @@ html, body{
   max-width:720px;
   text-align:center;
   overflow-x:hidden;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap: 6px;            /* <-- adjust this number */
 }
 
 /* LOGO REVEAL (NO SPRAY) */
@@ -55,7 +60,7 @@ html, body{
   position: relative;
   display: inline-block;
   width: min(320px, 78vw);
-  margin: 0 auto 6px;
+  margin: 0;
   overflow: hidden;
   line-height: 0; /* prevents tiny baseline gaps */
 }
@@ -105,7 +110,7 @@ html, body{
   100% { opacity: .12; transform: scale(.985); }
 }
 .nl-hub-line{
-  margin:4px auto 10px;
+  margin:0;
   max-width:620px;
   font-size:1.05rem;
   color:rgba(255,255,255,.9);
