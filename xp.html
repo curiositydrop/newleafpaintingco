@@ -16,12 +16,7 @@
   <script>
     const params = new URLSearchParams(location.search);
     const page = params.get("page") || "index.html?nav=1&mode=hub";
-
-    // ✅ Force iframe to use SAME host as xp.html (prevents cross-origin weirdness)
-    const url = new URL(page, window.location.href);
-    url.origin = window.location.origin;
-
-    document.getElementById("xpFrame").src = url.pathname.replace(/^\//,"") + url.search;
+    document.getElementById("xpFrame").src = page;
   </script>
 </body>
 </html>
