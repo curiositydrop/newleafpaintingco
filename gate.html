@@ -1,20 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>New Leaf Painting Co.</title>
+
+  <!-- IMPORTANT:
+       Do NOT include style.css on the gate page,
+       because your style.css sets a light background and other globals.
+  -->
+
+  <style>
+    html, body { height: 100%; margin: 0; }
+    body { background:#000; overflow:hidden; font-family: Helvetica, Arial, sans-serif; }
+
+    /* Fullscreen Gate */
+    #nl-gate{
+      position: fixed;
+      inset: 0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 24px;
+      background:#000;
+      z-index: 9999;
+    }
+
+    /* Fireworks canvas */
+    #nl-fireworks{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      pointer-events:none;
+      z-index: 1;
+    }
+
+    .gate-inner{
+      position: relative;
+      z-index: 2;
+      text-align:center;
+      width:100%;
+      max-width: 720px;
+      padding: 18px 14px;
+    }
+
+    .gate-logo{
+      width: min(320px, 78vw);
+      height:auto;
+      display:block;
+      margin: 0 auto 18px auto;
+      filter: drop-shadow(0 0 26px rgba(79,255,146,.55));
+    }
+
+    .gate-line{
+      margin: 0 auto 18px auto;
+      color: rgba(255,255,255,.92);
+      font-size: 1.05rem;
+      line-height: 1.35;
+    }
+
+    .gate-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap: 10px;
+      padding: 16px 18px;
+      border-radius: 999px;
+      border: 2px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.92);
+      color: #0f5f33;
+      font-weight: 900;
+      font-size: 1rem;
+      cursor: pointer;
+      min-width: min(520px, 92vw);
+      transition: transform .12s ease, filter .12s ease;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .gate-btn:hover{ transform: translateY(-1px); filter: brightness(1.03); }
+    .gate-btn:active{ transform: translateY(0px); filter: brightness(.98); }
+
+    /* Pulse glow */
+    .gate-btn.pulse{
+      animation: gatePulse 2.15s ease-in-out infinite;
+      box-shadow: 0 0 14px rgba(15,95,51,.55);
+    }
+    @keyframes gatePulse{
+      0%{
+        box-shadow: 0 0 10px rgba(15,95,51,.55), 0 0 0 rgba(79,255,146,0);
+        filter: brightness(1.00);
+      }
+      50%{
+        box-shadow: 0 0 34px rgba(79,255,146,.90), 0 0 0 10px rgba(79,255,146,.18);
+        filter: brightness(1.08);
+      }
+      100%{
+        box-shadow: 0 0 10px rgba(15,95,51,.55), 0 0 0 rgba(79,255,146,0);
+        filter: brightness(1.00);
+      }
+    }
+  </style>
+</head>
+
 <body>
-  <div id="nl-gate">
-    <canvas id="nl-fireworks"></canvas>
+  <div id="nl-gate" aria-label="New Leaf Gate">
+    <canvas id="nl-fireworks" aria-hidden="true"></canvas>
 
     <div class="gate-inner">
-      <img class="gate-logo" src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png">
+      <!-- Use your correct logo file name here -->
+      <img class="gate-logo" src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png" alt="New Leaf Painting Co." />
+
       <p class="gate-line">Not your typical painter website.</p>
 
-      <button id="nl-enter" class="gate-btn">
-        Enter your painting experience →
+      <button id="nl-enter" class="gate-btn pulse" type="button">
+        Enter your painting experience <span aria-hidden="true">→</span>
       </button>
     </div>
   </div>
 
   <script>
-    document.getElementById("nl-enter").onclick = () => {
+    // Enter -> XP Home
+    document.getElementById("nl-enter").addEventListener("click", () => {
       window.location.href = "xp.html";
-    };
+    });
+
+    // Simple fireworks (canvas)
+    (function fireworks(){
+      const canvas = document.getElementById("nl-fireworks");
+      const ctx = canvas.getContext("2d");
+
+      let w=0,h=0,dpr=Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+      function resize(){
+        w = canvas.clientWidth;
+        h = canvas.clientHeight;
+        canvas.width = Math.floor(w*dpr);
+        canvas.height = Math.floor(h*dpr);
+        ctx.setTransform(dpr,0,0,dpr,0,0);
+      }
+      resize();
+      window.addEventListener("resize", resize);
+
+      const colors = ["#ff4d4d","#ffd24d","#4dff88","#4dd2ff","#b84dff","#ff4dd2"];
+      const particles = [];
+
+      const rand = (a,b)=>Math.random()*(b-a)+a;
+
+      function burst(){
+        const x = rand(w*0.15, w*0.85);
+        const y = rand(h*0.12, h*0.55);
+        const color = colors[(Math.random()*colors.length)|0];
+        const count = (Math.random()<0.35) ? 110 : 80;
+
+        for(let i=0;i<count;i++){
+          const a = (Math.PI*2)*(i/count) + rand(-0.08,0.08);
+          const sp = rand(1.4, 4.8);
+          particles.push({
+            x,y,
+            vx: Math.cos(a)*sp,
+            vy: Math.sin(a)*sp,
+            g: rand(0.012,0.03),
+            drag: rand(0.985,0.992),
+            alpha: 1,
+            fade: rand(0.008,0.02),
+            r: rand(1.1,2.3),
+            color
+          });
+        }
+      }
+
+      let t=0;
+      function tick(){
+        t++;
+        if (t < 520 && t % 18 === 0) burst();
+
+        ctx.clearRect(0,0,w,h);
+
+        for(let i=particles.length-1;i>=0;i--){
+          const p = particles[i];
+          p.vx *= p.drag;
+          p.vy *= p.drag;
+          p.vy += p.g;
+          p.x += p.vx;
+          p.y += p.vy;
+          p.alpha -= p.fade;
+
+          if(p.alpha <= 0 || p.x < -60 || p.x > w+60 || p.y > h+90){
+            particles.splice(i,1);
+            continue;
+          }
+
+          ctx.globalAlpha = Math.max(0, p.alpha);
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+
+        requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    })();
   </script>
 </body>
+</html>
