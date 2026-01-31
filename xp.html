@@ -17,7 +17,7 @@
     }
 
     /* Hide any globals accidentally present in the shell */
-    #global-header, #global-footer, #contact-btn { display:none !important; }
+    #global-header, #global-footer, #contact-btn, #contact-popup { display:none !important; }
 
     /* Make iframe fill the screen */
     .xp-frame{
@@ -31,7 +31,6 @@
 </head>
 
 <body>
-  <!-- This loads any page INSIDE an XP shell -->
   <iframe class="xp-frame" id="xpFrame" title="New Leaf XP"></iframe>
 
   <script>
@@ -40,35 +39,21 @@
     const frame = document.getElementById("xpFrame");
     frame.src = page;
 
-    function injectXpFixesIntoFrame(){
+    // OPTIONAL: inject form readability CSS inside the iframe
+    function injectXpCssIntoFrame(){
       const doc = frame.contentDocument || frame.contentWindow?.document;
       if (!doc) return;
 
-      // 1) Inject CSS INSIDE the iframe so labels/text show properly
+      // prevent double-inject
+      if (doc.getElementById("xp-form-fix-style")) return;
+
       const style = doc.createElement("style");
+      style.id = "xp-form-fix-style";
       style.textContent = `
         /* ===== XP form readability fix (inside iframe) ===== */
         #contact-popup, #contact-popup *{ color:#111 !important; }
 
-        /* show labels if they exist */
         #contact-popup label{
-          display:block !important;
-          visibility:visible !important;
-          opacity:1 !important;
-          height:auto !important;
-          color:#111 !important;
-          font-weight:700 !important;
-          margin:10px 0 6px !important;
-          font-size:16px !important;
-          line-height:1.2 !important;
-        }
-
-        /* sometimes "labels" are spans/divs/p tags */
-        #contact-popup .label,
-        #contact-popup .form-label,
-        #contact-popup p,
-        #contact-popup span,
-        #contact-popup strong{
           display:block !important;
           visibility:visible !important;
           opacity:1 !important;
@@ -90,130 +75,9 @@
         #contact-popup ::placeholder{ color:#777 !important; }
       `;
       doc.head.appendChild(style);
-
-      // 2) Wire the contact form INSIDE the iframe to mailto
-      function wireContactFormToMailto(){
-        const form = doc.querySelector("#contact-popup form");
-        if (!form) return;
-
-        if (form.dataset.mailtoWired === "1") return;
-        form.dataset.mailtoWired = "1";
-
-        form.addEventListener("submit", (e) => {
-          e.preventDefault();
-
-          const getVal = (sel) => (form.querySelector(sel)?.value || "").trim();
-
-          const name =
-            getVal('input[name="name"]') ||
-            getVal('input[name="full-name"]') ||
-            getVal('input[name="fullname"]') ||
-            getVal('input[name="your-name"]');
-
-          const email =
-            getVal('input[name="email"]') ||
-            getVal('input[type="email"]');
-
-          const phone =
-            getVal('input[name="phone"]') ||
-            getVal('input[type="tel"]');
-
-          const message =
-            getVal('textarea[name="message"]') ||
-            getVal('textarea') ||
-            getVal('input[name="message"]');
-
-          const TO_EMAIL = "newleafpaintingcompany@gmail.com";
-
-          const subject = encodeURIComponent("New Leaf Estimate Request");
-          const body = encodeURIComponent(
-            `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\n\nMessage:\n${message}`
-          );
-
-          doc.defaultView.location.href = `mailto:${TO_EMAIL}?subject=${subject}&body=${body}`;
-        });
-      }
-
-      // Run now + keep retrying briefly (popup gets injected after global loads)
-      wireContactFormToMailto();
-      let tries = 0;
-      const t = setInterval(() => {
-        wireContactFormToMailto();
-        tries++;
-        if (doc.querySelector("#contact-popup form") || tries > 40) clearInterval(t);
-      }, 200);
     }
 
-    // Run fixes every time the iframe loads a page
-    frame.addEventListener("load", injectXpFixesIntoFrame);
-  </script><script>
-(function () {
-  const TO_EMAIL = "newleafpaintingcompany@gmail.com";
-
-  function killRouters(doc) {
-    // Remove all onclick handlers from links & buttons
-    doc.querySelectorAll("a, button, input[type='submit']").forEach(el => {
-      el.onclick = null;
-      el.onmousedown = null;
-      el.onmouseup = null;
-    });
-
-    // Stop navigation bubbling
-    doc.addEventListener("click", e => {
-      if (e.target.closest("#contact-popup")) return;
-      if (e.target.closest("a, button, input")) return;
-    }, true);
-  }
-
-  function rewireForm(doc) {
-    const oldForm = doc.querySelector("#contact-popup form");
-    if (!oldForm) return false;
-
-    if (oldForm.dataset.xpWired === "1") return true;
-
-    const newForm = oldForm.cloneNode(true);
-    newForm.dataset.xpWired = "1";
-    oldForm.parentNode.replaceChild(newForm, oldForm);
-
-    const get = id => (doc.getElementById(id)?.value || "").trim();
-
-    function send(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-
-      const subject = encodeURIComponent("New Leaf Estimate Request");
-      const body = encodeURIComponent(
-        `Name: ${get("name")}\nEmail: ${get("email")}\nPhone: ${get("phone")}\n\nMessage:\n${get("message")}`
-      );
-
-      window.top.location.href = `mailto:${TO_EMAIL}?subject=${subject}&body=${body}`;
-    }
-
-    newForm.addEventListener("submit", send, true);
-    newForm.querySelectorAll("button, input[type='submit']").forEach(btn => {
-      btn.addEventListener("click", send, true);
-    });
-
-    return true;
-  }
-
-  function hook() {
-    const frame = document.getElementById("xpFrame");
-    if (!frame) return;
-
-    try {
-      const doc = frame.contentDocument || frame.contentWindow.document;
-      if (!doc) return;
-
-      killRouters(doc);
-      rewireForm(doc);
-
-    } catch (e) {}
-  }
-
-  setInterval(hook, 300);
-})();
-</script>
+    frame.addEventListener("load", injectXpCssIntoFrame);
+  </script>
 </body>
 </html>
