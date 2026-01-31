@@ -1,45 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>New Leaf Experience | New Leaf Painting Co.</title>
 
-<link rel="stylesheet" href="style.css">
-
 <style>
-/* FORCE BLACK EXPERIENCE */
-html, body {
-  margin: 0;
-  background: #000;
-  color: #fff;
-  height: 100%;
+/* =========================
+   XP: HARD STOP SIDE SCROLL
+   ========================= */
+
+/* Use CLIP if supported (best on iOS). Fallback to hidden. */
+html, body{
+  margin:0;
+  padding:0;
+  width:100%;
+  max-width:100%;
+  overflow-x:hidden;
+  background:#000;
+  color:#fff;
 }
 
+@supports (overflow: clip){
+  html, body{ overflow-x: clip; }
+}
+
+/* Make sure nothing can “create width” */
+*, *::before, *::after{
+  box-sizing:border-box;
+}
+
+/* Main wrapper clips anything weird */
 #nl-hub{
   min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: 26px 14px;
-  background: #000;
+  width:100%;
+  max-width:100%;
+  display:grid;
+  place-items:center;
+  padding:26px 14px;
+  background:#000;
+  overflow-x:hidden;
+}
+
+@supports (overflow: clip){
+  #nl-hub{ overflow-x: clip; }
 }
 
 .nl-hub-inner{
-  width: 100%;
-  max-width: 720px;
-  text-align: center;
+  width:100%;
+  max-width:720px;
+  text-align:center;
+  overflow-x:hidden;
 }
 
 /* LOGO REVEAL */
 .nl-hub-logo-wrap{
-  position: relative;
-  display: inline-block;
-  width: min(300px, 75vw);
+  position:relative;
+  display:inline-block;
+  width:min(300px, 75vw);
+  max-width:75vw;
+  overflow:hidden;      /* IMPORTANT: clips any fade/filters */
+  contain: paint;       /* IMPORTANT: prevents paint overflow affecting layout */
 }
 
 .nl-hub-logo{
-  width: 100%;
-  display: block;
+  width:100%;
+  display:block;
 }
 
 .logo-white{
@@ -56,31 +82,30 @@ html, body {
 
 .logo-green{
   filter: drop-shadow(0 0 22px rgba(80,255,160,.65));
-  opacity: 0;
+  opacity:0;
   animation: greenFadeIn 1.8s ease forwards;
-  animation-delay: .9s;
+  animation-delay:.9s;
 }
 
 @keyframes greenFadeIn{
-  from{ opacity: 0; transform: scale(0.98); }
-  to{ opacity: 1; transform: scale(1); }
+  from{ opacity:0; transform:scale(0.98); }
+  to{ opacity:1; transform:scale(1); }
 }
-
-/* mist sweep */
-@keyframes whiteFade{ to{opacity:0;} }
+@keyframes whiteFade{ to{ opacity:0; } }
 
 .nl-hub-line{
-  margin: 18px auto;
-  max-width: 620px;
-  font-size: 1.05rem;
-  color: rgba(255,255,255,.9);
+  margin:18px auto;
+  max-width:620px;
+  font-size:1.05rem;
+  color:rgba(255,255,255,.9);
 }
 
 /* GRID */
 .nl-hub-grid{
   display:grid;
-  grid-template-columns: repeat(2,1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap:12px;
+  width:100%;
   max-width:560px;
   margin:0 auto;
 }
@@ -98,8 +123,11 @@ html, body {
   display:flex;
   justify-content:center;
   align-items:center;
-  transition:transform .12s, filter .12s;
+  transition: transform .12s ease, filter .12s ease;
+  text-align:center;
+  min-width:0; /* prevents grid overflow */
 }
+
 .nl-btn:hover{ transform:translateY(-1px); filter:brightness(1.1); }
 
 .nl-btn.primary{
@@ -108,58 +136,21 @@ html, body {
   color:#0f5f33;
 }
 
-.pulse{
-  animation:pulse 2.2s ease-in-out infinite;
-}
+.pulse{ animation:pulse 2.2s ease-in-out infinite; }
 @keyframes pulse{
+  0%,100%{ box-shadow:0 0 0 rgba(46,255,140,0); transform:translateY(0); }
   50%{ box-shadow:0 0 42px rgba(46,255,140,.9); transform:translateY(-2px); }
-}
-  /* =========================
-   XP: HARD STOP SIDE SCROLL
-   ========================= */
-html, body {
-  width: 100%;
-  overflow-x: hidden !important;
-}
-
-#nl-hub,
-.nl-hub-inner {
-  width: 100%;
-  max-width: 100%;
-  overflow-x: hidden !important;
-}
-
-/* This is usually the culprit */
-.nl-hub-logo-wrap {
-  position: relative;
-  display: inline-block;
-  width: min(300px, 75vw);
-  max-width: 75vw;
-  overflow: hidden;          /* IMPORTANT */
-}
-
-/* If ANY sweep/animation pseudo-elements still exist */
-.nl-hub-logo-wrap::before,
-.nl-hub-logo-wrap::after {
-  max-width: 100%;
-  overflow: hidden;
-}
-
-/* Make sure padding never “adds width” */
-*, *::before, *::after {
-  box-sizing: border-box;
 }
 </style>
 </head>
 
 <body>
-
 <main id="nl-hub">
   <div class="nl-hub-inner">
 
     <div class="nl-hub-logo-wrap">
-      <img class="nl-hub-logo logo-green" src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png">
-      <img class="nl-hub-logo logo-white" src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png" aria-hidden="true">
+      <img class="nl-hub-logo logo-green" src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png" alt="New Leaf Painting Co.">
+      <img class="nl-hub-logo logo-white" src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png" alt="" aria-hidden="true">
     </div>
 
     <p class="nl-hub-line">
@@ -173,7 +164,7 @@ html, body {
       <a class="nl-btn" href="past-projects.html">See Transformations</a>
       <a class="nl-btn" href="referus.html">Refer New Leaf Painting Co.</a>
 
-      <a class="nl-btn primary" href="#contact">Schedule a Free Estimate</a>
+      <a class="nl-btn primary" href="mailto:newleafpaintingcompany@gmail.com?subject=Estimate%20Request%20-%20New%20Leaf%20Painting%20Co.">Schedule a Free Estimate</a>
 
       <a class="nl-btn" href="local-partners.html">Local Partners</a>
       <a class="nl-btn" href="testimonials.html">Testimonials</a>
@@ -181,6 +172,5 @@ html, body {
 
   </div>
 </main>
-
 </body>
 </html>
