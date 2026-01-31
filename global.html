@@ -18,15 +18,15 @@
 </header>
 
 <!-- CONTACT FLOATING BUTTON -->
-<button id="contact-btn">Get free estimate</button>
+<button id="contact-btn" type="button">Get free estimate</button>
 
 <!-- CONTACT POPUP -->
 <div id="contact-popup" class="popup">
   <div class="popup-content">
-    <span class="close" aria-label="Close">&times;</span>
+    <button type="button" class="close" aria-label="Close">&times;</button>
     <h2>Get free estimate</h2>
 
-    <form id="estimate-form">
+    <form id="estimate-form" action="javascript:void(0)" novalidate>
       <div class="field">
         <label for="name">Name</label>
         <input type="text" id="name" name="name" placeholder="Your name" required>
