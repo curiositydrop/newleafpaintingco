@@ -5,7 +5,6 @@
     <img src="7D16A71A-2AF9-4EBB-863A-09C24D4F6662.png" alt="New Leaf Painting Co. logo" class="logo" />
   </div>
 
-  <!-- STANDARD NAV (boring/global across all pages) -->
   <nav aria-label="Site navigation">
     <ul class="nav-links">
       <li><a id="homeLink" href="index.html">Home</a></li>
@@ -26,43 +25,33 @@
     <button type="button" class="close" aria-label="Close">&times;</button>
     <h2>Get free estimate</h2>
 
+    <!-- NOTE: no action, no submit behavior needed -->
     <form id="estimate-form" novalidate>
-  <div class="field">
-    <label for="name">Name</label>
-    <input type="text" id="name" name="name" placeholder="Your name">
-  </div>
+      <div class="field">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" placeholder="Your name">
+      </div>
 
-  <div class="field">
-    <label for="email">Email</label>
-    <input type="email" id="email" name="email" placeholder="you@email.com">
-  </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="you@email.com">
+      </div>
 
-  <div class="field">
-    <label for="phone">Phone</label>
-    <input type="tel" id="phone" name="phone" placeholder="(207) 555-1234">
-  </div>
+      <div class="field">
+        <label for="phone">Phone</label>
+        <input type="tel" id="phone" name="phone" placeholder="(207) 555-1234">
+      </div>
 
-  <div class="field">
-    <label for="message">Message</label>
-    <textarea id="message" name="message" rows="4" placeholder="Tell me what you’re looking to paint…"></textarea>
-  </div>
+      <div class="field">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" rows="4" placeholder="Tell me what you’re looking to paint…"></textarea>
+      </div>
 
-  <input type="hidden" name="discount_code" id="discount-code" value="">
+      <input type="hidden" name="discount_code" id="discount-code" value="">
 
-  <button type="submit" id="estimate-send-btn">Send</button>
-
-  <!-- XP-safe fallback -->
-  <div id="estimate-fallback" style="display:none; margin-top:12px; text-align:center;">
-    <p style="margin:0 0 10px 0; color:#111; font-weight:700;">
-      Tap below to send your estimate request:
-    </p>
-    <a id="estimate-mailto-link"
-       href="#"
-       style="display:block; padding:10px 12px; border-radius:6px; background:#0b6831; color:#fff; text-decoration:none; font-weight:800;">
-      Open Email App
-    </a>
-  </div>
-</form>
+      <!-- ✅ THIS is the key: NOT submit -->
+      <button id="estimate-send" type="button">Send</button>
+    </form>
   </div>
 </div>
 
