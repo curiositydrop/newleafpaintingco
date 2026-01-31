@@ -9,8 +9,6 @@
 /* =========================
    XP: HARD STOP SIDE SCROLL
    ========================= */
-
-/* Use CLIP if supported (best on iOS). Fallback to hidden. */
 html, body{
   margin:0;
   padding:0;
@@ -25,12 +23,10 @@ html, body{
   html, body{ overflow-x: clip; }
 }
 
-/* Make sure nothing can “create width” */
 *, *::before, *::after{
   box-sizing:border-box;
 }
 
-/* Main wrapper clips anything weird */
 #nl-hub{
   min-height: 100vh;
   width:100%;
@@ -53,14 +49,18 @@ html, body{
   overflow-x:hidden;
 }
 
-/* LOGO REVEAL */
+/* LOGO REVEAL (NO SPRAY) */
 .nl-hub-logo-wrap{
   position:relative;
-  display:inline-block;
   width:min(300px, 75vw);
   max-width:75vw;
-  overflow:hidden;      /* IMPORTANT: clips any fade/filters */
-  contain: paint;       /* IMPORTANT: prevents paint overflow affecting layout */
+  margin: 0 auto;
+  overflow:hidden;       /* clips any filter paint overflow */
+  contain: paint;        /* prevents paint overflow affecting layout */
+}
+
+@supports (overflow: clip){
+  .nl-hub-logo-wrap{ overflow: clip; }
 }
 
 .nl-hub-logo{
@@ -77,21 +77,24 @@ html, body{
     brightness(0)
     invert(1)
     drop-shadow(0 0 18px rgba(255,255,255,.25));
-  animation: whiteFade 2.4s ease-out forwards;
+  animation: whiteFade 2.2s ease-out forwards;
 }
 
 .logo-green{
   filter: drop-shadow(0 0 22px rgba(80,255,160,.65));
   opacity:0;
-  animation: greenFadeIn 1.8s ease forwards;
-  animation-delay:.9s;
+  animation: greenFadeIn 1.6s ease forwards;
+  animation-delay:.75s;
 }
 
 @keyframes greenFadeIn{
-  from{ opacity:0; transform:scale(0.98); }
-  to{ opacity:1; transform:scale(1); }
+  from{ opacity:0; }
+  to{ opacity:1; }
 }
-@keyframes whiteFade{ to{ opacity:0; } }
+
+@keyframes whiteFade{
+  to{ opacity:0; }
+}
 
 .nl-hub-line{
   margin:18px auto;
@@ -125,7 +128,7 @@ html, body{
   align-items:center;
   transition: transform .12s ease, filter .12s ease;
   text-align:center;
-  min-width:0; /* prevents grid overflow */
+  min-width:0;
 }
 
 .nl-btn:hover{ transform:translateY(-1px); filter:brightness(1.1); }
@@ -164,7 +167,11 @@ html, body{
       <a class="nl-btn" href="past-projects.html">See Transformations</a>
       <a class="nl-btn" href="referus.html">Refer New Leaf Painting Co.</a>
 
-      <a class="nl-btn primary" href="mailto:newleafpaintingcompany@gmail.com?subject=Estimate%20Request%20-%20New%20Leaf%20Painting%20Co.">Schedule a Free Estimate</a>
+      <!-- Optional nicer mailto with subject + quick body -->
+      <a class="nl-btn primary"
+         href="mailto:newleafpaintingcompany@gmail.com?subject=Estimate%20Request%20-%20New%20Leaf%20Painting%20Co.&body=Hi%20Mike%2C%0A%0AI%E2%80%99d%20like%20a%20free%20estimate.%20Here%E2%80%99s%20what%20I%20need%3A%0A%0A-%20Address%3A%0A-%20Rooms%2Fareas%3A%0A-%20Timeline%3A%0A-%20Best%20phone%20%23%3A%0A%0AThanks!">
+        Schedule a Free Estimate
+      </a>
 
       <a class="nl-btn" href="local-partners.html">Local Partners</a>
       <a class="nl-btn" href="testimonials.html">Testimonials</a>
