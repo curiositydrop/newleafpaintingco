@@ -5,6 +5,7 @@
    - Forces nav links visible (your CSS hides them until JS runs)
    - Preserves nav=1, mode=hub|standard, and ref/drop/sample across all internal links
    - Forces Home link to go back to the correct index mode (no gate)
+   - ✅ Robust mailto submission (works even when popup is injected later)
    ========================================================= */
 
 (function () {
@@ -34,7 +35,6 @@
   }
 
   function forceNavVisible() {
-    // hard override your CSS "visibility:hidden" for nav links
     document.querySelectorAll(".nav-links a").forEach(a => {
       a.style.visibility = "visible";
       a.style.opacity = "1";
@@ -53,7 +53,6 @@
         .toLowerCase();
 
       if (!linkPage) linkPage = "index.html";
-
       link.classList.toggle("active", linkPage === currentPage);
     });
   }
@@ -70,11 +69,9 @@
 
       const url = new URL(href, window.location.origin);
 
-      // Always preserve nav + mode
       url.searchParams.set("nav", "1");
       url.searchParams.set("mode", mode);
 
-      // Preserve referral if present on current page
       if (
         refParam &&
         !url.searchParams.has("ref") &&
@@ -94,14 +91,19 @@
     const closeBtn = document.querySelector("#contact-popup .close");
     if (!popup || !btn || !closeBtn) return;
 
-    // ✅ Prevent any default actions and open/close safely
+    // Avoid double wiring
+    if (popup.dataset.popupWired === "1") return;
+    popup.dataset.popupWired = "1";
+
     btn.onclick = (e) => {
-      if (e) { e.preventDefault?.(); e.stopPropagation?.(); }
+      e?.preventDefault?.();
+      e?.stopPropagation?.();
       popup.style.display = "flex";
     };
 
     closeBtn.onclick = (e) => {
-      if (e) { e.preventDefault?.(); e.stopPropagation?.(); }
+      e?.preventDefault?.();
+      e?.stopPropagation?.();
       popup.style.display = "none";
     };
 
@@ -125,25 +127,26 @@
 
   function setHiddenFieldsOnContactOpen(refData) {
     document.addEventListener("click", e => {
-      if (e.target && e.target.id === "contact-btn") {
-        const discountField = document.getElementById("discount-code");
-        if (discountField) discountField.value = refData.discountcode || "";
+      const btn = e.target && e.target.id === "contact-btn";
+      if (!btn) return;
 
-        let refField = document.getElementById("referrer");
-        if (!refField) {
-          refField = document.createElement("input");
-          refField.type = "hidden";
-          refField.name = "referrer";
-          refField.id = "referrer";
-          document.querySelector("#contact-popup form")?.appendChild(refField);
-        }
+      const discountField = document.getElementById("discount-code");
+      if (discountField) discountField.value = refData.discountcode || "";
 
-        if (refField) {
-          refField.value =
-            `${refData.referrername || ""}${refData.businessname ? " at " + refData.businessname : ""}`.trim();
-        }
+      let refField = document.getElementById("referrer");
+      if (!refField) {
+        refField = document.createElement("input");
+        refField.type = "hidden";
+        refField.name = "referrer";
+        refField.id = "referrer";
+        document.querySelector("#contact-popup form")?.appendChild(refField);
       }
-    });
+
+      if (refField) {
+        refField.value =
+          `${refData.referrername || ""}${refData.businessname ? " at " + refData.businessname : ""}`.trim();
+      }
+    }, true);
   }
 
   /* --------------------
@@ -194,8 +197,6 @@
   async function injectGlobalHTML() {
     const headerTarget = document.getElementById("global-header");
     const footerTarget = document.getElementById("global-footer");
-
-    // These targets must exist on each page (you already have them)
     if (!headerTarget || !footerTarget) return;
 
     const hasHeader = !!headerTarget.querySelector("header");
@@ -203,7 +204,6 @@
     const hasPopup = !!document.querySelector("#contact-popup");
     const hasBtn = !!document.querySelector("#contact-btn");
 
-    // Already injected → just re-run behaviors
     if (hasHeader && hasFooter && hasPopup && hasBtn) return;
 
     const res = await fetch("global.html");
@@ -246,81 +246,89 @@
   }
 
   /* --------------------
-     FORM SUBMISSION (contact popup)
+     ✅ FORM SUBMISSION (mailto) — ALWAYS WORKS
+     Uses CAPTURE + DELEGATION so injection timing cannot break it.
   ---------------------*/
-  function setupContactFormMailto() {
-    const TO_EMAIL = "newleafpaintingcompany@gmail.com";
+  const TO_EMAIL = "newleafpaintingcompany@gmail.com";
 
-    function wire() {
-      const popup = document.getElementById("contact-popup");
-      const form = popup?.querySelector("form");
-      if (!form) return false;
+  function getFieldValue(id) {
+    return (document.getElementById(id)?.value || "").trim();
+  }
 
-      // ✅ Only wire once
-      if (form.dataset.mailtoWired === "1") return true;
-      form.dataset.mailtoWired = "1";
+  function buildMailto() {
+    const name = getFieldValue("name");
+    const email = getFieldValue("email");
+    const phone = getFieldValue("phone");
+    const message = getFieldValue("message");
+    const discount = (document.getElementById("discount-code")?.value || "").trim();
 
-      const send = (e) => {
-        // ✅ HARD STOP: prevents reload / prevents other JS from hijacking
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
+    const subject = encodeURIComponent(refData.emailsubject || "New Leaf Painting Inquiry");
 
-        const name = document.getElementById("name")?.value?.trim() || "";
-        const email = document.getElementById("email")?.value?.trim() || "";
-        const phone = document.getElementById("phone")?.value?.trim() || "";
-        const message = document.getElementById("message")?.value?.trim() || "";
-        const discount = document.getElementById("discount-code")?.value?.trim() || "";
+    const bodyLines = [
+      `Name: ${name}`,
+      `Email: ${email}`,
+      `Phone: ${phone}`,
+      "",
+      `Message:`,
+      message || "",
+      "",
+      discount ? `Discount Code: ${discount}` : "",
+      refData.referrername
+        ? `Referrer: ${refData.referrername}${refData.businessname ? " at " + refData.businessname : ""}`
+        : ""
+    ].filter(Boolean);
 
-        const subject = encodeURIComponent(refData.emailsubject || "New Leaf Painting Inquiry");
-        const bodyLines = [
-          `Name: ${name}`,
-          `Email: ${email}`,
-          `Phone: ${phone}`,
-          ``,
-          `Message:`,
-          message,
-          ``,
-          discount ? `Discount Code: ${discount}` : "",
-          refData.referrername
-            ? `Referrer: ${refData.referrername}${refData.businessname ? " at " + refData.businessname : ""}`
-            : ""
-        ].filter(Boolean);
+    const body = encodeURIComponent(bodyLines.join("\n"));
+    return `mailto:${TO_EMAIL}?subject=${subject}&body=${body}`;
+  }
 
-        const body = encodeURIComponent(bodyLines.join("\n"));
+  function installDelegatedMailtoHandler() {
+    if (document.documentElement.dataset.mailtoDelegate === "1") return;
+    document.documentElement.dataset.mailtoDelegate = "1";
 
-        // ✅ IMPORTANT: works even when running inside XP iframe
-        window.top.location.href = `mailto:${TO_EMAIL}?subject=${subject}&body=${body}`;
-      };
+    // Submit handler (capture) — stops ANY other submit logic first
+    document.addEventListener("submit", (e) => {
+      const form = e.target;
+      if (!form) return;
 
-      // Capture phase to beat other listeners
-      form.addEventListener("submit", send, true);
+      if (!form.closest || !form.closest("#contact-popup")) return;
 
-      // Also bind the Send button click
-      const sendBtn =
-        form.querySelector('button[type="submit"]') ||
-        form.querySelector('input[type="submit"]');
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
 
-      if (sendBtn) {
-        sendBtn.addEventListener("click", send, true);
+      // Let native required fields work (if required is set)
+      if (typeof form.reportValidity === "function" && !form.reportValidity()) return;
+
+      window.location.href = buildMailto();
+    }, true);
+
+    // Click handler for the Send button (also capture)
+    document.addEventListener("click", (e) => {
+      const btn = e.target && e.target.closest && e.target.closest("#contact-popup button[type='submit']");
+      if (!btn) return;
+
+      const form = btn.closest("form");
+      if (!form) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+
+      if (typeof form.requestSubmit === "function") {
+        form.requestSubmit();
+      } else {
+        // fallback for older browsers
+        const evt = new Event("submit", { bubbles: true, cancelable: true });
+        form.dispatchEvent(evt);
       }
-
-      return true;
-    }
-
-    // Try now, then retry a bit (because global.html inject happens async)
-    wire();
-    let tries = 0;
-    const timer = setInterval(() => {
-      if (wire() || tries++ > 40) clearInterval(timer);
-    }, 200);
+    }, true);
   }
 
   /* --------------------
      INIT
   ---------------------*/
   async function init() {
-    // Apply mode class for styling consistency (but we do NOT hide header on inner pages)
     const mode = getMode();
     document.body.classList.remove("mode-hub", "mode-standard");
     document.body.classList.add(mode === "hub" ? "mode-hub" : "mode-standard");
@@ -334,7 +342,6 @@
 
     await injectGlobalHTML();
 
-    // Always run these after injection
     forceNavVisible();
     highlightActiveLink();
     preserveParamsAcrossLinks();
@@ -342,8 +349,8 @@
     updatePopupHeadingAndButton(refData);
     setHiddenFieldsOnContactOpen(refData);
 
-    // ✅ Important: wire mailto AFTER popup is injected
-    setupContactFormMailto();
+    // ✅ This is the real fix
+    installDelegatedMailtoHandler();
 
     if (refData.bannertext) createBanner(refData.bannertext);
   }
