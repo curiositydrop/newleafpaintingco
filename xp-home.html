@@ -77,14 +77,12 @@ html, body{
     brightness(0)
     invert(1)
     drop-shadow(0 0 18px rgba(255,255,255,.25));
-  animation: whiteFade 2.2s ease-out forwards;
+  animation: whiteFadeLoop 7.5s ease-in-out infinite;
 }
 
 .logo-green{
   filter: drop-shadow(0 0 22px rgba(80,255,160,.65));
-  opacity:0;
-  animation: greenFadeIn 1.6s ease forwards;
-  animation-delay:.75s;
+  animation: greenFadeLoop 7.5s ease-in-out infinite;
 }
 
 @keyframes greenFadeIn{
@@ -95,7 +93,21 @@ html, body{
 @keyframes whiteFade{
   to{ opacity:0; }
 }
+@keyframes whiteFadeLoop{
+  0%   { opacity:1; }
+  20%  { opacity:1; }
+  40%  { opacity:0; }
+  80%  { opacity:0; }
+  100% { opacity:1; }
+}
 
+@keyframes greenFadeLoop{
+  0%   { opacity:0; transform:scale(0.985); }
+  30%  { opacity:0; }
+  50%  { opacity:1; transform:scale(1); }
+  80%  { opacity:1; }
+  100% { opacity:0; transform:scale(0.985); }
+}
 .nl-hub-line{
   margin:18px auto;
   max-width:620px;
