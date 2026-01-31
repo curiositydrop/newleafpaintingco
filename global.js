@@ -2,13 +2,14 @@
    NEW LEAF GLOBAL.JS (ONE SOURCE OF TRUTH)
    - Injects global.html into #global-header / #global-footer
    - Injects contact button + popup (once)
-   - Forces nav links visible (your CSS hides them until JS runs)
-   - Preserves nav=1, mode=hub|standard, and ref/drop/sample across all internal links
-   - Forces Home link to go back to the correct index mode (no gate)
-   - ✅ Robust mailto submission (works even when popup is injected later)
+   - Forces nav links visible
+   - Preserves nav=1, mode=hub|standard, and ref/drop/sample across links
+   - Forces Home link to go back to correct index mode (no gate)
+   - ✅ FIXES mailto in XP iframe by using window.top
    ========================================================= */
 
 (function () {
+
   /* --------------------
      HELPERS
   ---------------------*/
@@ -49,7 +50,8 @@
     document.querySelectorAll("nav a").forEach(link => {
       let linkPage = (link.getAttribute("href") || "")
         .split("?")[0]
-        .split("/").pop()
+        .split("/")
+        .pop()
         .toLowerCase();
 
       if (!linkPage) linkPage = "index.html";
@@ -68,7 +70,6 @@
       if (isExternalHref(href)) return;
 
       const url = new URL(href, window.location.origin);
-
       url.searchParams.set("nav", "1");
       url.searchParams.set("mode", mode);
 
@@ -90,10 +91,6 @@
     const btn = document.getElementById("contact-btn");
     const closeBtn = document.querySelector("#contact-popup .close");
     if (!popup || !btn || !closeBtn) return;
-
-    // Avoid double wiring
-    if (popup.dataset.popupWired === "1") return;
-    popup.dataset.popupWired = "1";
 
     btn.onclick = (e) => {
       e?.preventDefault?.();
@@ -127,26 +124,25 @@
 
   function setHiddenFieldsOnContactOpen(refData) {
     document.addEventListener("click", e => {
-      const btn = e.target && e.target.id === "contact-btn";
-      if (!btn) return;
+      if (e.target && e.target.id === "contact-btn") {
+        const discountField = document.getElementById("discount-code");
+        if (discountField) discountField.value = refData.discountcode || "";
 
-      const discountField = document.getElementById("discount-code");
-      if (discountField) discountField.value = refData.discountcode || "";
+        let refField = document.getElementById("referrer");
+        if (!refField) {
+          refField = document.createElement("input");
+          refField.type = "hidden";
+          refField.name = "referrer";
+          refField.id = "referrer";
+          document.querySelector("#contact-popup form")?.appendChild(refField);
+        }
 
-      let refField = document.getElementById("referrer");
-      if (!refField) {
-        refField = document.createElement("input");
-        refField.type = "hidden";
-        refField.name = "referrer";
-        refField.id = "referrer";
-        document.querySelector("#contact-popup form")?.appendChild(refField);
+        if (refField) {
+          refField.value =
+            `${refData.referrername || ""}${refData.businessname ? " at " + refData.businessname : ""}`.trim();
+        }
       }
-
-      if (refField) {
-        refField.value =
-          `${refData.referrername || ""}${refData.businessname ? " at " + refData.businessname : ""}`.trim();
-      }
-    }, true);
+    });
   }
 
   /* --------------------
@@ -221,7 +217,6 @@
     if (popup && !hasPopup) document.body.insertAdjacentElement("beforeend", popup);
     if (btn && !hasBtn) document.body.insertAdjacentElement("beforeend", btn);
 
-    // Force Home link to return to correct index mode (NO gate)
     const mode = getMode();
     const refParam = getRefParam();
     const homeLink = document.getElementById("homeLink");
@@ -246,82 +241,46 @@
   }
 
   /* --------------------
-     ✅ FORM SUBMISSION (mailto) — ALWAYS WORKS
-     Uses CAPTURE + DELEGATION so injection timing cannot break it.
+     ✅ FORM SUBMISSION (mailto)
+     - Works in core AND XP iframe
   ---------------------*/
-  const TO_EMAIL = "newleafpaintingcompany@gmail.com";
+  function setupContactFormMailto() {
+    const TO_EMAIL = "newleafpaintingcompany@gmail.com";
 
-  function getFieldValue(id) {
-    return (document.getElementById(id)?.value || "").trim();
-  }
-
-  function buildMailto() {
-    const name = getFieldValue("name");
-    const email = getFieldValue("email");
-    const phone = getFieldValue("phone");
-    const message = getFieldValue("message");
-    const discount = (document.getElementById("discount-code")?.value || "").trim();
-
-    const subject = encodeURIComponent(refData.emailsubject || "New Leaf Painting Inquiry");
-
-    const bodyLines = [
-      `Name: ${name}`,
-      `Email: ${email}`,
-      `Phone: ${phone}`,
-      "",
-      `Message:`,
-      message || "",
-      "",
-      discount ? `Discount Code: ${discount}` : "",
-      refData.referrername
-        ? `Referrer: ${refData.referrername}${refData.businessname ? " at " + refData.businessname : ""}`
-        : ""
-    ].filter(Boolean);
-
-    const body = encodeURIComponent(bodyLines.join("\n"));
-    return `mailto:${TO_EMAIL}?subject=${subject}&body=${body}`;
-  }
-
-  function installDelegatedMailtoHandler() {
-    if (document.documentElement.dataset.mailtoDelegate === "1") return;
-    document.documentElement.dataset.mailtoDelegate = "1";
-
-    // Submit handler (capture) — stops ANY other submit logic first
+    // capture-phase beats other listeners
     document.addEventListener("submit", (e) => {
-      const form = e.target;
-      if (!form) return;
-
-      if (!form.closest || !form.closest("#contact-popup")) return;
-
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-
-      // Let native required fields work (if required is set)
-      if (typeof form.reportValidity === "function" && !form.reportValidity()) return;
-
-      window.location.href = buildMailto();
-    }, true);
-
-    // Click handler for the Send button (also capture)
-    document.addEventListener("click", (e) => {
-      const btn = e.target && e.target.closest && e.target.closest("#contact-popup button[type='submit']");
-      if (!btn) return;
-
-      const form = btn.closest("form");
+      const form = e.target?.closest?.("#contact-popup form");
       if (!form) return;
 
       e.preventDefault();
       e.stopPropagation();
       e.stopImmediatePropagation();
 
-      if (typeof form.requestSubmit === "function") {
-        form.requestSubmit();
-      } else {
-        // fallback for older browsers
-        const evt = new Event("submit", { bubbles: true, cancelable: true });
-        form.dispatchEvent(evt);
-      }
+      const name = document.getElementById("name")?.value || "";
+      const email = document.getElementById("email")?.value || "";
+      const phone = document.getElementById("phone")?.value || "";
+      const message = document.getElementById("message")?.value || "";
+      const discount = document.getElementById("discount-code")?.value || "";
+
+      const subject = encodeURIComponent(refData.emailsubject || "New Leaf Painting Inquiry");
+      const bodyLines = [
+        `Name: ${name}`,
+        `Email: ${email}`,
+        `Phone: ${phone}`,
+        `Message: ${message}`,
+        `Discount Code: ${discount}`,
+        refData.referrername
+          ? `Referrer: ${refData.referrername}${refData.businessname ? " at " + refData.businessname : ""}`
+          : ""
+      ].filter(Boolean);
+
+      const body = encodeURIComponent(bodyLines.join("\n"));
+      const mailto = `mailto:${TO_EMAIL}?subject=${subject}&body=${body}`;
+
+      // ✅ THIS IS THE FIX:
+      // If we're inside an iframe (XP), fire mailto from the TOP window.
+      const targetWin = (window.top && window.top !== window) ? window.top : window;
+      targetWin.location.href = mailto;
     }, true);
   }
 
@@ -349,8 +308,8 @@
     updatePopupHeadingAndButton(refData);
     setHiddenFieldsOnContactOpen(refData);
 
-    // ✅ This is the real fix
-    installDelegatedMailtoHandler();
+    // ✅ mailto wire
+    setupContactFormMailto();
 
     if (refData.bannertext) createBanner(refData.bannertext);
   }
