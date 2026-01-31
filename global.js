@@ -5,7 +5,7 @@
    - Forces nav links visible
    - Preserves nav=1, mode=hub|standard, and ref/drop/sample across links
    - Forces Home link to go back to correct index mode (no gate)
-   - ✅ FIXES mailto in XP iframe by using window.top
+   - ✅ FIXES mailto in XP iframe by using window.top + fallback link
    ========================================================= */
 
 (function () {
@@ -241,48 +241,110 @@
   }
 
   /* --------------------
-     ✅ FORM SUBMISSION (mailto)
-     - Works in core AND XP iframe
+     ✅ FORM SUBMISSION (mailto) – CORE + XP SAFE
   ---------------------*/
-  function setupContactFormMailto() {
-  const TO_EMAIL = "newleafpaintingcompany@gmail.com";
+  function ensureMailtoFallbackUI(mailto) {
+    const popupContent = document.querySelector("#contact-popup .popup-content");
+    if (!popupContent) return;
 
-  // capture-phase so nothing else steals it
-  document.addEventListener("submit", (e) => {
-    const form = e.target?.closest?.("#contact-popup form");
-    if (!form) return;
+    let wrap = document.getElementById("estimate-fallback");
+    if (!wrap) {
+      wrap = document.createElement("div");
+      wrap.id = "estimate-fallback";
+      wrap.style.display = "none";
+      wrap.style.marginTop = "10px";
+      wrap.style.textAlign = "center";
+      wrap.style.fontSize = "14px";
+      wrap.style.color = "#333";
 
-    e.preventDefault();
-    e.stopPropagation();
-    e.stopImmediatePropagation();
+      wrap.innerHTML = `
+        <div style="margin-top:10px;">
+          If your email app didn’t open, tap:
+          <a id="estimate-mailto-link" href="#" style="font-weight:700; text-decoration:underline;">
+            Open Email
+          </a>
+        </div>
+      `;
 
-    const name = document.getElementById("name")?.value || "";
-    const email = document.getElementById("email")?.value || "";
-    const phone = document.getElementById("phone")?.value || "";
-    const message = document.getElementById("message")?.value || "";
-    const discount = document.getElementById("discount-code")?.value || "";
-
-    const subject = encodeURIComponent("New Leaf Estimate Request");
-    const body = encodeURIComponent(
-      `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\n\nMessage:\n${message}\n\nDiscount Code: ${discount}`
-    );
-
-    const mailto = `mailto:${TO_EMAIL}?subject=${subject}&body=${body}`;
-
-    // Try normal mailto first (works on core)
-    try {
-      window.location.href = mailto;
-    } catch (err) {}
-
-    // Always show fallback link (XP iframe-safe)
-    const fallback = document.getElementById("estimate-fallback");
-    const link = document.getElementById("estimate-mailto-link");
-    if (fallback && link) {
-      link.setAttribute("href", mailto);
-      fallback.style.display = "block";
+      popupContent.appendChild(wrap);
     }
-  }, true);
-}
+
+    const link = document.getElementById("estimate-mailto-link");
+    if (link) link.setAttribute("href", mailto);
+
+    wrap.style.display = "block";
+  }
+
+  function setupContactFormMailto() {
+    const TO_EMAIL = "newleafpaintingcompany@gmail.com";
+
+    // CAPTURE PHASE submit handler = stops ALL other submit behaviors (gate reload)
+    document.addEventListener("submit", (e) => {
+      const form = e.target?.closest?.("#contact-popup form");
+      if (!form) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+
+      const val = (sel) => (form.querySelector(sel)?.value || "").trim();
+
+      const name = val("#name") || val('input[name="name"]');
+      const email = val("#email") || val('input[name="email"]');
+      const phone = val("#phone") || val('input[name="phone"]');
+      const message = val("#message") || val('textarea[name="message"]');
+      const discount = (document.getElementById("discount-code")?.value || "").trim();
+
+      const subject = encodeURIComponent(refData.emailsubject || "New Leaf Painting Inquiry");
+      const bodyLines = [
+        `Name: ${name}`,
+        `Email: ${email}`,
+        `Phone: ${phone}`,
+        "",
+        "Message:",
+        message,
+        "",
+        discount ? `Discount Code: ${discount}` : "",
+        refData.referrername
+          ? `Referrer: ${refData.referrername}${refData.businessname ? " at " + refData.businessname : ""}`
+          : ""
+      ].filter(Boolean);
+
+      const body = encodeURIComponent(bodyLines.join("\n"));
+      const mailto = `mailto:${TO_EMAIL}?subject=${subject}&body=${body}`;
+
+      // Try to open mail client in a way Safari tolerates
+      // - In XP iframe, top is safest
+      // - In core, normal is fine
+      try {
+        if (window.top && window.top !== window) {
+          window.top.location.assign(mailto);
+        } else {
+          window.location.assign(mailto);
+        }
+      } catch (err) {
+        // If blocked, show fallback link
+        ensureMailtoFallbackUI(mailto);
+      }
+
+      // Always show fallback link (in case the browser blocks mailto)
+      ensureMailtoFallbackUI(mailto);
+    }, true);
+
+    // Bonus: also catch SEND button clicks in capture phase (some browsers skip submit)
+    document.addEventListener("click", (e) => {
+      const sendBtn = e.target?.closest?.("#contact-popup button[type='submit'], #contact-popup input[type='submit']");
+      if (!sendBtn) return;
+
+      // let the submit handler do the work — but prevent any rogue click handlers
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+
+      const form = document.querySelector("#contact-popup form");
+      form?.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+    }, true);
+  }
 
   /* --------------------
      INIT
