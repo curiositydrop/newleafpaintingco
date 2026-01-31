@@ -438,3 +438,19 @@ body.mode-hub header .nav-links a.active {
   border-bottom: none !important;
   outline: 2px solid rgba(255,255,255,.25);
 }
+/* === FIX: always show labels in the estimate popup === */
+#contact-popup label{
+  display:block !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  height:auto !important;
+  margin:10px 0 6px !important;
+  font-weight:700 !important;
+  color:#111 !important;
+}
+
+/* optional: tighten spacing so it looks clean */
+#contact-popup input,
+#contact-popup textarea{
+  margin-top:0 !important;
+}
