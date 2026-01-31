@@ -249,39 +249,71 @@
      FORM SUBMISSION (contact popup)
   ---------------------*/
   function setupContactFormMailto() {
-    const popupForm = document.querySelector("#contact-popup form");
-    if (!popupForm) return;
+    const TO_EMAIL = "newleafpaintingcompany@gmail.com";
 
-    // ✅ Only wire once
-    if (popupForm.dataset.mailtoWired === "1") return;
-    popupForm.dataset.mailtoWired = "1";
+    function wire() {
+      const popup = document.getElementById("contact-popup");
+      const form = popup?.querySelector("form");
+      if (!form) return false;
 
-    popupForm.addEventListener("submit", (e) => {
-      // ✅ HARD STOP: prevents reload that would kick XP iframe back to hub/gate
-      e.preventDefault();
-      e.stopPropagation();
+      // ✅ Only wire once
+      if (form.dataset.mailtoWired === "1") return true;
+      form.dataset.mailtoWired = "1";
 
-      const name = document.getElementById("name")?.value || "";
-      const email = document.getElementById("email")?.value || "";
-      const phone = document.getElementById("phone")?.value || "";
-      const message = document.getElementById("message")?.value || "";
-      const discount = document.getElementById("discount-code")?.value || "";
+      const send = (e) => {
+        // ✅ HARD STOP: prevents reload / prevents other JS from hijacking
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
 
-      const subject = encodeURIComponent(refData.emailsubject || "New Leaf Painting Inquiry");
-      const bodyLines = [
-        `Name: ${name}`,
-        `Email: ${email}`,
-        `Phone: ${phone}`,
-        `Message: ${message}`,
-        `Discount Code: ${discount}`,
-        refData.referrername
-          ? `Referrer: ${refData.referrername}${refData.businessname ? " at " + refData.businessname : ""}`
-          : ""
-      ].filter(Boolean);
+        const name = document.getElementById("name")?.value?.trim() || "";
+        const email = document.getElementById("email")?.value?.trim() || "";
+        const phone = document.getElementById("phone")?.value?.trim() || "";
+        const message = document.getElementById("message")?.value?.trim() || "";
+        const discount = document.getElementById("discount-code")?.value?.trim() || "";
 
-      const body = encodeURIComponent(bodyLines.join("\n"));
-      window.location.href = `mailto:newleafpaintingcompany@gmail.com?subject=${subject}&body=${body}`;
-    });
+        const subject = encodeURIComponent(refData.emailsubject || "New Leaf Painting Inquiry");
+        const bodyLines = [
+          `Name: ${name}`,
+          `Email: ${email}`,
+          `Phone: ${phone}`,
+          ``,
+          `Message:`,
+          message,
+          ``,
+          discount ? `Discount Code: ${discount}` : "",
+          refData.referrername
+            ? `Referrer: ${refData.referrername}${refData.businessname ? " at " + refData.businessname : ""}`
+            : ""
+        ].filter(Boolean);
+
+        const body = encodeURIComponent(bodyLines.join("\n"));
+
+        // ✅ IMPORTANT: works even when running inside XP iframe
+        window.top.location.href = `mailto:${TO_EMAIL}?subject=${subject}&body=${body}`;
+      };
+
+      // Capture phase to beat other listeners
+      form.addEventListener("submit", send, true);
+
+      // Also bind the Send button click
+      const sendBtn =
+        form.querySelector('button[type="submit"]') ||
+        form.querySelector('input[type="submit"]');
+
+      if (sendBtn) {
+        sendBtn.addEventListener("click", send, true);
+      }
+
+      return true;
+    }
+
+    // Try now, then retry a bit (because global.html inject happens async)
+    wire();
+    let tries = 0;
+    const timer = setInterval(() => {
+      if (wire() || tries++ > 40) clearInterval(timer);
+    }, 200);
   }
 
   /* --------------------
