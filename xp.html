@@ -8,17 +8,9 @@
   <link rel="stylesheet" href="style.css" />
 
   <style>
-    /* XP shell */
     body{ margin:0; background:#000; color:#fff; }
     #global-header, #global-footer, #contact-btn { display:none !important; }
-
-    .xp-frame{
-      width:100vw;
-      height:100vh;
-      border:0;
-      display:block;
-      background:#000;
-    }
+    .xp-frame{ width:100vw; height:100vh; border:0; display:block; background:#000; }
   </style>
 </head>
 
@@ -35,14 +27,11 @@
 
     function installIntoFrame(){
       let doc;
-      try {
-        doc = frame.contentDocument || frame.contentWindow.document;
-      } catch (e) {
-        return;
-      }
+      try { doc = frame.contentDocument || frame.contentWindow.document; }
+      catch(e){ return; }
       if (!doc) return;
 
-      /* 1) Inject CSS INSIDE iframe so labels are visible */
+      // 1) Inject label/text CSS inside iframe
       if (!doc.getElementById("xp-form-fix-style")) {
         const style = doc.createElement("style");
         style.id = "xp-form-fix-style";
@@ -70,17 +59,25 @@
         doc.head.appendChild(style);
       }
 
-      /* 2) Wire the form INSIDE iframe to mailto */
-      const form = doc.querySelector("#contact-popup form");
-      if (!form) return;
+      const oldForm = doc.querySelector("#contact-popup form");
+      if (!oldForm) return;
 
-      if (form.dataset.xpMailtoWired === "1") return;
-      form.dataset.xpMailtoWired = "1";
+      // 2) HARD RESET the form to remove any listeners global.js attached
+      if (oldForm.dataset.xpReplaced === "1") return;
+
+      const newForm = oldForm.cloneNode(true);
+      newForm.dataset.xpReplaced = "1";
+
+      // Ensure form never performs a real submit/navigation
+      newForm.setAttribute("action", "javascript:void(0)");
+      newForm.setAttribute("novalidate", "novalidate");
+
+      oldForm.parentNode.replaceChild(newForm, oldForm);
 
       const get = (id) => (doc.getElementById(id)?.value || "").trim();
 
       function sendMail(e){
-        // HARD STOP: prevent any navigation / gate
+        // stop EVERYTHING, including any bubbling / other handlers
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
@@ -93,31 +90,32 @@
           `Message:\n${get("message")}`
         );
 
-        // From inside an iframe, push mailto from the TOP window
+        // MUST be top-level, and MUST be directly from the click
         window.top.location.href = `mailto:${TO_EMAIL}?subject=${subject}&body=${body}`;
       }
 
-      // Submit handler
-      form.addEventListener("submit", sendMail, true);
+      // Capture phase to beat anything else
+      newForm.addEventListener("submit", sendMail, true);
 
-      // Also hook the button click (Safari sometimes ignores submit-only)
-      const sendBtn = form.querySelector('button[type="submit"], input[type="submit"]');
-      if (sendBtn) sendBtn.addEventListener("click", sendMail, true);
+      // Also bind click on the Send button (Safari likes this)
+      const sendBtn = newForm.querySelector('button[type="submit"], input[type="submit"]');
+      if (sendBtn) {
+        sendBtn.addEventListener("click", sendMail, true);
+      }
     }
 
-    // Run every time the iframe loads a page
     frame.addEventListener("load", () => {
-      // Try immediately, then retry for a moment because popup HTML is injected after global.html loads
       installIntoFrame();
 
+      // retry while global.html gets injected (your popup is injected after load)
       let tries = 0;
       const t = setInterval(() => {
         installIntoFrame();
         tries++;
-        if ((frame.contentDocument || frame.contentWindow.document)?.querySelector("#contact-popup form") || tries > 40) {
+        if ((frame.contentDocument || frame.contentWindow.document)?.querySelector("#contact-popup form") || tries > 60) {
           clearInterval(t);
         }
-      }, 200);
+      }, 150);
     });
   </script>
 </body>
