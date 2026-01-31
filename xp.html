@@ -4,229 +4,24 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>New Leaf XP</title>
-
   <link rel="stylesheet" href="style.css" />
-
   <style>
     body{ margin:0; background:#000; color:#fff; }
     #global-header, #global-footer, #contact-btn { display:none !important; }
     .xp-frame{ width:100vw; height:100vh; border:0; display:block; background:#000; }
-
-    /* ✅ mail overlay (top document, outside iframe) */
-    #xp-mail-overlay{
-      position: fixed;
-      inset: 0;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 18px;
-      background: rgba(0,0,0,.78);
-      z-index: 999999;
-    }
-    #xp-mail-overlay .box{
-      width: min(520px, 92vw);
-      background: #111;
-      border: 1px solid rgba(255,255,255,.14);
-      border-radius: 14px;
-      padding: 18px;
-      text-align: center;
-      box-shadow: 0 12px 40px rgba(0,0,0,.55);
-    }
-    #xp-mail-overlay h3{
-      margin: 0 0 10px 0;
-      font-size: 18px;
-      color: #fff;
-    }
-    #xp-mail-overlay p{
-      margin: 0 0 14px 0;
-      color: rgba(255,255,255,.82);
-      font-size: 14px;
-      line-height: 1.35;
-    }
-    #xp-mail-overlay a.send{
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      padding: 14px 16px;
-      border-radius: 12px;
-      background: rgba(255,255,255,.92);
-      color: #0f5f33;
-      font-weight: 900;
-      text-decoration: none;
-      border: 2px solid rgba(255,255,255,.18);
-      cursor: pointer;
-    }
-    #xp-mail-overlay button.close{
-      margin-top: 10px;
-      padding: 10px 14px;
-      border-radius: 10px;
-      background: rgba(255,255,255,.10);
-      color: #fff;
-      border: 1px solid rgba(255,255,255,.14);
-      font-weight: 800;
-      cursor: pointer;
-      width: 100%;
-    }
   </style>
 </head>
-
 <body>
   <iframe class="xp-frame" id="xpFrame" title="New Leaf XP"></iframe>
-
-  <!-- ✅ Always-works fallback overlay -->
-  <div id="xp-mail-overlay" role="dialog" aria-modal="true" aria-label="Send estimate email">
-    <div class="box">
-      <h3>Ready to send?</h3>
-      <p>Safari sometimes blocks auto-opening Mail from the experience view.<br>Tap the button below to open your email app.</p>
-      <a class="send" id="xp-mail-link" href="#">Open Email App →</a>
-      <button class="close" id="xp-mail-close" type="button">Cancel</button>
-    </div>
-  </div>
-
   <script>
-    const TO_EMAIL = "newleafpaintingcompany@gmail.com";
-
     const params = new URLSearchParams(location.search);
     const page = params.get("page") || "index.html?nav=1&mode=hub";
-    const frame = document.getElementById("xpFrame");
-    frame.src = page;
 
-    // ===== overlay helpers =====
-    const overlay = document.getElementById("xp-mail-overlay");
-    const mailLink = document.getElementById("xp-mail-link");
-    const mailClose = document.getElementById("xp-mail-close");
+    // ✅ Force iframe to use SAME host as xp.html (prevents cross-origin weirdness)
+    const url = new URL(page, window.location.href);
+    url.origin = window.location.origin;
 
-    mailClose.addEventListener("click", () => { overlay.style.display = "none"; });
-
-    function showMailOverlay(mailtoUrl){
-      mailLink.setAttribute("href", mailtoUrl);
-      overlay.style.display = "flex";
-    }
-
-    // Try to open; if Safari blocks, overlay is already there as the manual tap.
-    function tryOpenMail(mailtoUrl){
-      // 1) Show overlay immediately (so user has a guaranteed path)
-      showMailOverlay(mailtoUrl);
-
-      // 2) Attempt auto-open (works on many devices, harmless if blocked)
-      try{
-        window.top.location.href = mailtoUrl;
-      } catch(e){}
-
-      // 3) Second attempt: click real anchor in top doc (sometimes helps)
-      try{
-        const a = document.createElement("a");
-        a.href = mailtoUrl;
-        a.style.display = "none";
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-      } catch(e){}
-    }
-
-    function installIntoFrame(){
-      let doc;
-      try { doc = frame.contentDocument || frame.contentWindow.document; }
-      catch(e){ return; }
-      if (!doc) return;
-
-      // Inject CSS inside iframe so labels/textboxes are readable
-      if (!doc.getElementById("xp-form-fix-style")) {
-        const style = doc.createElement("style");
-        style.id = "xp-form-fix-style";
-        style.textContent = `
-          #contact-popup, #contact-popup *{ color:#111 !important; }
-          #contact-popup label{
-            display:block !important;
-            visibility:visible !important;
-            opacity:1 !important;
-            height:auto !important;
-            margin:10px 0 6px !important;
-            font-weight:700 !important;
-            font-size:16px !important;
-            line-height:1.2 !important;
-            color:#111 !important;
-          }
-          #contact-popup input,
-          #contact-popup textarea{
-            background:#fff !important;
-            color:#111 !important;
-            border:1px solid #cfcfcf !important;
-          }
-          #contact-popup ::placeholder{ color:#777 !important; }
-        `;
-        doc.head.appendChild(style);
-      }
-
-      if (doc.documentElement.dataset.xpHandlersInstalled === "1") return;
-      doc.documentElement.dataset.xpHandlersInstalled = "1";
-
-      function getVal(id){
-        return (doc.getElementById(id)?.value || "").trim();
-      }
-
-      function buildMailto(){
-        const subject = encodeURIComponent("New Leaf Estimate Request");
-        const body = encodeURIComponent(
-          `Name: ${getVal("name")}\n` +
-          `Email: ${getVal("email")}\n` +
-          `Phone: ${getVal("phone")}\n\n` +
-          `Message:\n${getVal("message")}`
-        );
-        return `mailto:${TO_EMAIL}?subject=${subject}&body=${body}`;
-      }
-
-      // Make sure submit can’t navigate
-      function prepForm(){
-        const form = doc.querySelector("#contact-popup form");
-        if (!form) return;
-        form.querySelectorAll("[required]").forEach(el => el.removeAttribute("required"));
-        form.setAttribute("action", "javascript:void(0)");
-        form.setAttribute("novalidate", "novalidate");
-      }
-
-      let tries = 0;
-      const prepTimer = setInterval(() => {
-        prepForm();
-        tries++;
-        if (doc.querySelector("#contact-popup form") || tries > 80) clearInterval(prepTimer);
-      }, 150);
-
-      // Capture click on Send
-      doc.addEventListener("click", (e) => {
-        const sendBtn = e.target.closest("#contact-popup button[type='submit'], #contact-popup input[type='submit']");
-        if (!sendBtn) return;
-
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-
-        tryOpenMail(buildMailto());
-      }, true);
-
-      // Capture submit as backup
-      doc.addEventListener("submit", (e) => {
-        const form = e.target.closest("#contact-popup form");
-        if (!form) return;
-
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-
-        tryOpenMail(buildMailto());
-      }, true);
-    }
-
-    frame.addEventListener("load", () => {
-      installIntoFrame();
-      let tries = 0;
-      const t = setInterval(() => {
-        installIntoFrame();
-        tries++;
-        if (tries > 40) clearInterval(t);
-      }, 150);
-    });
+    document.getElementById("xpFrame").src = url.pathname.replace(/^\//,"") + url.search;
   </script>
 </body>
 </html>
