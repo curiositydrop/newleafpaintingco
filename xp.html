@@ -147,5 +147,42 @@
     // Run fixes every time the iframe loads a page
     frame.addEventListener("load", injectXpFixesIntoFrame);
   </script>
+  <script>
+function overrideXPContactForm() {
+  const iframe = document.getElementById("xpFrame");
+  if (!iframe || !iframe.contentWindow) return;
+
+  try {
+    const doc = iframe.contentWindow.document;
+    const form = doc.querySelector("#contact-popup form");
+    if (!form) return;
+
+    if (form.dataset.mailto === "1") return;
+    form.dataset.mailto = "1";
+
+    form.addEventListener("submit", function(e){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+
+      const name = doc.getElementById("name")?.value || "";
+      const email = doc.getElementById("email")?.value || "";
+      const phone = doc.getElementById("phone")?.value || "";
+      const message = doc.getElementById("message")?.value || "";
+
+      const to = "newleafpaintingcompany@gmail.com";
+      const subject = encodeURIComponent("New Leaf Estimate Request");
+      const body = encodeURIComponent(
+        `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\n\nMessage:\n${message}`
+      );
+
+      window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+    });
+
+  } catch(e){}
+}
+
+// keep trying until iframe loads
+setInterval(overrideXPContactForm, 500);
+</script>
 </body>
 </html>
