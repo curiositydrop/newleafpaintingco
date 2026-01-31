@@ -245,44 +245,44 @@
      - Works in core AND XP iframe
   ---------------------*/
   function setupContactFormMailto() {
-    const TO_EMAIL = "newleafpaintingcompany@gmail.com";
+  const TO_EMAIL = "newleafpaintingcompany@gmail.com";
 
-    // capture-phase beats other listeners
-    document.addEventListener("submit", (e) => {
-      const form = e.target?.closest?.("#contact-popup form");
-      if (!form) return;
+  // capture-phase so nothing else steals it
+  document.addEventListener("submit", (e) => {
+    const form = e.target?.closest?.("#contact-popup form");
+    if (!form) return;
 
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
 
-      const name = document.getElementById("name")?.value || "";
-      const email = document.getElementById("email")?.value || "";
-      const phone = document.getElementById("phone")?.value || "";
-      const message = document.getElementById("message")?.value || "";
-      const discount = document.getElementById("discount-code")?.value || "";
+    const name = document.getElementById("name")?.value || "";
+    const email = document.getElementById("email")?.value || "";
+    const phone = document.getElementById("phone")?.value || "";
+    const message = document.getElementById("message")?.value || "";
+    const discount = document.getElementById("discount-code")?.value || "";
 
-      const subject = encodeURIComponent(refData.emailsubject || "New Leaf Painting Inquiry");
-      const bodyLines = [
-        `Name: ${name}`,
-        `Email: ${email}`,
-        `Phone: ${phone}`,
-        `Message: ${message}`,
-        `Discount Code: ${discount}`,
-        refData.referrername
-          ? `Referrer: ${refData.referrername}${refData.businessname ? " at " + refData.businessname : ""}`
-          : ""
-      ].filter(Boolean);
+    const subject = encodeURIComponent("New Leaf Estimate Request");
+    const body = encodeURIComponent(
+      `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\n\nMessage:\n${message}\n\nDiscount Code: ${discount}`
+    );
 
-      const body = encodeURIComponent(bodyLines.join("\n"));
-      const mailto = `mailto:${TO_EMAIL}?subject=${subject}&body=${body}`;
+    const mailto = `mailto:${TO_EMAIL}?subject=${subject}&body=${body}`;
 
-      // ✅ THIS IS THE FIX:
-      // If we're inside an iframe (XP), fire mailto from the TOP window.
-      const targetWin = (window.top && window.top !== window) ? window.top : window;
-      targetWin.location.href = mailto;
-    }, true);
-  }
+    // Try normal mailto first (works on core)
+    try {
+      window.location.href = mailto;
+    } catch (err) {}
+
+    // Always show fallback link (XP iframe-safe)
+    const fallback = document.getElementById("estimate-fallback");
+    const link = document.getElementById("estimate-mailto-link");
+    if (fallback && link) {
+      link.setAttribute("href", mailto);
+      fallback.style.display = "block";
+    }
+  }, true);
+}
 
   /* --------------------
      INIT
