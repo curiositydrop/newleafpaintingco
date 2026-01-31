@@ -25,6 +25,32 @@
     const frame = document.getElementById("xpFrame");
     frame.src = page;
 
+    // ✅ iOS/Safari-friendly way to open mail client from an iframe situation
+    function openMailto(url){
+      try{
+        const topDoc = window.top.document;
+
+        // Ensure body exists
+        if (!topDoc.body) {
+          window.top.location.href = url;
+          return;
+        }
+
+        const a = topDoc.createElement("a");
+        a.href = url;
+        a.style.display = "none";
+        topDoc.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        // fallback
+        setTimeout(() => { window.top.location.href = url; }, 60);
+      }catch(e){
+        // last fallback
+        window.location.href = url;
+      }
+    }
+
     function installIntoFrame(){
       let doc;
       try { doc = frame.contentDocument || frame.contentWindow.document; }
@@ -107,8 +133,8 @@
         e.stopPropagation();
         e.stopImmediatePropagation();
 
-        // Fire mailto from TOP window (outside iframe)
-        window.top.location.href = buildMailto();
+        // ✅ iOS-safe mailto launch
+        openMailto(buildMailto());
       }, true);
 
       // Also capture submit (backup)
@@ -120,7 +146,8 @@
         e.stopPropagation();
         e.stopImmediatePropagation();
 
-        window.top.location.href = buildMailto();
+        // ✅ iOS-safe mailto launch
+        openMailto(buildMailto());
       }, true);
     }
 
