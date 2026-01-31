@@ -23,22 +23,32 @@
 <!-- CONTACT POPUP -->
 <div id="contact-popup" class="popup">
   <div class="popup-content">
-    <span class="close">&times;</span>
+    <span class="close" aria-label="Close">&times;</span>
     <h2>Get free estimate</h2>
-    <form>
-      <label for="name">Name:</label>
-      <input type="text" id="name" required>
 
-      <label for="email">Email:</label>
-      <input type="email" id="email" required>
+    <form id="estimate-form">
+      <div class="field">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" placeholder="Your name" required>
+      </div>
 
-      <label for="phone">Phone:</label>
-      <input type="tel" id="phone">
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="you@email.com" required>
+      </div>
 
-      <label for="message">Message:</label>
-      <textarea id="message" rows="4"></textarea>
+      <div class="field">
+        <label for="phone">Phone</label>
+        <input type="tel" id="phone" name="phone" placeholder="(207) 555-1234">
+      </div>
+
+      <div class="field">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" rows="4" placeholder="Tell me what you’re looking to paint…"></textarea>
+      </div>
 
       <input type="hidden" name="discount_code" id="discount-code" value="">
+
       <button type="submit">Send</button>
     </form>
   </div>
