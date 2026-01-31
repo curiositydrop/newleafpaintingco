@@ -11,11 +11,78 @@
     body{ margin:0; background:#000; color:#fff; }
     #global-header, #global-footer, #contact-btn { display:none !important; }
     .xp-frame{ width:100vw; height:100vh; border:0; display:block; background:#000; }
+
+    /* ✅ mail overlay (top document, outside iframe) */
+    #xp-mail-overlay{
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(0,0,0,.78);
+      z-index: 999999;
+    }
+    #xp-mail-overlay .box{
+      width: min(520px, 92vw);
+      background: #111;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 14px;
+      padding: 18px;
+      text-align: center;
+      box-shadow: 0 12px 40px rgba(0,0,0,.55);
+    }
+    #xp-mail-overlay h3{
+      margin: 0 0 10px 0;
+      font-size: 18px;
+      color: #fff;
+    }
+    #xp-mail-overlay p{
+      margin: 0 0 14px 0;
+      color: rgba(255,255,255,.82);
+      font-size: 14px;
+      line-height: 1.35;
+    }
+    #xp-mail-overlay a.send{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.92);
+      color: #0f5f33;
+      font-weight: 900;
+      text-decoration: none;
+      border: 2px solid rgba(255,255,255,.18);
+      cursor: pointer;
+    }
+    #xp-mail-overlay button.close{
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: rgba(255,255,255,.10);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.14);
+      font-weight: 800;
+      cursor: pointer;
+      width: 100%;
+    }
   </style>
 </head>
 
 <body>
   <iframe class="xp-frame" id="xpFrame" title="New Leaf XP"></iframe>
+
+  <!-- ✅ Always-works fallback overlay -->
+  <div id="xp-mail-overlay" role="dialog" aria-modal="true" aria-label="Send estimate email">
+    <div class="box">
+      <h3>Ready to send?</h3>
+      <p>Safari sometimes blocks auto-opening Mail from the experience view.<br>Tap the button below to open your email app.</p>
+      <a class="send" id="xp-mail-link" href="#">Open Email App →</a>
+      <button class="close" id="xp-mail-close" type="button">Cancel</button>
+    </div>
+  </div>
 
   <script>
     const TO_EMAIL = "newleafpaintingcompany@gmail.com";
@@ -25,30 +92,37 @@
     const frame = document.getElementById("xpFrame");
     frame.src = page;
 
-    // ✅ iOS/Safari-friendly way to open mail client from an iframe situation
-    function openMailto(url){
+    // ===== overlay helpers =====
+    const overlay = document.getElementById("xp-mail-overlay");
+    const mailLink = document.getElementById("xp-mail-link");
+    const mailClose = document.getElementById("xp-mail-close");
+
+    mailClose.addEventListener("click", () => { overlay.style.display = "none"; });
+
+    function showMailOverlay(mailtoUrl){
+      mailLink.setAttribute("href", mailtoUrl);
+      overlay.style.display = "flex";
+    }
+
+    // Try to open; if Safari blocks, overlay is already there as the manual tap.
+    function tryOpenMail(mailtoUrl){
+      // 1) Show overlay immediately (so user has a guaranteed path)
+      showMailOverlay(mailtoUrl);
+
+      // 2) Attempt auto-open (works on many devices, harmless if blocked)
       try{
-        const topDoc = window.top.document;
+        window.top.location.href = mailtoUrl;
+      } catch(e){}
 
-        // Ensure body exists
-        if (!topDoc.body) {
-          window.top.location.href = url;
-          return;
-        }
-
-        const a = topDoc.createElement("a");
-        a.href = url;
+      // 3) Second attempt: click real anchor in top doc (sometimes helps)
+      try{
+        const a = document.createElement("a");
+        a.href = mailtoUrl;
         a.style.display = "none";
-        topDoc.body.appendChild(a);
+        document.body.appendChild(a);
         a.click();
         a.remove();
-
-        // fallback
-        setTimeout(() => { window.top.location.href = url; }, 60);
-      }catch(e){
-        // last fallback
-        window.location.href = url;
-      }
+      } catch(e){}
     }
 
     function installIntoFrame(){
@@ -85,7 +159,6 @@
         doc.head.appendChild(style);
       }
 
-      // Make sure we only install handlers once per iframe document
       if (doc.documentElement.dataset.xpHandlersInstalled === "1") return;
       doc.documentElement.dataset.xpHandlersInstalled = "1";
 
@@ -104,19 +177,15 @@
         return `mailto:${TO_EMAIL}?subject=${subject}&body=${body}`;
       }
 
+      // Make sure submit can’t navigate
       function prepForm(){
         const form = doc.querySelector("#contact-popup form");
         if (!form) return;
-
-        // Remove native validation blockers (these can stop submit/click behavior)
         form.querySelectorAll("[required]").forEach(el => el.removeAttribute("required"));
-
-        // Prevent any real navigation submit
         form.setAttribute("action", "javascript:void(0)");
         form.setAttribute("novalidate", "novalidate");
       }
 
-      // Keep prepping in case popup is injected later
       let tries = 0;
       const prepTimer = setInterval(() => {
         prepForm();
@@ -124,7 +193,7 @@
         if (doc.querySelector("#contact-popup form") || tries > 80) clearInterval(prepTimer);
       }, 150);
 
-      // ✅ GUARANTEED: capture-phase click handler for the Send button
+      // Capture click on Send
       doc.addEventListener("click", (e) => {
         const sendBtn = e.target.closest("#contact-popup button[type='submit'], #contact-popup input[type='submit']");
         if (!sendBtn) return;
@@ -133,11 +202,10 @@
         e.stopPropagation();
         e.stopImmediatePropagation();
 
-        // ✅ iOS-safe mailto launch
-        openMailto(buildMailto());
+        tryOpenMail(buildMailto());
       }, true);
 
-      // Also capture submit (backup)
+      // Capture submit as backup
       doc.addEventListener("submit", (e) => {
         const form = e.target.closest("#contact-popup form");
         if (!form) return;
@@ -146,13 +214,11 @@
         e.stopPropagation();
         e.stopImmediatePropagation();
 
-        // ✅ iOS-safe mailto launch
-        openMailto(buildMailto());
+        tryOpenMail(buildMailto());
       }, true);
     }
 
     frame.addEventListener("load", () => {
-      // popup may be injected after load; install now + retry a bit
       installIntoFrame();
       let tries = 0;
       const t = setInterval(() => {
