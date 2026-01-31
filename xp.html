@@ -4,19 +4,138 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>New Leaf XP</title>
+
   <link rel="stylesheet" href="style.css" />
+
   <style>
     body{ margin:0; background:#000; color:#fff; }
     #global-header, #global-footer, #contact-btn { display:none !important; }
     .xp-frame{ width:100vw; height:100vh; border:0; display:block; background:#000; }
   </style>
 </head>
+
 <body>
   <iframe class="xp-frame" id="xpFrame" title="New Leaf XP"></iframe>
+
   <script>
+    const TO_EMAIL = "newleafpaintingcompany@gmail.com";
+
+    // Always load hub mode inside the iframe
     const params = new URLSearchParams(location.search);
     const page = params.get("page") || "index.html?nav=1&mode=hub";
-    document.getElementById("xpFrame").src = page;
+    const frame = document.getElementById("xpFrame");
+    frame.src = page;
+
+    // Parent listens for mail requests from iframe and opens mail client from TOP
+    window.addEventListener("message", (event) => {
+      if (!event.data || event.data.type !== "NL_MAILTO") return;
+      const mailto = event.data.mailto;
+      if (!mailto) return;
+
+      try {
+        window.top.location.href = mailto;
+      } catch (e) {
+        // fallback
+        window.open(mailto, "_self");
+      }
+    });
+
+    function installIntoFrame(){
+      let doc;
+      try { doc = frame.contentDocument || frame.contentWindow.document; }
+      catch(e){ return; }
+      if (!doc) return;
+
+      // Inject CSS inside iframe so labels/textboxes are readable
+      if (!doc.getElementById("xp-form-fix-style")) {
+        const style = doc.createElement("style");
+        style.id = "xp-form-fix-style";
+        style.textContent = `
+          #contact-popup, #contact-popup *{ color:#111 !important; }
+          #contact-popup label{
+            display:block !important;
+            visibility:visible !important;
+            opacity:1 !important;
+            height:auto !important;
+            margin:10px 0 6px !important;
+            font-weight:700 !important;
+            font-size:16px !important;
+            line-height:1.2 !important;
+            color:#111 !important;
+          }
+          #contact-popup input,
+          #contact-popup textarea{
+            background:#fff !important;
+            color:#111 !important;
+            border:1px solid #cfcfcf !important;
+          }
+          #contact-popup ::placeholder{ color:#777 !important; }
+        `;
+        doc.head.appendChild(style);
+      }
+
+      // Install handlers once per iframe document
+      if (doc.documentElement.dataset.xpMailInstalled === "1") return;
+      doc.documentElement.dataset.xpMailInstalled = "1";
+
+      function val(sel){
+        return (doc.querySelector(sel)?.value || "").trim();
+      }
+
+      function buildMailto(){
+        const name = val("#name") || val('input[name="name"]');
+        const email = val("#email") || val('input[name="email"]');
+        const phone = val("#phone") || val('input[name="phone"]');
+        const message = val("#message") || val('textarea[name="message"]');
+        const discount = (doc.getElementById("discount-code")?.value || "").trim();
+
+        const subject = encodeURIComponent("New Leaf Estimate Request");
+        const body = encodeURIComponent(
+          `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\n\nMessage:\n${message}\n\nDiscount Code: ${discount}`
+        );
+
+        return `mailto:${TO_EMAIL}?subject=${subject}&body=${body}`;
+      }
+
+      // CAPTURE submit INSIDE iframe so it can’t reload to the gate
+      doc.addEventListener("submit", (e) => {
+        const form = e.target?.closest?.("#contact-popup form");
+        if (!form) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+
+        const mailto = buildMailto();
+        // Send to parent to open mail client
+        window.postMessage({ type:"NL_MAILTO", mailto }, "*");
+      }, true);
+
+      // Also capture SEND button clicks (some browsers are weird)
+      doc.addEventListener("click", (e) => {
+        const sendBtn = e.target?.closest?.("#contact-popup button[type='submit'], #contact-popup input[type='submit']");
+        if (!sendBtn) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+
+        const mailto = buildMailto();
+        window.postMessage({ type:"NL_MAILTO", mailto }, "*");
+      }, true);
+    }
+
+    frame.addEventListener("load", () => {
+      installIntoFrame();
+
+      // Popup is injected after global.html load sometimes — retry briefly
+      let tries = 0;
+      const t = setInterval(() => {
+        installIntoFrame();
+        tries++;
+        if (tries > 60) clearInterval(t);
+      }, 150);
+    });
   </script>
 </body>
 </html>
