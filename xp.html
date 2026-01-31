@@ -18,12 +18,12 @@
   <iframe class="xp-frame" id="xpFrame" title="New Leaf XP"></iframe>
 
   <script>
+    const TO_EMAIL = "newleafpaintingcompany@gmail.com";
+
     const params = new URLSearchParams(location.search);
     const page = params.get("page") || "index.html?nav=1&mode=hub";
     const frame = document.getElementById("xpFrame");
     frame.src = page;
-
-    const TO_EMAIL = "newleafpaintingcompany@gmail.com";
 
     function installIntoFrame(){
       let doc;
@@ -31,7 +31,7 @@
       catch(e){ return; }
       if (!doc) return;
 
-      // 1) Inject label/text CSS inside iframe
+      // Inject CSS inside iframe so labels/textboxes are readable
       if (!doc.getElementById("xp-form-fix-style")) {
         const style = doc.createElement("style");
         style.id = "xp-form-fix-style";
@@ -59,62 +59,79 @@
         doc.head.appendChild(style);
       }
 
-      const oldForm = doc.querySelector("#contact-popup form");
-      if (!oldForm) return;
+      // Make sure we only install handlers once per iframe document
+      if (doc.documentElement.dataset.xpHandlersInstalled === "1") return;
+      doc.documentElement.dataset.xpHandlersInstalled = "1";
 
-      // 2) HARD RESET the form to remove any listeners global.js attached
-      if (oldForm.dataset.xpReplaced === "1") return;
+      function getVal(id){
+        return (doc.getElementById(id)?.value || "").trim();
+      }
 
-      const newForm = oldForm.cloneNode(true);
-      newForm.dataset.xpReplaced = "1";
+      function buildMailto(){
+        const subject = encodeURIComponent("New Leaf Estimate Request");
+        const body = encodeURIComponent(
+          `Name: ${getVal("name")}\n` +
+          `Email: ${getVal("email")}\n` +
+          `Phone: ${getVal("phone")}\n\n` +
+          `Message:\n${getVal("message")}`
+        );
+        return `mailto:${TO_EMAIL}?subject=${subject}&body=${body}`;
+      }
 
-      // Ensure form never performs a real submit/navigation
-      newForm.setAttribute("action", "javascript:void(0)");
-      newForm.setAttribute("novalidate", "novalidate");
+      function prepForm(){
+        const form = doc.querySelector("#contact-popup form");
+        if (!form) return;
 
-      oldForm.parentNode.replaceChild(newForm, oldForm);
+        // Remove native validation blockers (these can stop submit/click behavior)
+        form.querySelectorAll("[required]").forEach(el => el.removeAttribute("required"));
 
-      const get = (id) => (doc.getElementById(id)?.value || "").trim();
+        // Prevent any real navigation submit
+        form.setAttribute("action", "javascript:void(0)");
+        form.setAttribute("novalidate", "novalidate");
+      }
 
-      function sendMail(e){
-        // stop EVERYTHING, including any bubbling / other handlers
+      // Keep prepping in case popup is injected later
+      let tries = 0;
+      const prepTimer = setInterval(() => {
+        prepForm();
+        tries++;
+        if (doc.querySelector("#contact-popup form") || tries > 80) clearInterval(prepTimer);
+      }, 150);
+
+      // ✅ GUARANTEED: capture-phase click handler for the Send button
+      doc.addEventListener("click", (e) => {
+        const sendBtn = e.target.closest("#contact-popup button[type='submit'], #contact-popup input[type='submit']");
+        if (!sendBtn) return;
+
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
 
-        const subject = encodeURIComponent("New Leaf Estimate Request");
-        const body = encodeURIComponent(
-          `Name: ${get("name")}\n` +
-          `Email: ${get("email")}\n` +
-          `Phone: ${get("phone")}\n\n` +
-          `Message:\n${get("message")}`
-        );
+        // Fire mailto from TOP window (outside iframe)
+        window.top.location.href = buildMailto();
+      }, true);
 
-        // MUST be top-level, and MUST be directly from the click
-        window.top.location.href = `mailto:${TO_EMAIL}?subject=${subject}&body=${body}`;
-      }
+      // Also capture submit (backup)
+      doc.addEventListener("submit", (e) => {
+        const form = e.target.closest("#contact-popup form");
+        if (!form) return;
 
-      // Capture phase to beat anything else
-      newForm.addEventListener("submit", sendMail, true);
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
 
-      // Also bind click on the Send button (Safari likes this)
-      const sendBtn = newForm.querySelector('button[type="submit"], input[type="submit"]');
-      if (sendBtn) {
-        sendBtn.addEventListener("click", sendMail, true);
-      }
+        window.top.location.href = buildMailto();
+      }, true);
     }
 
     frame.addEventListener("load", () => {
+      // popup may be injected after load; install now + retry a bit
       installIntoFrame();
-
-      // retry while global.html gets injected (your popup is injected after load)
       let tries = 0;
       const t = setInterval(() => {
         installIntoFrame();
         tries++;
-        if ((frame.contentDocument || frame.contentWindow.document)?.querySelector("#contact-popup form") || tries > 60) {
-          clearInterval(t);
-        }
+        if (tries > 40) clearInterval(t);
       }, 150);
     });
   </script>
