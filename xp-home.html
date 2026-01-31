@@ -114,6 +114,41 @@ html, body {
 @keyframes pulse{
   50%{ box-shadow:0 0 42px rgba(46,255,140,.9); transform:translateY(-2px); }
 }
+  /* =========================
+   XP: HARD STOP SIDE SCROLL
+   ========================= */
+html, body {
+  width: 100%;
+  overflow-x: hidden !important;
+}
+
+#nl-hub,
+.nl-hub-inner {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden !important;
+}
+
+/* This is usually the culprit */
+.nl-hub-logo-wrap {
+  position: relative;
+  display: inline-block;
+  width: min(300px, 75vw);
+  max-width: 75vw;
+  overflow: hidden;          /* IMPORTANT */
+}
+
+/* If ANY sweep/animation pseudo-elements still exist */
+.nl-hub-logo-wrap::before,
+.nl-hub-logo-wrap::after {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* Make sure padding never “adds width” */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
 </style>
 </head>
 
