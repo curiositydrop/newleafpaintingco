@@ -1,229 +1,27 @@
-<!-- global.html (XP DARK VIBE) -->
-
-<style>
-  :root{
-    --xp-bg:#000;
-    --xp-panel: rgba(255,255,255,.06);
-    --xp-stroke: rgba(255,255,255,.14);
-    --xp-text: rgba(255,255,255,.92);
-    --xp-muted: rgba(255,255,255,.78);
-    --xp-green:#1f6b33;
-    --xp-glow: rgba(80,255,160,.22);
-  }
-
-  /* Keep the rest of the site from being forced light by style.css */
-  body{
-    background: var(--xp-bg) !important;
-    color: var(--xp-text);
-  }
-
-  /* ===== XP HEADER ===== */
-  header{
-    background: #050505 !important;
-    border-bottom: 1px solid rgba(255,255,255,.10);
-    box-shadow: 0 18px 40px rgba(0,0,0,.45);
-    padding: 14px 12px 12px;
-    text-align: center;
-  }
-
-  .logo-container{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    margin: 2px 0 10px;
-  }
-
-  /* new logo */
-  .logo{
-    width: min(220px, 62vw);
-    height: auto;
-    display:block;
-    filter: drop-shadow(0 0 20px rgba(80,255,160,.35));
-  }
-
-  nav{
-    margin-top: 6px;
-  }
-
-  .nav-links{
-    list-style:none;
-    padding:0;
-    margin:0 auto;
-    display:flex;
-    gap: 10px;
-    justify-content:center;
-    flex-wrap: wrap;
-  }
-
-  /* XP button-style nav */
-  .nav-links a{
-    visibility: visible !important;
-    opacity: 1 !important;
-
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    padding: 10px 12px;
-    border-radius: 12px;
-    border: 2px solid rgba(255,255,255,.16);
-    background: rgba(255,255,255,.08);
-    color: #fff !important;
-    font-weight: 800;
-    text-decoration:none;
-    transition: transform .12s ease, filter .12s ease, background .12s ease;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .nav-links a:hover{
-    transform: translateY(-1px);
-    filter: brightness(1.05);
-    background: rgba(255,255,255,.10);
-  }
-
-  .nav-links a.active{
-    outline: 2px solid rgba(80,255,160,.35);
-    background: rgba(80,255,160,.10);
-  }
-
-  /* ===== FLOATING ESTIMATE BUTTON (XP) ===== */
-  #contact-btn{
-    position: fixed;
-    right: 18px;
-    bottom: 18px;
-    z-index: 9998;
-
-    border-radius: 999px;
-    padding: 14px 16px;
-    border: 2px solid rgba(255,255,255,.16);
-    background: rgba(255,255,255,.92);
-    color: #0f5f33;
-    font-weight: 900;
-    cursor: pointer;
-    box-shadow: 0 14px 30px rgba(0,0,0,.45);
-  }
-
-  #contact-btn:hover{ filter: brightness(1.03); }
-
-  /* ===== POPUP (XP) ===== */
-  .popup{
-    display:none;
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    background: rgba(0,0,0,.72);
-    justify-content:center;
-    align-items:center;
-    padding: 18px 12px;
-  }
-
-  .popup-content{
-    width: 100%;
-    max-width: 420px;
-    border-radius: 16px;
-    background: rgba(10,10,10,.96);
-    border: 1px solid rgba(255,255,255,.14);
-    box-shadow:
-      0 26px 70px rgba(0,0,0,.70),
-      0 0 30px rgba(80,255,160,.12);
-    padding: 18px 16px 16px;
-    position: relative;
-    color: var(--xp-text);
-  }
-
-  .popup-content h2{
-    margin: 4px 0 12px;
-    text-align:center;
-    font-size: 1.15rem;
-    color: #fff;
-  }
-
-  .popup-content .close{
-    position:absolute;
-    top: 8px;
-    right: 10px;
-    border:none;
-    background: transparent;
-    color:#fff;
-    font-size: 34px;
-    font-weight: 900;
-    cursor:pointer;
-    line-height:1;
-  }
-
-  .field{ margin: 10px 0; }
-  .popup-content label{
-    display:block;
-    margin: 0 0 6px;
-    font-weight: 800;
-    color: rgba(255,255,255,.85);
-    font-size: .92rem;
-  }
-
-  .popup-content input,
-  .popup-content textarea{
-    width: 100%;
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,.14);
-    background: rgba(255,255,255,.06);
-    color: #fff;
-    padding: 10px 12px;
-    outline: none;
-    box-sizing: border-box;
-  }
-
-  .popup-content textarea{ resize: vertical; }
-
-  #estimate-send{
-    width:100%;
-    margin-top: 12px;
-    border-radius: 12px;
-    border: 2px solid rgba(255,255,255,.16);
-    background: rgba(255,255,255,.92);
-    color: #0f5f33;
-    padding: 12px 14px;
-    font-weight: 900;
-    cursor: pointer;
-  }
-
-  #estimate-send:hover{ filter: brightness(1.03); }
-
-  /* ===== XP FOOTER ===== */
-  footer{
-    margin-top: 44px;
-    padding: 26px 14px 34px;
-    text-align:center;
-    background: #050505;
-    border-top: 1px solid rgba(255,255,255,.10);
-    color: rgba(255,255,255,.82);
-  }
-
-  .footer-logo{
-    width: min(140px, 42vw);
-    height:auto;
-    display:block;
-    margin: 0 auto 10px;
-    filter: drop-shadow(0 0 18px rgba(80,255,160,.22));
-  }
-</style>
+<!-- global.html -->
 
 <!-- HEADER -->
-<header>
+<header class="xp-header">
   <div class="logo-container">
-    <!-- ✅ NEW LOGO FILE -->
-    <img
-      src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png"
-      alt="New Leaf Painting Co."
-      class="logo"
-    />
+    <div class="nl-hub-logo-wrap" aria-label="New Leaf Painting Co.">
+      <img class="nl-hub-logo logo-green" src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png" alt="New Leaf Painting Co.">
+      <img class="nl-hub-logo logo-white" src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png" alt="" aria-hidden="true">
+    </div>
   </div>
 
   <nav aria-label="Site navigation">
     <ul class="nav-links">
-      <li><a id="homeLink" href="xp-home.html">Home</a></li>
+      <li><a id="homeLink" href="xp-home.html">XP Home</a></li>
+      <li><a href="experience.html">The Experience</a></li>
+
       <li><a href="past-projects.html">Past Projects</a></li>
       <li><a href="local-partners.html">Local Partners</a></li>
-      <li><a href="referus.html">Refer</a></li>
+
+      <li><a href="contractors.html">Contractors</a></li>
+      <li><a href="referus.html">Refer New Leaf</a></li>
+
       <li><a href="testimonials.html">Testimonials</a></li>
+      <li><a href="#" data-contact-open="1">Get Free Estimate</a></li>
     </ul>
   </nav>
 </header>
@@ -266,11 +64,7 @@
 </div>
 
 <!-- FOOTER -->
-<footer>
-  <img
-    src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png"
-    alt="New Leaf Painting Co."
-    class="footer-logo"
-  />
-  <p>&copy; 2026 New Leaf Painting Co. | All Rights Reserved</p>
+<footer class="xp-footer">
+  <img src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png" alt="New Leaf Painting Co." class="footer-logo" />
+  <p>&copy; 2025 New Leaf Painting Co. | All Rights Reserved</p>
 </footer>
