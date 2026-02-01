@@ -44,6 +44,9 @@
     /* Injected containers */
     #global-header, #global-footer{ width:100%; }
 
+    /* Optional: gives your global nav a tiny bit of breathing room before hero */
+    .page-wrap{ padding-top: 6px; }
+
     /* HERO */
     .hero{
       text-align:center;
@@ -294,6 +297,8 @@
       inset:0;
       background: rgba(0,0,0,.85);
       padding: 24px 12px;
+      align-items: center;
+      justify-content: center;
     }
 
     .modal-content{
@@ -315,6 +320,9 @@
       font-weight: 900;
       cursor: pointer;
       text-shadow: 0 10px 24px rgba(0,0,0,.55);
+      line-height: 1;
+      background: transparent;
+      border: none;
     }
 
     @media (max-width: 640px){
@@ -329,97 +337,101 @@
   <!-- GLOBAL HEADER (injects logo + links + contact button) -->
   <div id="global-header"></div>
 
-  <!-- PAGE CONTENT -->
-  <section class="hero">
-    <h1>Our Completed Transformations</h1>
-    <p>Take a look at some of the spaces, surfaces, and projects we’ve transformed — and the clients we’ve delighted.</p>
-  </section>
+  <div class="page-wrap">
 
-  <!-- ===== Project 1: Slider ===== -->
-  <div>
-    <h3>Kitchen Cabinet Refresh</h3>
-    <p>This cabinet respray gave this kitchen a nice new look.</p>
-  </div>
+    <!-- PAGE CONTENT -->
+    <section class="hero">
+      <h1>Our Completed Transformations</h1>
+      <p>Take a look at some of the spaces, surfaces, and projects we’ve transformed — and the clients we’ve delighted.</p>
+    </section>
 
-  <div class="ba">
-    <div class="ba-slider" aria-label="Before and after slider">
-      <img class="ba-base" src="IMG_8455.jpeg" alt="Cabinet repaint after" loading="lazy">
-      <div class="ba-before">
-        <img src="IMG_8428.jpeg" alt="Cabinet repaint before" loading="lazy">
+    <!-- ===== Project 1: Slider ===== -->
+    <div>
+      <h3>Kitchen Cabinet Refresh</h3>
+      <p>This cabinet respray gave this kitchen a nice new look.</p>
+    </div>
+
+    <div class="ba">
+      <div class="ba-slider" aria-label="Before and after slider">
+        <img class="ba-base" src="IMG_8455.jpeg" alt="Cabinet repaint after" loading="lazy">
+        <div class="ba-before">
+          <img src="IMG_8428.jpeg" alt="Cabinet repaint before" loading="lazy">
+        </div>
+
+        <div class="ba-label before">BEFORE</div>
+        <div class="ba-label after">AFTER</div>
+
+        <div class="ba-handle">
+          <div class="ba-knob" aria-hidden="true"><span>⇆</span></div>
+        </div>
+      </div>
+      <div class="ba-hint">Drag the green slider to reveal the transformation.</div>
+    </div>
+
+    <hr class="project-divider">
+
+    <!-- ===== Project 2: Slider + extra angles ===== -->
+    <div>
+      <h3>Kitchen Cabinet Painting</h3>
+      <p>This cabinet respray gave this kitchen a whole new look.</p>
+    </div>
+
+    <div class="ba">
+      <div class="ba-slider" aria-label="Before and after slider">
+        <img class="ba-base" src="IMG_8599.jpeg" alt="Cabinet repaint after" loading="lazy">
+        <div class="ba-before">
+          <img src="IMG_7625.jpeg" alt="Cabinet repaint before" loading="lazy">
+        </div>
+
+        <div class="ba-label before">BEFORE</div>
+        <div class="ba-label after">AFTER</div>
+
+        <div class="ba-handle">
+          <div class="ba-knob" aria-hidden="true"><span>⇆</span></div>
+        </div>
+      </div>
+      <div class="ba-hint">Drag the green slider to reveal the transformation.</div>
+    </div>
+
+    <div class="project-gallery">
+      <div class="image-wrap">
+        <img src="IMG_7628.jpeg" alt="Cabinet repaint before angle" class="clickable-img">
+        <p class="caption before">Before (Angle)</p>
       </div>
 
-      <div class="ba-label before">BEFORE</div>
-      <div class="ba-label after">AFTER</div>
-
-      <div class="ba-handle">
-        <div class="ba-knob" aria-hidden="true"><span>⇆</span></div>
+      <div class="image-wrap">
+        <img src="IMG_8601.jpeg" alt="Cabinet repaint after angle" class="clickable-img">
+        <p class="caption after">After (Angle)</p>
       </div>
     </div>
-    <div class="ba-hint">Drag the green slider to reveal the transformation.</div>
-  </div>
 
-  <hr class="project-divider">
+    <hr class="project-divider">
 
-  <!-- ===== Project 2: Slider + extra angles ===== -->
-  <div>
-    <h3>Kitchen Cabinet Painting</h3>
-    <p>This cabinet respray gave this kitchen a whole new look.</p>
-  </div>
-
-  <div class="ba">
-    <div class="ba-slider" aria-label="Before and after slider">
-      <img class="ba-base" src="IMG_8599.jpeg" alt="Cabinet repaint after" loading="lazy">
-      <div class="ba-before">
-        <img src="IMG_7625.jpeg" alt="Cabinet repaint before" loading="lazy">
+    <section class="projects">
+      <div class="project-card">
+        <img src="IMG_8114.jpeg" alt="Kitchen paint" class="clickable-img">
+        <img src="IMG_8117.jpeg" alt="Kitchen paint" class="clickable-img">
+        <img src="IMG_8125.jpeg" alt="Kitchen paint" class="clickable-img">
+        <h3>Kitchen Refresh</h3>
+        <p>Tile backsplash and new coat of paint gave this kitchen a nice new look.</p>
       </div>
+    </section>
 
-      <div class="ba-label before">BEFORE</div>
-      <div class="ba-label after">AFTER</div>
-
-      <div class="ba-handle">
-        <div class="ba-knob" aria-hidden="true"><span>⇆</span></div>
+    <section class="projects">
+      <div class="project-card">
+        <img src="IMG_8118.jpeg" alt="Master Bedroom paint" class="clickable-img">
+        <img src="IMG_8119.jpeg" alt="Master Bedroom paint" class="clickable-img">
+        <img src="IMG_8120.jpeg" alt="Master Bedroom paint" class="clickable-img">
+        <h3>Bedroom Makeover</h3>
+        <p>Freshly painted walls and contrasting trim create a serene and elegant master bedroom space.</p>
       </div>
-    </div>
-    <div class="ba-hint">Drag the green slider to reveal the transformation.</div>
-  </div>
+    </section>
 
-  <div class="project-gallery">
-    <div class="image-wrap">
-      <img src="IMG_7628.jpeg" alt="Cabinet repaint before angle" class="clickable-img">
-      <p class="caption before">Before (Angle)</p>
-    </div>
-
-    <div class="image-wrap">
-      <img src="IMG_8601.jpeg" alt="Cabinet repaint after angle" class="clickable-img">
-      <p class="caption after">After (Angle)</p>
-    </div>
-  </div>
-
-  <hr class="project-divider">
-
-  <section class="projects">
-    <div class="project-card">
-      <img src="IMG_8114.jpeg" alt="Kitchen paint" class="clickable-img">
-      <img src="IMG_8117.jpeg" alt="Kitchen paint" class="clickable-img">
-      <img src="IMG_8125.jpeg" alt="Kitchen paint" class="clickable-img">
-      <h3>Kitchen Refresh</h3>
-      <p>Tile backsplash and new coat of paint gave this kitchen a nice new look.</p>
-    </div>
-  </section>
-
-  <section class="projects">
-    <div class="project-card">
-      <img src="IMG_8118.jpeg" alt="Master Bedroom paint" class="clickable-img">
-      <img src="IMG_8119.jpeg" alt="Master Bedroom paint" class="clickable-img">
-      <img src="IMG_8120.jpeg" alt="Master Bedroom paint" class="clickable-img">
-      <h3>Bedroom Makeover</h3>
-      <p>Freshly painted walls and contrasting trim create a serene and elegant master bedroom space.</p>
-    </div>
-  </section>
+  </div><!-- /page-wrap -->
 
   <!-- IMAGE MODAL -->
-  <div id="imgModal" class="img-modal">
-    <span class="close">&times;</span>
+  <div id="imgModal" class="img-modal" role="dialog" aria-modal="true" aria-label="Image preview">
+    <button class="close" type="button" aria-label="Close">&times;</button>
     <img class="modal-content" id="modalImage" alt="">
   </div>
 
@@ -460,6 +472,11 @@
       const modalImg = document.getElementById("modalImage");
       const closeBtn = modal.querySelector(".close");
 
+      const closeModal = () => {
+        modal.style.display = "none";
+        modalImg.src = "";
+      };
+
       document.querySelectorAll(".clickable-img").forEach(img => {
         img.onclick = () => {
           modal.style.display = "flex";
@@ -468,8 +485,13 @@
         };
       });
 
-      closeBtn.onclick = () => modal.style.display = "none";
-      window.onclick = e => { if (e.target === modal) modal.style.display = "none"; };
+      closeBtn.onclick = closeModal;
+      window.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+
+      // ESC closes modal
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && modal.style.display === "flex") closeModal();
+      });
     }
 
     document.addEventListener("DOMContentLoaded", () => {
