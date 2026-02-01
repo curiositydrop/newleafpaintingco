@@ -782,11 +782,7 @@ body{
 }
 /* Prevent “flash of wrong header” before global.js injects */
 .global-loading #global-header,
-.global-loading #global-footer {
-  visibility: hidden;
-}
+.global-loading #global-footer { visibility: hidden; }
 
 .global-ready #global-header,
-.global-ready #global-footer {
-  visibility: visible;
-}
+.global-ready #global-footer { visibility: visible; }
