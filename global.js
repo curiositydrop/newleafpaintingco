@@ -1,121 +1,98 @@
-// global.js
-(() => {
-  const GLOBAL_URL = "global.html"; // keep as-is
+// global.js (robust injector + cache-bust + moves <style> into <head>)
 
-  // Add body class to reduce flash while injecting
-  document.documentElement.classList.add("global-loading");
+(async function () {
+  const headerMount = document.getElementById("global-header");
+  const footerMount = document.getElementById("global-footer");
 
-  function safeQS(sel, root = document) {
-    try { return root.querySelector(sel); } catch { return null; }
-  }
-  function safeQSA(sel, root = document) {
-    try { return Array.from(root.querySelectorAll(sel)); } catch { return []; }
-  }
+  if (!headerMount && !footerMount) return;
 
-  function setActiveNav(root) {
-    const path = (location.pathname.split("/").pop() || "").toLowerCase();
-    if (!path) return;
-
-    const links = safeQSA(".nav-links a", root);
-    links.forEach(a => a.classList.remove("active"));
-
-    // Match by href ending (past-projects.html etc.)
-    const match = links.find(a => {
-      const href = (a.getAttribute("href") || "").toLowerCase();
-      return href && href.split("?")[0] === path;
-    });
-
-    if (match) match.classList.add("active");
-
-    // Special-case: if you're on "/" or index, highlight XP Home if you want:
-    // if (path === "" || path === "index.html") safeQS("#homeLink", root)?.classList.add("active");
-  }
-
-  function wireContactPopup(root) {
-    const popup = safeQS("#contact-popup", root);
-    const floatBtn = safeQS("#contact-btn", root);
-    const closeBtn = safeQS("#contact-popup .close", root);
-
-    if (!popup) return;
-
-    const open = (e) => {
-      if (e) { e.preventDefault?.(); e.stopPropagation?.(); }
-      popup.style.display = "flex";
-      document.body.style.overflow = "hidden";
-    };
-
-    const close = (e) => {
-      if (e) { e.preventDefault?.(); e.stopPropagation?.(); }
-      popup.style.display = "none";
-      document.body.style.overflow = "";
-    };
-
-    // Floating button
-    if (floatBtn) floatBtn.addEventListener("click", open);
-
-    // Any element with data-contact-open="1"
-    safeQSA('[data-contact-open="1"]', root).forEach(el => {
-      el.addEventListener("click", open);
-    });
-
-    // Close button
-    if (closeBtn) closeBtn.addEventListener("click", close);
-
-    // Click outside popup-content closes
-    popup.addEventListener("click", (e) => {
-      if (e.target === popup) close(e);
-    });
-
-    // ESC closes
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && popup.style.display === "flex") close(e);
-    });
-
-    // OPTIONAL: Hook up Send button if you want it to do something later.
-    // const sendBtn = safeQS("#estimate-send", root);
-    // if (sendBtn) sendBtn.addEventListener("click", () => { ... });
-  }
-
-  async function inject() {
-    const headerMount = safeQS("#global-header");
-    const footerMount = safeQS("#global-footer");
-
-    // If mounts don't exist, bail quietly.
-    if (!headerMount && !footerMount) {
-      document.documentElement.classList.remove("global-loading");
-      document.documentElement.classList.add("global-ready");
-      return;
-    }
-
-    // Cache-bust in a way that won't wreck Netlify caching forever
-    // (if you want even stronger busting, change v number manually when updating)
-    const url = `${GLOBAL_URL}?v=3`;
-
-    const res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) throw new Error(`Failed to load ${GLOBAL_URL}: ${res.status}`);
+  try {
+    // Kill aggressive caching (Safari/Netlify can be sticky)
+    const res = await fetch("global.html", { cache: "no-store" });
+    if (!res.ok) throw new Error("Failed to load global.html: " + res.status);
 
     const html = await res.text();
-    const doc = new DOMParser().parseFromString(html, "text/html");
+    const temp = document.createElement("div");
+    temp.innerHTML = html;
 
-    const header = safeQS("header", doc);
-    const footer = safeQS("footer", doc);
+    // ---- 1) Move ANY <style> blocks in global.html into <head> ----
+    // (Safari sometimes won't respect injected styles inside body)
+    temp.querySelectorAll("style").forEach((styleTag) => {
+      const clone = styleTag.cloneNode(true);
 
-    if (headerMount) headerMount.innerHTML = header ? header.outerHTML : "";
-    if (footerMount) footerMount.innerHTML = footer ? footer.outerHTML : "";
+      // Prevent duplicates if the user refreshes or multiple pages inject
+      const sig = "global-style-signature";
+      if (!clone.getAttribute("data-global-style")) clone.setAttribute("data-global-style", sig);
 
-    // Now query inside the injected DOM (in the real page)
-    const injectedRoot = document;
+      const already = document.head.querySelector(`style[data-global-style="${sig}"]`);
+      if (!already) document.head.appendChild(clone);
 
-    setActiveNav(injectedRoot);
-    wireContactPopup(injectedRoot);
+      styleTag.remove();
+    });
 
-    document.documentElement.classList.remove("global-loading");
-    document.documentElement.classList.add("global-ready");
+    // ---- 2) Extract header/footer/contact elements ----
+    const header = temp.querySelector("header");
+    const footer = temp.querySelector("footer");
+
+    const contactBtn = temp.querySelector("#contact-btn");
+    const contactPopup = temp.querySelector("#contact-popup");
+
+    // Clean mounts before injecting (prevents “flash” leftovers)
+    if (headerMount) headerMount.innerHTML = "";
+    if (footerMount) footerMount.innerHTML = "";
+
+    // Inject header/footer
+    if (headerMount && header) headerMount.appendChild(header);
+    if (footerMount && footer) footerMount.appendChild(footer);
+
+    // Inject contact UI into BODY (not inside header mount)
+    // Remove any existing duplicates first
+    document.querySelectorAll("#contact-btn, #contact-popup").forEach((el) => el.remove());
+
+    if (contactBtn) document.body.appendChild(contactBtn);
+    if (contactPopup) document.body.appendChild(contactPopup);
+
+    // ---- 3) Active link highlight (green glow) ----
+    const path = (location.pathname.split("/").pop() || "").toLowerCase();
+    document.querySelectorAll(".nav-links a").forEach((a) => {
+      const href = (a.getAttribute("href") || "").toLowerCase();
+      const hrefFile = href.split("/").pop();
+
+      // match exact file names only
+      const isActive = hrefFile && path && hrefFile === path;
+      if (isActive) a.classList.add("active");
+      else a.classList.remove("active");
+    });
+
+    // ---- 4) Contact popup wiring ----
+    const popup = document.getElementById("contact-popup");
+    const openers = document.querySelectorAll('[data-contact-open="1"], #contact-btn');
+    const closer = popup ? popup.querySelector(".close") : null;
+
+    const openPopup = (e) => {
+      if (e) e.preventDefault();
+      if (!popup) return;
+      popup.style.display = "flex";
+    };
+
+    const closePopup = () => {
+      if (!popup) return;
+      popup.style.display = "none";
+    };
+
+    openers.forEach((btn) => btn.addEventListener("click", openPopup));
+    if (closer) closer.addEventListener("click", closePopup);
+
+    window.addEventListener("click", (e) => {
+      if (!popup) return;
+      if (e.target === popup) closePopup();
+    });
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closePopup();
+    });
+
+  } catch (err) {
+    console.error(err);
   }
-
-  inject().catch(err => {
-    console.error("Global inject error:", err);
-    document.documentElement.classList.remove("global-loading");
-    document.documentElement.classList.add("global-ready");
-  });
 })();
