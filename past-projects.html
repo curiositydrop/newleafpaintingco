@@ -16,144 +16,316 @@
     gtag('config', 'G-ZFESYBBBWD');
   </script>
 
-  <style>
-    /* ===== Existing gallery styles (kept) ===== */
-    .project-gallery {
-      display: flex;
-      gap: 20px;
-      justify-content: center;
-      align-items: flex-start;
-      flex-wrap: nowrap;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-    .image-wrap {
-      text-align: center;
-      flex: 1;
-      max-width: 400px;
-    }
-    .project-gallery img {
-      width: 85%;
-      height: auto;
-      border-radius: 6px;
-    }
-    .project-divider {
-      border: none;
-      height: 6px;
-      width: 85%;
-      margin: 10px auto 50px auto;
-      background-color: #1f6b33;
-      border-radius: 6px;
-    }
+ <style>
+  :root{
+    --bg:#000;
+    --panel: rgba(255,255,255,.06);
+    --panel2: rgba(255,255,255,.09);
+    --stroke: rgba(255,255,255,.14);
+    --text: rgba(255,255,255,.92);
+    --muted: rgba(255,255,255,.75);
+    --green:#1f6b33;
+    --glow: rgba(80,255,160,.30);
+  }
 
-    /* ===== Before/After Slider ===== */
-    .ba {
-      max-width: 900px;
-      margin: 0 auto 10px auto;
-      padding: 0 10px;
-    }
-    .ba-slider {
-      position: relative;
-      width: 100%;
-      max-width: 820px;
-      margin: 12px auto 0 auto;
-      border-radius: 10px;
-      overflow: hidden;
-      background: #0e0f10;
-      box-shadow: 0 10px 24px rgba(0,0,0,.15);
-      user-select: none;
-      touch-action: pan-y;
-    }
-    .ba-slider img.ba-base {
-      display: block;
-      width: 100%;
-      height: auto;
-      max-height: 520px;
-      object-fit: cover;
-    }
-    .ba-before {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 50%;
-      overflow: hidden;
-    }
-    .ba-before img {
-      height: 100%;
-      width: 100%;
-      object-fit: cover;
-    }
+  /* page base */
+  html, body{
+    margin:0;
+    padding:0;
+    background: var(--bg);
+    color: var(--text);
+  }
 
-    .ba-handle {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      height: 100%;
-      width: 44px;
-      cursor: ew-resize;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-    }
-    .ba-handle::before {
-      content: "";
-      position: absolute;
-      height: 100%;
-      width: 4px;
-      background: rgba(255,255,255,.9);
-      border-radius: 4px;
-    }
-    .ba-knob {
-      position: relative;
-      width: 38px;
-      height: 38px;
-      border-radius: 999px;
-      background: rgba(31,107,51,.95);
-      border: 2px solid rgba(255,255,255,.9);
-      display: grid;
-      place-items: center;
-      box-shadow: 0 6px 16px rgba(0,0,0,.25);
-    }
-    .ba-knob span {
-      display: inline-block;
-      font-size: 18px;
-      color: #fff;
-      line-height: 1;
-      transform: translateY(-1px);
-    }
+  /* if style.css tries to force light backgrounds on sections, this overrides it */
+  body{
+    background: var(--bg) !important;
+  }
+  section, .projects, .hero{
+    background: transparent !important;
+  }
 
-    .ba-label {
-      position: absolute;
-      top: 12px;
-      padding: 8px 10px;
-      border-radius: 999px;
-      font-weight: 700;
-      font-size: 12px;
-      letter-spacing: .3px;
-      background: rgba(0,0,0,.55);
-      color: #fff;
-      backdrop-filter: blur(6px);
-    }
-    .ba-label.before { left: 12px; }
-    .ba-label.after  { right: 12px; }
+  /* tighten up header/footer containers (global.js injects them) */
+  #global-header, #global-footer{
+    width:100%;
+  }
 
-    .ba-hint {
-      text-align: center;
-      font-size: 13px;
-      opacity: .85;
-      margin-top: 8px;
-    }
+  /* HERO (top copy) */
+  .hero{
+    text-align:center;
+    padding: 44px 16px 10px;
+    max-width: 980px;
+    margin: 0 auto;
+  }
+  .hero h1{
+    margin: 0 0 10px;
+    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+    letter-spacing: .2px;
+    color: #fff;
+    text-shadow: 0 0 18px rgba(0,0,0,.35);
+  }
+  .hero p{
+    margin: 0 auto;
+    max-width: 760px;
+    color: var(--muted);
+    line-height: 1.45;
+    font-size: 1.02rem;
+  }
 
-    @media (max-width: 640px) {
-      .ba-slider img.ba-base { max-height: 420px; }
-    }
+  /* section headings above each project */
+  body h3{
+    margin: 26px 0 8px;
+    color:#fff;
+    letter-spacing:.2px;
+  }
+  body p{
+    color: var(--muted);
+  }
 
-    /* ✅ REMOVED the old mode-hub "hide global header/footer/button/popup" rules.
-       Those were the reason nav + CTA disappeared when arriving from the Experience. */
-  </style>
+  /* Wrap each project “block” in a subtle card feel (without changing HTML) */
+  .ba,
+  .project-gallery,
+  .projects{
+    max-width: 980px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ===== Before/After Slider ===== */
+  .ba{
+    margin: 10px auto 18px auto;
+    padding: 0 12px;
+  }
+
+  .ba-slider{
+    position: relative;
+    width: 100%;
+    max-width: 860px;
+    margin: 12px auto 0;
+    border-radius: 16px;
+    overflow: hidden;
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--stroke);
+    box-shadow:
+      0 18px 46px rgba(0,0,0,.55),
+      0 0 34px var(--glow);
+    user-select: none;
+    touch-action: pan-y;
+  }
+
+  .ba-slider img.ba-base{
+    display:block;
+    width:100%;
+    height:auto;
+    max-height: 560px;
+    object-fit: cover;
+    filter: saturate(1.02) contrast(1.02);
+  }
+
+  .ba-before{
+    position:absolute;
+    top:0;
+    left:0;
+    height:100%;
+    width:50%;
+    overflow:hidden;
+  }
+  .ba-before img{
+    width:100%;
+    height:100%;
+    object-fit: cover;
+  }
+
+  .ba-handle{
+    position:absolute;
+    top:0;
+    left:50%;
+    transform: translateX(-50%);
+    height:100%;
+    width:44px;
+    cursor: ew-resize;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    pointer-events:none;
+  }
+  .ba-handle::before{
+    content:"";
+    position:absolute;
+    height:100%;
+    width:4px;
+    background: rgba(255,255,255,.92);
+    border-radius: 4px;
+  }
+
+  .ba-knob{
+    position:relative;
+    width:40px;
+    height:40px;
+    border-radius:999px;
+    background: rgba(31,107,51,.92);
+    border: 2px solid rgba(255,255,255,.9);
+    display:grid;
+    place-items:center;
+    box-shadow:
+      0 10px 20px rgba(0,0,0,.35),
+      0 0 18px rgba(80,255,160,.35);
+  }
+  .ba-knob span{
+    font-size:18px;
+    color:#fff;
+    transform: translateY(-1px);
+  }
+
+  .ba-label{
+    position:absolute;
+    top:12px;
+    padding: 8px 11px;
+    border-radius: 999px;
+    font-weight: 900;
+    font-size: 12px;
+    letter-spacing: .5px;
+    background: rgba(0,0,0,.55);
+    border: 1px solid rgba(255,255,255,.18);
+    color:#fff;
+    backdrop-filter: blur(8px);
+  }
+  .ba-label.before{ left:12px; }
+  .ba-label.after{ right:12px; }
+
+  .ba-hint{
+    text-align:center;
+    font-size: 13px;
+    color: rgba(255,255,255,.78);
+    margin-top: 10px;
+  }
+
+  /* divider becomes sleek glow bar */
+  .project-divider{
+    border:none;
+    height: 6px;
+    width: min(860px, 92vw);
+    margin: 20px auto 38px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, transparent, rgba(80,255,160,.55), transparent);
+    box-shadow: 0 0 18px rgba(80,255,160,.18);
+  }
+
+  /* ===== Project Gallery (the side-by-side angles) ===== */
+  .project-gallery{
+    display:flex;
+    gap: 14px;
+    justify-content:center;
+    align-items: stretch;
+    flex-wrap: wrap;
+    padding: 0 12px;
+    margin: 18px auto 0;
+  }
+
+  .image-wrap{
+    flex: 1;
+    min-width: 240px;
+    max-width: 420px;
+    text-align:center;
+    padding: 12px;
+    border-radius: 16px;
+    background: var(--panel);
+    border: 1px solid var(--stroke);
+    box-shadow: 0 12px 26px rgba(0,0,0,.45);
+  }
+
+  .project-gallery img{
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,.12);
+    box-shadow: 0 10px 22px rgba(0,0,0,.35);
+    cursor: zoom-in;
+  }
+
+  .caption{
+    margin: 10px 0 0;
+    font-weight: 800;
+    letter-spacing: .2px;
+    color: rgba(255,255,255,.82);
+  }
+
+  /* ===== The older “3-up image rows” ===== */
+  .projects{
+    padding: 0 12px;
+    margin: 18px auto 0;
+  }
+
+  .project-card{
+    padding: 16px;
+    border-radius: 18px;
+    background: var(--panel);
+    border: 1px solid var(--stroke);
+    box-shadow: 0 14px 30px rgba(0,0,0,.50);
+    text-align:center;
+    max-width: 860px;
+    margin: 0 auto 18px;
+  }
+
+  .project-card img{
+    width: 32%;
+    height:auto;
+    margin-right: 1%;
+    margin-bottom: 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,.12);
+    box-shadow: 0 10px 22px rgba(0,0,0,.35);
+    cursor: zoom-in;
+  }
+  .project-card img:last-child{ margin-right:0; }
+
+  .project-card h3{
+    margin: 10px 0 6px;
+    color:#fff;
+  }
+  .project-card p{
+    margin: 0 auto 6px;
+    max-width: 720px;
+    color: rgba(255,255,255,.78);
+    line-height: 1.45;
+  }
+
+  /* ===== Modal polish ===== */
+  .img-modal{
+    display:none;
+    position:fixed;
+    z-index: 9999;
+    inset:0;
+    background: rgba(0,0,0,.85);
+    padding: 24px 12px;
+  }
+
+  .modal-content{
+    margin: auto;
+    display:block;
+    max-width: min(980px, 92vw);
+    max-height: 82vh;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.14);
+    box-shadow: 0 18px 50px rgba(0,0,0,.65);
+  }
+
+  .img-modal .close{
+    position: fixed;
+    top: 16px;
+    right: 18px;
+    color: #fff;
+    font-size: 40px;
+    font-weight: 900;
+    cursor: pointer;
+    text-shadow: 0 10px 24px rgba(0,0,0,.55);
+  }
+
+  /* Mobile tuning */
+  @media (max-width: 640px){
+    .ba-slider img.ba-base{ max-height: 420px; }
+    .project-card img{ width: 100%; margin-right:0; }
+  }
+</style>
 </head>
 
 <body>
