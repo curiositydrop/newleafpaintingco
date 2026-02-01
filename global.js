@@ -99,7 +99,14 @@
       e?.stopPropagation?.();
       popup.style.display = "flex";
     };
-
+       // ALSO allow any element with data-contact-open="1" to open popup
+    document.querySelectorAll('[data-contact-open="1"]').forEach(el => {
+      el.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        popup.style.display = "flex";
+      };
+    });
     closeBtn.onclick = (e) => {
       e?.preventDefault?.();
       e?.stopPropagation?.();
