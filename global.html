@@ -1,37 +1,53 @@
-<!-- global.html -->
+<!-- global.html (XP DARK + HAMBURGER MENU) -->
 
-<!-- HEADER -->
-<header class="xp-header">
-  <div class="logo-container">
+<header class="xp-topbar" aria-label="New Leaf Header">
+  <!-- Left: hamburger -->
+  <button class="xp-burger" type="button" aria-label="Open menu" aria-controls="xp-menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+
+  <!-- Center: logo (breathing overlay) -->
+  <a class="xp-logo-link" href="xp-home.html" aria-label="Go to XP Home">
     <div class="nl-hub-logo-wrap" aria-label="New Leaf Painting Co.">
       <img class="nl-hub-logo logo-green" src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png" alt="New Leaf Painting Co.">
       <img class="nl-hub-logo logo-white" src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png" alt="" aria-hidden="true">
     </div>
+  </a>
+
+  <!-- Right: optional spacer (keeps logo centered) -->
+  <div class="xp-right-spacer" aria-hidden="true"></div>
+</header>
+
+<!-- subtle divider under topbar -->
+<div class="xp-divider" aria-hidden="true"></div>
+
+<!-- Slide-in menu + overlay -->
+<div class="xp-menu-overlay" id="xp-menu-overlay" hidden></div>
+
+<aside class="xp-menu" id="xp-menu" aria-label="Site menu" hidden>
+  <div class="xp-menu-head">
+    <div class="xp-menu-title">Menu</div>
+    <button class="xp-menu-close" type="button" aria-label="Close menu">×</button>
   </div>
 
-  <nav class="xp-nav" aria-label="Site navigation">
-    <ul class="nav-links xp-nav-grid">
-      <li><a class="xp-nav-btn" id="homeLink" href="xp-home.html">XP Home</a></li>
-      <li><a class="xp-nav-btn" href="experience.html">The Experience</a></li>
+  <nav class="xp-menu-nav" aria-label="Primary">
+    <a id="homeLink" class="xp-menu-link" href="xp-home.html">XP Home</a>
+    <a class="xp-menu-link" href="experience.html">The Experience</a>
 
-      <li><a class="xp-nav-btn" href="past-projects.html">Past Projects</a></li>
-      <li><a class="xp-nav-btn" href="local-partners.html">Local Partners</a></li>
+    <a class="xp-menu-link" href="past-projects.html">Past Projects</a>
+    <a class="xp-menu-link" href="testimonials.html">Testimonials</a>
+    <a class="xp-menu-link" href="local-partners.html">Local Partners</a>
 
-      <li><a class="xp-nav-btn" href="contractors.html">Contractors</a></li>
-      <li><a class="xp-nav-btn" href="referus.html">Refer New Leaf</a></li>
+    <a class="xp-menu-link" href="contractors.html">Contractors</a>
+    <a class="xp-menu-link" href="referus.html">Refer New Leaf</a>
 
-      <li><a class="xp-nav-btn" href="testimonials.html">Testimonials</a></li>
-
-      <!-- Popup opener (no jump) -->
-      <li>
-        <a class="xp-nav-btn xp-nav-btn--primary" href="#" data-contact-open="1">Get Free Estimate</a>
-      </li>
-    </ul>
+    <a class="xp-menu-link xp-estimate-link" href="#" data-contact-open="1">Get Free Estimate</a>
   </nav>
 
-  <!-- subtle separator under the menu -->
-  <div class="xp-menu-divider" aria-hidden="true"></div>
-</header>
+  <div class="xp-menu-foot">
+    <div class="xp-menu-mini">New Leaf Painting Co.</div>
+  </div>
+</aside>
 
 <!-- CONTACT FLOATING BUTTON -->
 <button id="contact-btn" type="button">Get free estimate</button>
@@ -64,13 +80,13 @@
       </div>
 
       <input type="hidden" name="discount_code" id="discount-code" value="">
+
       <button id="estimate-send" type="button">Send</button>
     </form>
   </div>
 </div>
 
-<!-- FOOTER -->
 <footer class="xp-footer">
   <img src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png" alt="New Leaf Painting Co." class="footer-logo" />
-  <p>&copy; 2025 New Leaf Painting Co. | All Rights Reserved</p>
+  <p>&copy; 2026 New Leaf Painting Co. | All Rights Reserved</p>
 </footer>
