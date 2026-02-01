@@ -1,344 +1,145 @@
-/* =========================================================
-   NEW LEAF GLOBAL.JS (ONE SOURCE OF TRUTH)
-   - Injects global.html into #global-header / #global-footer
-   - Injects contact button + popup (once)
-   - Forces nav links visible
-   - Preserves nav=1, mode=hub|standard, and ref/drop/sample across links
-   - Forces Home link to go back to correct XP home
-   - ✅ Mailto works in core AND XP because we DO NOT submit the form
-   - ✅ Clicking any [data-contact-open="1"] opens the popup
-   ========================================================= */
+// global.js
+// Injects global.html header/footer and wires up nav active state + contact popup
 
 (function () {
+  const HEADER_MOUNT = document.getElementById("global-header");
+  const FOOTER_MOUNT = document.getElementById("global-footer");
 
-  /* --------------------
-     HELPERS
-  ---------------------*/
-  function getMode() {
-    const p = new URLSearchParams(window.location.search);
-    const mode = (p.get("mode") || "standard").toLowerCase();
-    return (mode === "hub" || mode === "standard") ? mode : "standard";
-  }
+  // Nothing to mount into? Bail safely.
+  if (!HEADER_MOUNT && !FOOTER_MOUNT) return;
 
-  function getRefParam() {
-    const p = new URLSearchParams(window.location.search);
-    return p.get("ref") || p.get("drop") || p.get("sample") || "";
-  }
+  // During active editing, cache can make you think "nothing changed".
+  // Leave cacheBust on for now; you can remove it later.
+  const cacheBust = `v=${Date.now()}`;
 
-  function isExternalHref(href) {
-    if (!href) return true;
-    return (
-      href.startsWith("http://") ||
-      href.startsWith("https://") ||
-      href.startsWith("mailto:") ||
-      href.startsWith("tel:") ||
-      href.startsWith("javascript:")
-    );
-  }
+  fetch(`global.html?${cacheBust}`, { cache: "no-store" })
+    .then((r) => {
+      if (!r.ok) throw new Error("Failed to load global.html");
+      return r.text();
+    })
+    .then((html) => {
+      const temp = document.createElement("div");
+      temp.innerHTML = html;
 
-  function forceNavVisible() {
-    document.querySelectorAll(".nav-links a").forEach(a => {
-      a.style.visibility = "visible";
-      a.style.opacity = "1";
-      a.style.pointerEvents = "auto";
+      // Try to find header/footer inside global.html
+      const headerEl = temp.querySelector("header");
+      const footerEl = temp.querySelector("footer");
+
+      if (HEADER_MOUNT && headerEl) HEADER_MOUNT.innerHTML = headerEl.outerHTML;
+      if (FOOTER_MOUNT && footerEl) FOOTER_MOUNT.innerHTML = footerEl.outerHTML;
+
+      // After injection, wire everything
+      setActiveNavLink();
+      wireContactPopup();
+    })
+    .catch((err) => {
+      console.error(err);
     });
+
+  function normalizePath(p) {
+    // remove query/hash and trailing slashes
+    return (p || "")
+      .split("?")[0]
+      .split("#")[0]
+      .replace(/\/+$/, "");
   }
 
-  function highlightActiveLink() {
-    let currentPage = window.location.pathname.split("/").pop().toLowerCase();
-    if (!currentPage) currentPage = "index.html";
+  function setActiveNavLink() {
+    const current = normalizePath(window.location.pathname);
+    const file = current.split("/").pop() || "";
 
-    document.querySelectorAll("nav a").forEach(link => {
-      let linkPage = (link.getAttribute("href") || "")
-        .split("?")[0]
-        .split("/")
-        .pop()
-        .toLowerCase();
+    // Look for nav links in injected header
+    const scope = document.getElementById("global-header") || document;
+    const links = scope.querySelectorAll(".nav-links a");
 
-      if (!linkPage) linkPage = "index.html";
-      link.classList.toggle("active", linkPage === currentPage);
-    });
-  }
+    links.forEach((a) => a.classList.remove("active"));
 
-  function preserveParamsAcrossLinks() {
-    const mode = getMode();
-    const refParam = getRefParam();
+    links.forEach((a) => {
+      const href = a.getAttribute("href") || "";
+      const hrefFile = normalizePath(href).split("/").pop();
 
-    document.querySelectorAll("a[href]").forEach(link => {
-      const href = link.getAttribute("href");
-      if (!href) return;
-      if (href.startsWith("#")) return;
-      if (isExternalHref(href)) return;
+      // If href is "#" skip
+      if (!hrefFile || hrefFile === "#") return;
 
-      const url = new URL(href, window.location.origin);
-      url.searchParams.set("nav", "1");
-      url.searchParams.set("mode", mode);
-
-      if (
-        refParam &&
-        !url.searchParams.has("ref") &&
-        !url.searchParams.has("drop") &&
-        !url.searchParams.has("sample")
-      ) {
-        url.searchParams.set("ref", refParam);
+      // Match by filename (past-projects.html etc.)
+      if (hrefFile === file) {
+        a.classList.add("active");
       }
-
-      link.setAttribute("href", url.pathname.replace(/^\//, "") + url.search);
     });
+
+    // If you're on root "/", you might want to highlight XP Home (optional)
+    if ((file === "" || file === "index.html") && links.length) {
+      const xp = Array.from(links).find((a) => (a.getAttribute("href") || "").includes("xp-home.html"));
+      if (xp) xp.classList.add("active");
+    }
   }
 
-  function setupPopupHandlers() {
-    const popup = document.getElementById("contact-popup");
-    const btn = document.getElementById("contact-btn");
-    const closeBtn = document.querySelector("#contact-popup .close");
-    if (!popup || !btn || !closeBtn) return;
+  function wireContactPopup() {
+    const scope = document; // popup lives in injected global.html, but easiest is document
+
+    const popup = scope.querySelector("#contact-popup");
+    const openBtn = scope.querySelector("#contact-btn");
+    const closeBtn = scope.querySelector("#contact-popup .close");
+    const sendBtn = scope.querySelector("#estimate-send");
+
+    if (!popup) return;
 
     const openPopup = (e) => {
-      e?.preventDefault?.();
-      e?.stopPropagation?.();
+      if (e) {
+        e.preventDefault?.();
+        e.stopPropagation?.();
+      }
       popup.style.display = "flex";
     };
 
     const closePopup = (e) => {
-      e?.preventDefault?.();
-      e?.stopPropagation?.();
+      if (e) {
+        e.preventDefault?.();
+        e.stopPropagation?.();
+      }
       popup.style.display = "none";
     };
 
     // Floating button
-    btn.onclick = openPopup;
+    if (openBtn) openBtn.onclick = openPopup;
 
-    // Close button
-    closeBtn.onclick = closePopup;
+    // Any link/button with data-contact-open="1"
+    scope.querySelectorAll('[data-contact-open="1"]').forEach((el) => {
+      el.onclick = openPopup;
+    });
+
+    // Close X
+    if (closeBtn) closeBtn.onclick = closePopup;
 
     // Click outside modal closes
-    window.addEventListener("click", e => {
-      if (e.target === popup) popup.style.display = "none";
+    popup.addEventListener("click", (e) => {
+      if (e.target === popup) closePopup(e);
     });
 
-    // ✅ Any element with data-contact-open="1" opens popup (event delegation)
-    document.addEventListener("click", (e) => {
-      const trigger = e.target?.closest?.('[data-contact-open="1"]');
-      if (!trigger) return;
-      openPopup(e);
-    }, true);
-  }
-
-  function updatePopupHeadingAndButton(refData) {
-    const btn = document.getElementById("contact-btn");
-    if (btn && refData.buttontext) btn.textContent = refData.buttontext;
-
-    const popupHeading = document.querySelector("#contact-popup h2");
-    if (!popupHeading) return;
-
-    const code = (refData.discountcode || "").toUpperCase();
-    if (code.includes("DROP")) popupHeading.textContent = "Redeem Drop Reward";
-    else if (code.includes("SAMPLE")) popupHeading.textContent = "Redeem Sample Reward";
-    else popupHeading.textContent = "Get free estimate";
-  }
-
-  function setHiddenFieldsOnContactOpen(refData) {
-    document.addEventListener("click", e => {
-      const opener = e.target?.closest?.("#contact-btn, [data-contact-open='1']");
-      if (!opener) return;
-
-      const discountField = document.getElementById("discount-code");
-      if (discountField) discountField.value = refData.discountcode || "";
-
-      let refField = document.getElementById("referrer");
-      if (!refField) {
-        refField = document.createElement("input");
-        refField.type = "hidden";
-        refField.name = "referrer";
-        refField.id = "referrer";
-        document.querySelector("#contact-popup form")?.appendChild(refField);
-      }
-
-      if (refField) {
-        refField.value =
-          `${refData.referrername || ""}${refData.businessname ? " at " + refData.businessname : ""}`.trim();
-      }
+    // ESC closes
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && popup.style.display === "flex") closePopup(e);
     });
-  }
 
-  /* --------------------
-     REFERRAL DATA (SHEET CSV)
-  ---------------------*/
-  const sheetURL =
-    "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGQaoBZ7rMgXkLt9ZvLeF9zZ5V5qv1m4mlWWowx-VskRE6hrd1rHOVAg3M4JJfXCotw8wVVK_nVasH/pub?output=csv";
+    // OPTIONAL: "Send" button -> mailto
+    // If you already handle this elsewhere, remove this block.
+    if (sendBtn) {
+      sendBtn.onclick = () => {
+        const name = (scope.querySelector("#name")?.value || "").trim();
+        const email = (scope.querySelector("#email")?.value || "").trim();
+        const phone = (scope.querySelector("#phone")?.value || "").trim();
+        const msg = (scope.querySelector("#message")?.value || "").trim();
 
-  const refData = {
-    id: "",
-    referrername: "",
-    businessname: "",
-    discountcode: "",
-    bannertext: "",
-    buttontext: "Get free estimate",
-    emailsubject: "New Leaf Painting Inquiry",
-    activeinactive: ""
-  };
+        const subject = encodeURIComponent("New Leaf Painting – Free Estimate Request");
+        const body = encodeURIComponent(
+          `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\n\nProject Details:\n${msg}\n`
+        );
 
-  function cleanValue(value) {
-    return value ? value.replace(/^"|"$/g, "").trim() : "";
-  }
+        // CHANGE THIS if you want a different inbox
+        const to = "newleafpaintingcompany@gmail.com";
 
-  async function loadReferrerData() {
-    const refParam = getRefParam();
-    if (!refParam) return;
-
-    try {
-      const res = await fetch(sheetURL);
-      const text = await res.text();
-      const rows = text.trim().split("\n").map(r => r.split(","));
-      const headers = rows.shift().map(h => h.trim().toLowerCase());
-
-      const match = rows.find(row => (row[0] || "").trim().toLowerCase() === refParam.toLowerCase());
-      if (!match) return;
-
-      headers.forEach((h, i) => {
-        refData[h] = cleanValue(match[i]);
-      });
-    } catch (err) {
-      console.error("Error loading spreadsheet:", err);
+        window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+      };
     }
   }
-
-  /* --------------------
-     GLOBAL.HTML INJECTION
-  ---------------------*/
-  async function injectGlobalHTML() {
-    const headerTarget = document.getElementById("global-header");
-    const footerTarget = document.getElementById("global-footer");
-    if (!headerTarget || !footerTarget) return;
-
-    const hasHeader = !!headerTarget.querySelector("header");
-    const hasFooter = !!footerTarget.querySelector("footer");
-    const hasPopup = !!document.querySelector("#contact-popup");
-    const hasBtn = !!document.querySelector("#contact-btn");
-
-    if (hasHeader && hasFooter && hasPopup && hasBtn) return;
-
-    const res = await fetch("global.html");
-    const html = await res.text();
-    const doc = new DOMParser().parseFromString(html, "text/html");
-
-    const header = doc.querySelector("header");
-    const footer = doc.querySelector("footer");
-    const popup = doc.querySelector("#contact-popup");
-    const btn = doc.querySelector("#contact-btn");
-
-    if (header && !hasHeader) headerTarget.replaceChildren(header);
-    if (footer && !hasFooter) footerTarget.replaceChildren(footer);
-
-    if (popup && !hasPopup) document.body.insertAdjacentElement("beforeend", popup);
-    if (btn && !hasBtn) document.body.insertAdjacentElement("beforeend", btn);
-
-    // Force home link target (XP Home)
-    const homeLink = document.getElementById("homeLink");
-    if (homeLink) homeLink.setAttribute("href", `xp-home.html`);
-  }
-
-  /* --------------------
-     BANNER (OPTIONAL)
-  ---------------------*/
-  function createBanner(message) {
-    if (!message) return;
-    if (document.querySelector("#drop-banner")) return;
-
-    const banner = document.createElement("div");
-    banner.id = "drop-banner";
-    banner.textContent = message;
-    document.body.prepend(banner);
-  }
-
-  /* --------------------
-     ✅ MAILTO (NO SUBMIT)
-  ---------------------*/
-  function setupContactFormMailto() {
-    const TO_EMAIL = "newleafpaintingcompany@gmail.com";
-
-    // wire once using event delegation
-    if (document.documentElement.dataset.mailtoDelegated === "1") return;
-    document.documentElement.dataset.mailtoDelegated = "1";
-
-    function buildMailto() {
-      const name = document.getElementById("name")?.value || "";
-      const email = document.getElementById("email")?.value || "";
-      const phone = document.getElementById("phone")?.value || "";
-      const message = document.getElementById("message")?.value || "";
-      const discount = document.getElementById("discount-code")?.value || "";
-
-      const subject = encodeURIComponent(refData.emailsubject || "New Leaf Estimate Request");
-      const bodyLines = [
-        `Name: ${name}`,
-        `Email: ${email}`,
-        `Phone: ${phone}`,
-        ``,
-        `Message:`,
-        message,
-        ``,
-        `Discount Code: ${discount}`,
-        refData.referrername
-          ? `Referrer: ${refData.referrername}${refData.businessname ? " at " + refData.businessname : ""}`
-          : ""
-      ].filter(Boolean);
-
-      const body = encodeURIComponent(bodyLines.join("\n"));
-      return `mailto:${TO_EMAIL}?subject=${subject}&body=${body}`;
-    }
-
-    document.addEventListener("submit", (e) => {
-      const form = e.target?.closest?.("#contact-popup form");
-      if (!form) return;
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-    }, true);
-
-    document.addEventListener("click", (e) => {
-      const sendBtn = e.target?.closest?.("#estimate-send");
-      if (!sendBtn) return;
-
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-
-      const mailto = buildMailto();
-
-      // Works in core and XP iframe
-      if (window.top && window.top !== window) window.top.location.href = mailto;
-      else window.location.href = mailto;
-    }, true);
-  }
-
-  /* --------------------
-     INIT
-  ---------------------*/
-  async function init() {
-    const mode = getMode();
-    document.body.classList.remove("mode-hub", "mode-standard");
-    document.body.classList.add(mode === "hub" ? "mode-hub" : "mode-standard");
-
-    await loadReferrerData();
-
-    if ((refData.activeinactive || "").toLowerCase() === "inactive") {
-      document.body.innerHTML = "<h2>This referral is no longer active.</h2>";
-      return;
-    }
-
-    await injectGlobalHTML();
-
-    forceNavVisible();
-    highlightActiveLink();
-    preserveParamsAcrossLinks();
-    setupPopupHandlers();
-    updatePopupHeadingAndButton(refData);
-    setHiddenFieldsOnContactOpen(refData);
-
-    setupContactFormMailto();
-
-    if (refData.bannertext) createBanner(refData.bannertext);
-  }
-
-  init();
 })();
