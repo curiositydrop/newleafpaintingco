@@ -9,21 +9,28 @@
     </div>
   </div>
 
-  <nav aria-label="Site navigation">
-    <ul class="nav-links">
-      <li><a id="homeLink" href="xp-home.html">XP Home</a></li>
-      <li><a href="experience.html">The Experience</a></li>
+  <nav class="xp-nav" aria-label="Site navigation">
+    <ul class="nav-links xp-nav-grid">
+      <li><a class="xp-nav-btn" id="homeLink" href="xp-home.html">XP Home</a></li>
+      <li><a class="xp-nav-btn" href="experience.html">The Experience</a></li>
 
-      <li><a href="past-projects.html">Past Projects</a></li>
-      <li><a href="local-partners.html">Local Partners</a></li>
+      <li><a class="xp-nav-btn" href="past-projects.html">Past Projects</a></li>
+      <li><a class="xp-nav-btn" href="local-partners.html">Local Partners</a></li>
 
-      <li><a href="contractors.html">Contractors</a></li>
-      <li><a href="referus.html">Refer New Leaf</a></li>
+      <li><a class="xp-nav-btn" href="contractors.html">Contractors</a></li>
+      <li><a class="xp-nav-btn" href="referus.html">Refer New Leaf</a></li>
 
-      <li><a href="testimonials.html">Testimonials</a></li>
-      <li><a href="#" data-contact-open="1">Get Free Estimate</a></li>
+      <li><a class="xp-nav-btn" href="testimonials.html">Testimonials</a></li>
+
+      <!-- Popup opener (no jump) -->
+      <li>
+        <a class="xp-nav-btn xp-nav-btn--primary" href="#" data-contact-open="1">Get Free Estimate</a>
+      </li>
     </ul>
   </nav>
+
+  <!-- subtle separator under the menu -->
+  <div class="xp-menu-divider" aria-hidden="true"></div>
 </header>
 
 <!-- CONTACT FLOATING BUTTON -->
@@ -57,7 +64,6 @@
       </div>
 
       <input type="hidden" name="discount_code" id="discount-code" value="">
-
       <button id="estimate-send" type="button">Send</button>
     </form>
   </div>
