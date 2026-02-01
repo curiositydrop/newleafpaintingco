@@ -1,87 +1,121 @@
-// global.js  ✅ (inject header + footer + contact popup reliably)
+// global.js
+(() => {
+  const GLOBAL_URL = "global.html"; // keep as-is
 
-(async function () {
-  // Add a loading class so we can hide the global containers until injected
+  // Add body class to reduce flash while injecting
   document.documentElement.classList.add("global-loading");
 
-  const cacheBust = Date.now(); // helps Safari cache issues while you're iterating
-  const res = await fetch(`global.html?v=${cacheBust}`, { cache: "no-store" });
-  const html = await res.text();
-
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, "text/html");
-
-  const mountHeader = document.getElementById("global-header");
-  const mountFooter = document.getElementById("global-footer");
-
-  if (!mountHeader || !mountFooter) {
-    console.warn("Missing #global-header or #global-footer on this page.");
-    document.documentElement.classList.remove("global-loading");
-    document.documentElement.classList.add("global-ready");
-    return;
+  function safeQS(sel, root = document) {
+    try { return root.querySelector(sel); } catch { return null; }
+  }
+  function safeQSA(sel, root = document) {
+    try { return Array.from(root.querySelectorAll(sel)); } catch { return []; }
   }
 
-  // Grab pieces from global.html
-  const headerEl = doc.querySelector("header");
-  const footerEl = doc.querySelector("footer");
+  function setActiveNav(root) {
+    const path = (location.pathname.split("/").pop() || "").toLowerCase();
+    if (!path) return;
 
-  const contactBtn = doc.querySelector("#contact-btn");
-  const contactPopup = doc.querySelector("#contact-popup");
+    const links = safeQSA(".nav-links a", root);
+    links.forEach(a => a.classList.remove("active"));
 
-  // Inject header + footer
-  mountHeader.innerHTML = headerEl ? headerEl.outerHTML : "";
-  mountFooter.innerHTML = footerEl ? footerEl.outerHTML : "";
+    // Match by href ending (past-projects.html etc.)
+    const match = links.find(a => {
+      const href = (a.getAttribute("href") || "").toLowerCase();
+      return href && href.split("?")[0] === path;
+    });
 
-  // Ensure only ONE contact button/popup exist on the page
-  document.getElementById("contact-btn")?.remove();
-  document.getElementById("contact-popup")?.remove();
+    if (match) match.classList.add("active");
 
-  // Append contact UI to end of body (works regardless of where footer loads)
-  if (contactBtn) document.body.appendChild(contactBtn);
-  if (contactPopup) document.body.appendChild(contactPopup);
+    // Special-case: if you're on "/" or index, highlight XP Home if you want:
+    // if (path === "" || path === "index.html") safeQS("#homeLink", root)?.classList.add("active");
+  }
 
-  // ===== Wire up contact popup open/close =====
-  const popup = document.getElementById("contact-popup");
-  const btn = document.getElementById("contact-btn");
+  function wireContactPopup(root) {
+    const popup = safeQS("#contact-popup", root);
+    const floatBtn = safeQS("#contact-btn", root);
+    const closeBtn = safeQS("#contact-popup .close", root);
 
-  const openPopup = (e) => {
-    if (e) {
-      e.preventDefault?.();
-      e.stopPropagation?.();
-    }
     if (!popup) return;
-    popup.style.display = "flex";
-  };
 
-  const closePopup = () => {
-    if (!popup) return;
-    popup.style.display = "none";
-  };
-
-  // Floating button opens popup
-  if (btn) btn.onclick = openPopup;
-
-  // Any element with data-contact-open="1" opens popup
-  document.querySelectorAll('[data-contact-open="1"]').forEach((el) => {
-    el.onclick = openPopup;
-  });
-
-  // Close button + click outside
-  if (popup) {
-    const closeBtn = popup.querySelector(".close");
-    if (closeBtn) closeBtn.onclick = closePopup;
-
-    popup.onclick = (e) => {
-      if (e.target === popup) closePopup();
+    const open = (e) => {
+      if (e) { e.preventDefault?.(); e.stopPropagation?.(); }
+      popup.style.display = "flex";
+      document.body.style.overflow = "hidden";
     };
 
-    // Esc closes
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closePopup();
+    const close = (e) => {
+      if (e) { e.preventDefault?.(); e.stopPropagation?.(); }
+      popup.style.display = "none";
+      document.body.style.overflow = "";
+    };
+
+    // Floating button
+    if (floatBtn) floatBtn.addEventListener("click", open);
+
+    // Any element with data-contact-open="1"
+    safeQSA('[data-contact-open="1"]', root).forEach(el => {
+      el.addEventListener("click", open);
     });
+
+    // Close button
+    if (closeBtn) closeBtn.addEventListener("click", close);
+
+    // Click outside popup-content closes
+    popup.addEventListener("click", (e) => {
+      if (e.target === popup) close(e);
+    });
+
+    // ESC closes
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && popup.style.display === "flex") close(e);
+    });
+
+    // OPTIONAL: Hook up Send button if you want it to do something later.
+    // const sendBtn = safeQS("#estimate-send", root);
+    // if (sendBtn) sendBtn.addEventListener("click", () => { ... });
   }
 
-  // Mark as ready (stops the flash)
-  document.documentElement.classList.remove("global-loading");
-  document.documentElement.classList.add("global-ready");
+  async function inject() {
+    const headerMount = safeQS("#global-header");
+    const footerMount = safeQS("#global-footer");
+
+    // If mounts don't exist, bail quietly.
+    if (!headerMount && !footerMount) {
+      document.documentElement.classList.remove("global-loading");
+      document.documentElement.classList.add("global-ready");
+      return;
+    }
+
+    // Cache-bust in a way that won't wreck Netlify caching forever
+    // (if you want even stronger busting, change v number manually when updating)
+    const url = `${GLOBAL_URL}?v=3`;
+
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error(`Failed to load ${GLOBAL_URL}: ${res.status}`);
+
+    const html = await res.text();
+    const doc = new DOMParser().parseFromString(html, "text/html");
+
+    const header = safeQS("header", doc);
+    const footer = safeQS("footer", doc);
+
+    if (headerMount) headerMount.innerHTML = header ? header.outerHTML : "";
+    if (footerMount) footerMount.innerHTML = footer ? footer.outerHTML : "";
+
+    // Now query inside the injected DOM (in the real page)
+    const injectedRoot = document;
+
+    setActiveNav(injectedRoot);
+    wireContactPopup(injectedRoot);
+
+    document.documentElement.classList.remove("global-loading");
+    document.documentElement.classList.add("global-ready");
+  }
+
+  inject().catch(err => {
+    console.error("Global inject error:", err);
+    document.documentElement.classList.remove("global-loading");
+    document.documentElement.classList.add("global-ready");
+  });
 })();
