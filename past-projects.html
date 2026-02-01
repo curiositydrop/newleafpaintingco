@@ -6,7 +6,7 @@
   <title>New Leaf Painting Projects | Luxury & General Homes in Maine</title>
   <meta name="description" content="See past interior painting projects by New Leaf Painting Co., serving Cumberland, Falmouth, Cape Elizabeth, Yarmouth, Kennebunkport, and all of Southern Maine. High-quality painting on walls, trim, baseboards, cabinets, and doors for every home.">
 
-  <!-- Keep your normal site CSS for header/footer + global elements -->
+  <!-- Keep your normal site CSS (global.html has its own XP header styles) -->
   <link rel="stylesheet" href="style.css" />
 
   <!-- Google tag (gtag.js) -->
@@ -43,103 +43,8 @@
     body{ background: var(--bg) !important; }
     section, .projects, .hero{ background: transparent !important; }
 
-    /* tighten injected containers */
+    /* injected containers */
     #global-header, #global-footer{ width:100%; }
-
-    /* ===== XP LOGO + BUTTONS STRIP (TOP) ===== */
-    .xp-top{
-      text-align:center;
-      padding: 16px 14px 8px;
-      max-width: 980px;
-      margin: 0 auto;
-    }
-
-    .nl-hub-logo-wrap{
-      position: relative;
-      display: inline-block;
-      width: min(320px, 78vw);
-      aspect-ratio: 1 / 1; /* stable box */
-      margin: 0 auto 6px;
-      overflow: hidden;
-      line-height: 0;
-    }
-
-    .nl-hub-logo{
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      display: block;
-    }
-
-    /* WHITE */
-    .logo-white{
-      z-index: 2;
-      filter:
-        grayscale(1)
-        brightness(0)
-        invert(1)
-        drop-shadow(0 0 18px rgba(255,255,255,.25));
-      animation: whiteBreath 9s ease-in-out infinite;
-    }
-
-    /* GREEN */
-    .logo-green{
-      z-index: 1;
-      filter: drop-shadow(0 0 22px rgba(80,255,160,.65));
-      animation: greenBreath 9s ease-in-out infinite;
-    }
-
-    @keyframes whiteBreath{
-      0%   { opacity: 1; }
-      25%  { opacity: .35; }
-      50%  { opacity: .12; }
-      75%  { opacity: .35; }
-      100% { opacity: 1; }
-    }
-
-    @keyframes greenBreath{
-      0%   { opacity: .12; transform: scale(.985); }
-      25%  { opacity: .35; transform: scale(.992); }
-      50%  { opacity: 1;  transform: scale(1); }
-      75%  { opacity: .35; transform: scale(.992); }
-      100% { opacity: .12; transform: scale(.985); }
-    }
-
-    .xp-links{
-      display:grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-      width: 100%;
-      max-width: 560px;
-      margin: 10px auto 0;
-    }
-
-    .xp-btn{
-      border-radius: 12px;
-      padding: 12px 14px;
-      font-weight: 900;
-      font-size: .95rem;
-      border: 2px solid rgba(255,255,255,.18);
-      background: rgba(255,255,255,.10);
-      color:#fff;
-      cursor:pointer;
-      text-decoration:none;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      transition: transform .12s ease, filter .12s ease;
-      text-align:center;
-      min-width:0;
-    }
-    .xp-btn:hover{ transform: translateY(-1px); filter: brightness(1.08); }
-
-    .xp-btn.primary{
-      grid-column: 1 / -1;
-      background: #fff;
-      color:#0f5f33;
-    }
 
     /* HERO */
     .hero{
@@ -171,7 +76,7 @@
     }
     body p{ color: var(--muted); }
 
-    /* Wrap each project “block” */
+    /* Wrap each project block */
     .ba, .project-gallery, .projects{
       max-width: 980px;
       margin-left: auto;
@@ -416,32 +321,8 @@
 
 <body>
 
-  <!-- GLOBAL HEADER -->
+  <!-- GLOBAL HEADER (XP-styled via global.html) -->
   <div id="global-header"></div>
-
-  <!-- XP TOP: logo + matching buttons -->
-  <div class="xp-top" aria-label="New Leaf XP Navigation">
-    <div class="nl-hub-logo-wrap">
-      <img class="nl-hub-logo logo-green" src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png" alt="New Leaf Painting Co.">
-      <img class="nl-hub-logo logo-white" src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png" alt="" aria-hidden="true">
-    </div>
-
-    <div class="xp-links">
-      <a class="xp-btn" href="xp-home.html">XP Home</a>
-      <a class="xp-btn" href="experience.html">The Experience</a>
-
-      <a class="xp-btn" href="contractors.html">Contractors</a>
-      <a class="xp-btn" href="referus.html">Refer New Leaf</a>
-
-      <a class="xp-btn primary"
-         href="mailto:newleafpaintingcompany@gmail.com?subject=Estimate%20Request%20-%20New%20Leaf%20Painting%20Co.&body=Hi%20Mike%2C%0A%0AI%E2%80%99d%20like%20a%20free%20estimate.%20Here%E2%80%99s%20what%20I%20need%3A%0A%0A-%20Address%3A%0A-%20Rooms%2Fareas%3A%0A-%20Timeline%3A%0A-%20Best%20phone%20%23%3A%0A%0AThanks!">
-        Get a Free Estimate
-      </a>
-
-      <a class="xp-btn" href="local-partners.html">Local Partners</a>
-      <a class="xp-btn" href="testimonials.html">Testimonials</a>
-    </div>
-  </div>
 
   <!-- PAGE CONTENT -->
   <section class="hero">
