@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>New Leaf Painting Projects | Luxury & General Homes in Maine</title>
   <meta name="description" content="See past interior painting projects by New Leaf Painting Co., serving Cumberland, Falmouth, Cape Elizabeth, Yarmouth, Kennebunkport, and all of Southern Maine. High-quality painting on walls, trim, baseboards, cabinets, and doors for every home.">
+
+  <!-- Keep your normal site CSS for header/footer + global elements -->
   <link rel="stylesheet" href="style.css" />
 
   <!-- Google tag (gtag.js) -->
@@ -16,322 +18,430 @@
     gtag('config', 'G-ZFESYBBBWD');
   </script>
 
- <style>
-  :root{
-    --bg:#000;
-    --panel: rgba(255,255,255,.06);
-    --panel2: rgba(255,255,255,.09);
-    --stroke: rgba(255,255,255,.14);
-    --text: rgba(255,255,255,.92);
-    --muted: rgba(255,255,255,.75);
-    --green:#1f6b33;
-    --glow: rgba(80,255,160,.30);
-  }
+  <style>
+    :root{
+      --bg:#000;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.09);
+      --stroke: rgba(255,255,255,.14);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.75);
+      --green:#1f6b33;
+      --glow: rgba(80,255,160,.30);
+    }
 
-  /* page base */
-  html, body{
-    margin:0;
-    padding:0;
-    background: var(--bg);
-    color: var(--text);
-  }
+    /* page base */
+    html, body{
+      margin:0;
+      padding:0;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x:hidden;
+    }
 
-  /* if style.css tries to force light backgrounds on sections, this overrides it */
-  body{
-    background: var(--bg) !important;
-  }
-  section, .projects, .hero{
-    background: transparent !important;
-  }
+    /* if style.css tries to force light backgrounds on sections, override it */
+    body{ background: var(--bg) !important; }
+    section, .projects, .hero{ background: transparent !important; }
 
-  /* tighten up header/footer containers (global.js injects them) */
-  #global-header, #global-footer{
-    width:100%;
-  }
+    /* tighten injected containers */
+    #global-header, #global-footer{ width:100%; }
 
-  /* HERO (top copy) */
-  .hero{
-    text-align:center;
-    padding: 44px 16px 10px;
-    max-width: 980px;
-    margin: 0 auto;
-  }
-  .hero h1{
-    margin: 0 0 10px;
-    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
-    letter-spacing: .2px;
-    color: #fff;
-    text-shadow: 0 0 18px rgba(0,0,0,.35);
-  }
-  .hero p{
-    margin: 0 auto;
-    max-width: 760px;
-    color: var(--muted);
-    line-height: 1.45;
-    font-size: 1.02rem;
-  }
+    /* ===== XP LOGO + BUTTONS STRIP (TOP) ===== */
+    .xp-top{
+      text-align:center;
+      padding: 16px 14px 8px;
+      max-width: 980px;
+      margin: 0 auto;
+    }
 
-  /* section headings above each project */
-  body h3{
-    margin: 26px 0 8px;
-    color:#fff;
-    letter-spacing:.2px;
-  }
-  body p{
-    color: var(--muted);
-  }
+    .nl-hub-logo-wrap{
+      position: relative;
+      display: inline-block;
+      width: min(320px, 78vw);
+      aspect-ratio: 1 / 1; /* stable box */
+      margin: 0 auto 6px;
+      overflow: hidden;
+      line-height: 0;
+    }
 
-  /* Wrap each project “block” in a subtle card feel (without changing HTML) */
-  .ba,
-  .project-gallery,
-  .projects{
-    max-width: 980px;
-    margin-left: auto;
-    margin-right: auto;
-  }
+    .nl-hub-logo{
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
 
-  /* ===== Before/After Slider ===== */
-  .ba{
-    margin: 10px auto 18px auto;
-    padding: 0 12px;
-  }
+    /* WHITE */
+    .logo-white{
+      z-index: 2;
+      filter:
+        grayscale(1)
+        brightness(0)
+        invert(1)
+        drop-shadow(0 0 18px rgba(255,255,255,.25));
+      animation: whiteBreath 9s ease-in-out infinite;
+    }
 
-  .ba-slider{
-    position: relative;
-    width: 100%;
-    max-width: 860px;
-    margin: 12px auto 0;
-    border-radius: 16px;
-    overflow: hidden;
-    background: rgba(255,255,255,.04);
-    border: 1px solid var(--stroke);
-    box-shadow:
-      0 18px 46px rgba(0,0,0,.55),
-      0 0 34px var(--glow);
-    user-select: none;
-    touch-action: pan-y;
-  }
+    /* GREEN */
+    .logo-green{
+      z-index: 1;
+      filter: drop-shadow(0 0 22px rgba(80,255,160,.65));
+      animation: greenBreath 9s ease-in-out infinite;
+    }
 
-  .ba-slider img.ba-base{
-    display:block;
-    width:100%;
-    height:auto;
-    max-height: 560px;
-    object-fit: cover;
-    filter: saturate(1.02) contrast(1.02);
-  }
+    @keyframes whiteBreath{
+      0%   { opacity: 1; }
+      25%  { opacity: .35; }
+      50%  { opacity: .12; }
+      75%  { opacity: .35; }
+      100% { opacity: 1; }
+    }
 
-  .ba-before{
-    position:absolute;
-    top:0;
-    left:0;
-    height:100%;
-    width:50%;
-    overflow:hidden;
-  }
-  .ba-before img{
-    width:100%;
-    height:100%;
-    object-fit: cover;
-  }
+    @keyframes greenBreath{
+      0%   { opacity: .12; transform: scale(.985); }
+      25%  { opacity: .35; transform: scale(.992); }
+      50%  { opacity: 1;  transform: scale(1); }
+      75%  { opacity: .35; transform: scale(.992); }
+      100% { opacity: .12; transform: scale(.985); }
+    }
 
-  .ba-handle{
-    position:absolute;
-    top:0;
-    left:50%;
-    transform: translateX(-50%);
-    height:100%;
-    width:44px;
-    cursor: ew-resize;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    pointer-events:none;
-  }
-  .ba-handle::before{
-    content:"";
-    position:absolute;
-    height:100%;
-    width:4px;
-    background: rgba(255,255,255,.92);
-    border-radius: 4px;
-  }
+    .xp-links{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      width: 100%;
+      max-width: 560px;
+      margin: 10px auto 0;
+    }
 
-  .ba-knob{
-    position:relative;
-    width:40px;
-    height:40px;
-    border-radius:999px;
-    background: rgba(31,107,51,.92);
-    border: 2px solid rgba(255,255,255,.9);
-    display:grid;
-    place-items:center;
-    box-shadow:
-      0 10px 20px rgba(0,0,0,.35),
-      0 0 18px rgba(80,255,160,.35);
-  }
-  .ba-knob span{
-    font-size:18px;
-    color:#fff;
-    transform: translateY(-1px);
-  }
+    .xp-btn{
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-weight: 900;
+      font-size: .95rem;
+      border: 2px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.10);
+      color:#fff;
+      cursor:pointer;
+      text-decoration:none;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      transition: transform .12s ease, filter .12s ease;
+      text-align:center;
+      min-width:0;
+    }
+    .xp-btn:hover{ transform: translateY(-1px); filter: brightness(1.08); }
 
-  .ba-label{
-    position:absolute;
-    top:12px;
-    padding: 8px 11px;
-    border-radius: 999px;
-    font-weight: 900;
-    font-size: 12px;
-    letter-spacing: .5px;
-    background: rgba(0,0,0,.55);
-    border: 1px solid rgba(255,255,255,.18);
-    color:#fff;
-    backdrop-filter: blur(8px);
-  }
-  .ba-label.before{ left:12px; }
-  .ba-label.after{ right:12px; }
+    .xp-btn.primary{
+      grid-column: 1 / -1;
+      background: #fff;
+      color:#0f5f33;
+    }
 
-  .ba-hint{
-    text-align:center;
-    font-size: 13px;
-    color: rgba(255,255,255,.78);
-    margin-top: 10px;
-  }
+    /* HERO */
+    .hero{
+      text-align:center;
+      padding: 30px 16px 10px;
+      max-width: 980px;
+      margin: 0 auto;
+    }
+    .hero h1{
+      margin: 0 0 10px;
+      font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+      letter-spacing: .2px;
+      color: #fff;
+      text-shadow: 0 0 18px rgba(0,0,0,.35);
+    }
+    .hero p{
+      margin: 0 auto;
+      max-width: 760px;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 1.02rem;
+    }
 
-  /* divider becomes sleek glow bar */
-  .project-divider{
-    border:none;
-    height: 6px;
-    width: min(860px, 92vw);
-    margin: 20px auto 38px;
-    border-radius: 999px;
-    background: linear-gradient(90deg, transparent, rgba(80,255,160,.55), transparent);
-    box-shadow: 0 0 18px rgba(80,255,160,.18);
-  }
+    /* section headings above each project */
+    body h3{
+      margin: 26px 0 8px;
+      color:#fff;
+      letter-spacing:.2px;
+    }
+    body p{ color: var(--muted); }
 
-  /* ===== Project Gallery (the side-by-side angles) ===== */
-  .project-gallery{
-    display:flex;
-    gap: 14px;
-    justify-content:center;
-    align-items: stretch;
-    flex-wrap: wrap;
-    padding: 0 12px;
-    margin: 18px auto 0;
-  }
+    /* Wrap each project “block” */
+    .ba, .project-gallery, .projects{
+      max-width: 980px;
+      margin-left: auto;
+      margin-right: auto;
+    }
 
-  .image-wrap{
-    flex: 1;
-    min-width: 240px;
-    max-width: 420px;
-    text-align:center;
-    padding: 12px;
-    border-radius: 16px;
-    background: var(--panel);
-    border: 1px solid var(--stroke);
-    box-shadow: 0 12px 26px rgba(0,0,0,.45);
-  }
+    /* ===== Before/After Slider ===== */
+    .ba{
+      margin: 10px auto 18px auto;
+      padding: 0 12px;
+    }
 
-  .project-gallery img{
-    width: 100%;
-    height: auto;
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,.12);
-    box-shadow: 0 10px 22px rgba(0,0,0,.35);
-    cursor: zoom-in;
-  }
+    .ba-slider{
+      position: relative;
+      width: 100%;
+      max-width: 860px;
+      margin: 12px auto 0;
+      border-radius: 16px;
+      overflow: hidden;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--stroke);
+      box-shadow:
+        0 18px 46px rgba(0,0,0,.55),
+        0 0 34px var(--glow);
+      user-select: none;
+      touch-action: pan-y;
+    }
 
-  .caption{
-    margin: 10px 0 0;
-    font-weight: 800;
-    letter-spacing: .2px;
-    color: rgba(255,255,255,.82);
-  }
+    .ba-slider img.ba-base{
+      display:block;
+      width:100%;
+      height:auto;
+      max-height: 560px;
+      object-fit: cover;
+      filter: saturate(1.02) contrast(1.02);
+    }
 
-  /* ===== The older “3-up image rows” ===== */
-  .projects{
-    padding: 0 12px;
-    margin: 18px auto 0;
-  }
+    .ba-before{
+      position:absolute;
+      top:0;
+      left:0;
+      height:100%;
+      width:50%;
+      overflow:hidden;
+    }
+    .ba-before img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+    }
 
-  .project-card{
-    padding: 16px;
-    border-radius: 18px;
-    background: var(--panel);
-    border: 1px solid var(--stroke);
-    box-shadow: 0 14px 30px rgba(0,0,0,.50);
-    text-align:center;
-    max-width: 860px;
-    margin: 0 auto 18px;
-  }
+    .ba-handle{
+      position:absolute;
+      top:0;
+      left:50%;
+      transform: translateX(-50%);
+      height:100%;
+      width:44px;
+      cursor: ew-resize;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      pointer-events:none;
+    }
+    .ba-handle::before{
+      content:"";
+      position:absolute;
+      height:100%;
+      width:4px;
+      background: rgba(255,255,255,.92);
+      border-radius: 4px;
+    }
 
-  .project-card img{
-    width: 32%;
-    height:auto;
-    margin-right: 1%;
-    margin-bottom: 10px;
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,.12);
-    box-shadow: 0 10px 22px rgba(0,0,0,.35);
-    cursor: zoom-in;
-  }
-  .project-card img:last-child{ margin-right:0; }
+    .ba-knob{
+      position:relative;
+      width:40px;
+      height:40px;
+      border-radius:999px;
+      background: rgba(31,107,51,.92);
+      border: 2px solid rgba(255,255,255,.9);
+      display:grid;
+      place-items:center;
+      box-shadow:
+        0 10px 20px rgba(0,0,0,.35),
+        0 0 18px rgba(80,255,160,.35);
+    }
+    .ba-knob span{
+      font-size:18px;
+      color:#fff;
+      transform: translateY(-1px);
+    }
 
-  .project-card h3{
-    margin: 10px 0 6px;
-    color:#fff;
-  }
-  .project-card p{
-    margin: 0 auto 6px;
-    max-width: 720px;
-    color: rgba(255,255,255,.78);
-    line-height: 1.45;
-  }
+    .ba-label{
+      position:absolute;
+      top:12px;
+      padding: 8px 11px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 12px;
+      letter-spacing: .5px;
+      background: rgba(0,0,0,.55);
+      border: 1px solid rgba(255,255,255,.18);
+      color:#fff;
+      backdrop-filter: blur(8px);
+    }
+    .ba-label.before{ left:12px; }
+    .ba-label.after{ right:12px; }
 
-  /* ===== Modal polish ===== */
-  .img-modal{
-    display:none;
-    position:fixed;
-    z-index: 9999;
-    inset:0;
-    background: rgba(0,0,0,.85);
-    padding: 24px 12px;
-  }
+    .ba-hint{
+      text-align:center;
+      font-size: 13px;
+      color: rgba(255,255,255,.78);
+      margin-top: 10px;
+    }
 
-  .modal-content{
-    margin: auto;
-    display:block;
-    max-width: min(980px, 92vw);
-    max-height: 82vh;
-    border-radius: 14px;
-    border: 1px solid rgba(255,255,255,.14);
-    box-shadow: 0 18px 50px rgba(0,0,0,.65);
-  }
+    .project-divider{
+      border:none;
+      height: 6px;
+      width: min(860px, 92vw);
+      margin: 20px auto 38px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, rgba(80,255,160,.55), transparent);
+      box-shadow: 0 0 18px rgba(80,255,160,.18);
+    }
 
-  .img-modal .close{
-    position: fixed;
-    top: 16px;
-    right: 18px;
-    color: #fff;
-    font-size: 40px;
-    font-weight: 900;
-    cursor: pointer;
-    text-shadow: 0 10px 24px rgba(0,0,0,.55);
-  }
+    /* ===== Project Gallery ===== */
+    .project-gallery{
+      display:flex;
+      gap: 14px;
+      justify-content:center;
+      align-items: stretch;
+      flex-wrap: wrap;
+      padding: 0 12px;
+      margin: 18px auto 0;
+    }
 
-  /* Mobile tuning */
-  @media (max-width: 640px){
-    .ba-slider img.ba-base{ max-height: 420px; }
-    .project-card img{ width: 100%; margin-right:0; }
-  }
-</style>
+    .image-wrap{
+      flex: 1;
+      min-width: 240px;
+      max-width: 420px;
+      text-align:center;
+      padding: 12px;
+      border-radius: 16px;
+      background: var(--panel);
+      border: 1px solid var(--stroke);
+      box-shadow: 0 12px 26px rgba(0,0,0,.45);
+    }
+
+    .project-gallery img{
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: 0 10px 22px rgba(0,0,0,.35);
+      cursor: zoom-in;
+    }
+
+    .caption{
+      margin: 10px 0 0;
+      font-weight: 800;
+      letter-spacing: .2px;
+      color: rgba(255,255,255,.82);
+    }
+
+    /* ===== The older “3-up image rows” ===== */
+    .projects{
+      padding: 0 12px;
+      margin: 18px auto 0;
+    }
+
+    .project-card{
+      padding: 16px;
+      border-radius: 18px;
+      background: var(--panel);
+      border: 1px solid var(--stroke);
+      box-shadow: 0 14px 30px rgba(0,0,0,.50);
+      text-align:center;
+      max-width: 860px;
+      margin: 0 auto 18px;
+    }
+
+    .project-card img{
+      width: 32%;
+      height:auto;
+      margin-right: 1%;
+      margin-bottom: 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: 0 10px 22px rgba(0,0,0,.35);
+      cursor: zoom-in;
+    }
+    .project-card img:last-child{ margin-right:0; }
+
+    .project-card h3{
+      margin: 10px 0 6px;
+      color:#fff;
+    }
+    .project-card p{
+      margin: 0 auto 6px;
+      max-width: 720px;
+      color: rgba(255,255,255,.78);
+      line-height: 1.45;
+    }
+
+    /* ===== Modal ===== */
+    .img-modal{
+      display:none;
+      position:fixed;
+      z-index: 9999;
+      inset:0;
+      background: rgba(0,0,0,.85);
+      padding: 24px 12px;
+    }
+
+    .modal-content{
+      margin: auto;
+      display:block;
+      max-width: min(980px, 92vw);
+      max-height: 82vh;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: 0 18px 50px rgba(0,0,0,.65);
+    }
+
+    .img-modal .close{
+      position: fixed;
+      top: 16px;
+      right: 18px;
+      color: #fff;
+      font-size: 40px;
+      font-weight: 900;
+      cursor: pointer;
+      text-shadow: 0 10px 24px rgba(0,0,0,.55);
+    }
+
+    @media (max-width: 640px){
+      .ba-slider img.ba-base{ max-height: 420px; }
+      .project-card img{ width: 100%; margin-right:0; }
+    }
+  </style>
 </head>
 
 <body>
 
   <!-- GLOBAL HEADER -->
   <div id="global-header"></div>
+
+  <!-- XP TOP: logo + matching buttons -->
+  <div class="xp-top" aria-label="New Leaf XP Navigation">
+    <div class="nl-hub-logo-wrap">
+      <img class="nl-hub-logo logo-green" src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png" alt="New Leaf Painting Co.">
+      <img class="nl-hub-logo logo-white" src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png" alt="" aria-hidden="true">
+    </div>
+
+    <div class="xp-links">
+      <a class="xp-btn" href="xp-home.html">XP Home</a>
+      <a class="xp-btn" href="experience.html">The Experience</a>
+
+      <a class="xp-btn" href="contractors.html">Contractors</a>
+      <a class="xp-btn" href="referus.html">Refer New Leaf</a>
+
+      <a class="xp-btn primary"
+         href="mailto:newleafpaintingcompany@gmail.com?subject=Estimate%20Request%20-%20New%20Leaf%20Painting%20Co.&body=Hi%20Mike%2C%0A%0AI%E2%80%99d%20like%20a%20free%20estimate.%20Here%E2%80%99s%20what%20I%20need%3A%0A%0A-%20Address%3A%0A-%20Rooms%2Fareas%3A%0A-%20Timeline%3A%0A-%20Best%20phone%20%23%3A%0A%0AThanks!">
+        Get a Free Estimate
+      </a>
+
+      <a class="xp-btn" href="local-partners.html">Local Partners</a>
+      <a class="xp-btn" href="testimonials.html">Testimonials</a>
+    </div>
+  </div>
 
   <!-- PAGE CONTENT -->
   <section class="hero">
@@ -364,7 +474,7 @@
 
   <hr class="project-divider">
 
-  <!-- ===== Project 2: Slider + extra angles (clickable) ===== -->
+  <!-- ===== Project 2 ===== -->
   <div style="text-align: center;">
     <h3>Kitchen Cabinet Painting</h3>
     <p>This cabinet respray gave this kitchen a whole new look.</p>
