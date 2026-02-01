@@ -1,345 +1,488 @@
-/* =========================================================
-   NEW LEAF GLOBAL.JS (XP VIBE)
-   - Injects global.html into #global-header / #global-footer
-   - Injects contact button + popup (once)
-   - Forces nav links visible
-   - Preserves nav=1, mode=hub|standard, and ref/drop/sample across links
-   - ✅ Home link goes to xp-home.html (NOT gate)
-   - ✅ Mailto works (no submit), populates body with form entries
-   ========================================================= */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>New Leaf Painting Projects | Luxury & General Homes in Maine</title>
+  <meta name="description" content="See past interior painting projects by New Leaf Painting Co., serving Cumberland, Falmouth, Cape Elizabeth, Yarmouth, Kennebunkport, and all of Southern Maine. High-quality painting on walls, trim, baseboards, cabinets, and doors for every home.">
 
-(function () {
+  <!-- Keep your normal site CSS (global header/footer + contact button styles live here) -->
+  <link rel="stylesheet" href="style.css" />
 
-  /* --------------------
-     HELPERS
-  ---------------------*/
-  function getMode() {
-    const p = new URLSearchParams(window.location.search);
-    const mode = (p.get("mode") || "standard").toLowerCase();
-    return (mode === "hub" || mode === "standard") ? mode : "standard";
-  }
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZFESYBBBWD"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-ZFESYBBBWD');
+  </script>
 
-  function getRefParam() {
-    const p = new URLSearchParams(window.location.search);
-    return p.get("ref") || p.get("drop") || p.get("sample") || "";
-  }
+  <style>
+    :root{
+      --bg:#000;
+      --panel: rgba(255,255,255,.06);
+      --stroke: rgba(255,255,255,.14);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.75);
+      --green:#1f6b33;
+      --glow: rgba(80,255,160,.30);
+    }
 
-  function isExternalHref(href) {
-    if (!href) return true;
-    return (
-      href.startsWith("http://") ||
-      href.startsWith("https://") ||
-      href.startsWith("mailto:") ||
-      href.startsWith("tel:") ||
-      href.startsWith("javascript:")
-    );
-  }
+    html, body{
+      margin:0;
+      padding:0;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x:hidden;
+    }
 
-  function forceNavVisible() {
-    document.querySelectorAll(".nav-links a").forEach(a => {
-      a.style.visibility = "visible";
-      a.style.opacity = "1";
-      a.style.pointerEvents = "auto";
-    });
-  }
+    /* Override any light section bg coming from style.css */
+    body{ background: var(--bg) !important; }
+    section, .projects, .hero{ background: transparent !important; }
 
-  function highlightActiveLink() {
-    let currentPage = window.location.pathname.split("/").pop().toLowerCase();
-    if (!currentPage) currentPage = "index.html";
+    /* Injected containers */
+    #global-header, #global-footer{ width:100%; }
 
-    document.querySelectorAll("nav a").forEach(link => {
-      let linkPage = (link.getAttribute("href") || "")
-        .split("?")[0]
-        .split("/")
-        .pop()
-        .toLowerCase();
+    /* HERO */
+    .hero{
+      text-align:center;
+      padding: 34px 16px 10px;
+      max-width: 980px;
+      margin: 0 auto;
+    }
+    .hero h1{
+      margin: 0 0 10px;
+      font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+      letter-spacing: .2px;
+      color: #fff;
+      text-shadow: 0 0 18px rgba(0,0,0,.35);
+    }
+    .hero p{
+      margin: 0 auto;
+      max-width: 760px;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 1.02rem;
+    }
 
-      if (!linkPage) linkPage = "index.html";
-      link.classList.toggle("active", linkPage === currentPage);
-    });
-  }
+    /* section headings above each project */
+    body h3{
+      margin: 26px 0 8px;
+      color:#fff;
+      letter-spacing:.2px;
+      text-align:center;
+    }
+    body p{
+      color: var(--muted);
+      text-align:center;
+    }
 
-  function preserveParamsAcrossLinks() {
-    const mode = getMode();
-    const refParam = getRefParam();
+    /* Wrap each project “block” */
+    .ba, .project-gallery, .projects{
+      max-width: 980px;
+      margin-left: auto;
+      margin-right: auto;
+    }
 
-    document.querySelectorAll("a[href]").forEach(link => {
-      const href = link.getAttribute("href");
-      if (!href) return;
-      if (href.startsWith("#")) return;
-      if (isExternalHref(href)) return;
+    /* ===== Before/After Slider ===== */
+    .ba{
+      margin: 10px auto 18px auto;
+      padding: 0 12px;
+    }
 
-      const url = new URL(href, window.location.origin);
+    .ba-slider{
+      position: relative;
+      width: 100%;
+      max-width: 860px;
+      margin: 12px auto 0;
+      border-radius: 16px;
+      overflow: hidden;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--stroke);
+      box-shadow:
+        0 18px 46px rgba(0,0,0,.55),
+        0 0 34px var(--glow);
+      user-select: none;
+      touch-action: pan-y;
+    }
 
-      // Preserve your tracking params
-      url.searchParams.set("nav", "1");
-      url.searchParams.set("mode", mode);
+    .ba-slider img.ba-base{
+      display:block;
+      width:100%;
+      height:auto;
+      max-height: 560px;
+      object-fit: cover;
+      filter: saturate(1.02) contrast(1.02);
+    }
 
-      if (
-        refParam &&
-        !url.searchParams.has("ref") &&
-        !url.searchParams.has("drop") &&
-        !url.searchParams.has("sample")
-      ) {
-        url.searchParams.set("ref", refParam);
-      }
+    .ba-before{
+      position:absolute;
+      top:0;
+      left:0;
+      height:100%;
+      width:50%;
+      overflow:hidden;
+    }
+    .ba-before img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+    }
 
-      link.setAttribute("href", url.pathname.replace(/^\//, "") + url.search);
-    });
-  }
+    .ba-handle{
+      position:absolute;
+      top:0;
+      left:50%;
+      transform: translateX(-50%);
+      height:100%;
+      width:44px;
+      cursor: ew-resize;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      pointer-events:none;
+    }
+    .ba-handle::before{
+      content:"";
+      position:absolute;
+      height:100%;
+      width:4px;
+      background: rgba(255,255,255,.92);
+      border-radius: 4px;
+    }
 
-  function setupPopupHandlers() {
-  const popup = document.getElementById("contact-popup");
-  const btn = document.getElementById("contact-btn");
-  const closeBtn = document.querySelector("#contact-popup .close");
-  if (!popup || !closeBtn) return;
+    .ba-knob{
+      position:relative;
+      width:40px;
+      height:40px;
+      border-radius:999px;
+      background: rgba(31,107,51,.92);
+      border: 2px solid rgba(255,255,255,.9);
+      display:grid;
+      place-items:center;
+      box-shadow:
+        0 10px 20px rgba(0,0,0,.35),
+        0 0 18px rgba(80,255,160,.35);
+    }
+    .ba-knob span{
+      font-size:18px;
+      color:#fff;
+      transform: translateY(-1px);
+    }
 
-  // Floating button
-  if (btn) {
-    btn.onclick = (e) => {
-      e?.preventDefault?.();
-      e?.stopPropagation?.();
-      popup.style.display = "flex";
-    };
-  }
+    .ba-label{
+      position:absolute;
+      top:12px;
+      padding: 8px 11px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 12px;
+      letter-spacing: .5px;
+      background: rgba(0,0,0,.55);
+      border: 1px solid rgba(255,255,255,.18);
+      color:#fff;
+      backdrop-filter: blur(8px);
+    }
+    .ba-label.before{ left:12px; }
+    .ba-label.after{ right:12px; }
 
-  // Any element can open the popup (nav item, buttons, etc.)
-  document.querySelectorAll('[data-contact-open="1"]').forEach(el => {
-    el.onclick = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      popup.style.display = "flex";
-    };
-  });
+    .ba-hint{
+      text-align:center;
+      font-size: 13px;
+      color: rgba(255,255,255,.78);
+      margin-top: 10px;
+    }
 
-  closeBtn.onclick = (e) => {
-    e?.preventDefault?.();
-    e?.stopPropagation?.();
-    popup.style.display = "none";
-  };
+    /* divider glow bar */
+    .project-divider{
+      border:none;
+      height: 6px;
+      width: min(860px, 92vw);
+      margin: 20px auto 38px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, rgba(80,255,160,.55), transparent);
+      box-shadow: 0 0 18px rgba(80,255,160,.18);
+    }
 
-  window.addEventListener("click", e => {
-    if (e.target === popup) popup.style.display = "none";
-  });
-}
+    /* ===== Project Gallery ===== */
+    .project-gallery{
+      display:flex;
+      gap: 14px;
+      justify-content:center;
+      align-items: stretch;
+      flex-wrap: wrap;
+      padding: 0 12px;
+      margin: 18px auto 0;
+    }
 
-  function updatePopupHeadingAndButton(refData) {
-    const btn = document.getElementById("contact-btn");
-    if (btn && refData.buttontext) btn.textContent = refData.buttontext;
+    .image-wrap{
+      flex: 1;
+      min-width: 240px;
+      max-width: 420px;
+      text-align:center;
+      padding: 12px;
+      border-radius: 16px;
+      background: var(--panel);
+      border: 1px solid var(--stroke);
+      box-shadow: 0 12px 26px rgba(0,0,0,.45);
+    }
 
-    const popupHeading = document.querySelector("#contact-popup h2");
-    if (!popupHeading) return;
+    .project-gallery img{
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: 0 10px 22px rgba(0,0,0,.35);
+      cursor: zoom-in;
+    }
 
-    const code = (refData.discountcode || "").toUpperCase();
-    if (code.includes("DROP")) popupHeading.textContent = "Redeem Drop Reward";
-    else if (code.includes("SAMPLE")) popupHeading.textContent = "Redeem Sample Reward";
-    else popupHeading.textContent = "Get free estimate";
-  }
+    .caption{
+      margin: 10px 0 0;
+      font-weight: 800;
+      letter-spacing: .2px;
+      color: rgba(255,255,255,.82);
+    }
 
-  function setHiddenFieldsOnContactOpen(refData) {
-    document.addEventListener("click", e => {
-      if (e.target && e.target.id === "contact-btn") {
-        const discountField = document.getElementById("discount-code");
-        if (discountField) discountField.value = refData.discountcode || "";
+    /* ===== Older 3-up image rows ===== */
+    .projects{
+      padding: 0 12px;
+      margin: 18px auto 0;
+    }
 
-        let refField = document.getElementById("referrer");
-        if (!refField) {
-          refField = document.createElement("input");
-          refField.type = "hidden";
-          refField.name = "referrer";
-          refField.id = "referrer";
-          document.querySelector("#contact-popup form")?.appendChild(refField);
-        }
+    .project-card{
+      padding: 16px;
+      border-radius: 18px;
+      background: var(--panel);
+      border: 1px solid var(--stroke);
+      box-shadow: 0 14px 30px rgba(0,0,0,.50);
+      text-align:center;
+      max-width: 860px;
+      margin: 0 auto 18px;
+    }
 
-        if (refField) {
-          refField.value =
-            `${refData.referrername || ""}${refData.businessname ? " at " + refData.businessname : ""}`.trim();
-        }
-      }
-    });
-  }
+    .project-card img{
+      width: 32%;
+      height:auto;
+      margin-right: 1%;
+      margin-bottom: 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: 0 10px 22px rgba(0,0,0,.35);
+      cursor: zoom-in;
+    }
+    .project-card img:last-child{ margin-right:0; }
 
-  /* --------------------
-     REFERRAL DATA (SHEET CSV)
-  ---------------------*/
-  const sheetURL =
-    "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGQaoBZ7rMgXkLt9ZvLeF9zZ5V5qv1m4mlWWowx-VskRE6hrd1rHOVAg3M4JJfXCotw8wVVK_nVasH/pub?output=csv";
+    .project-card h3{
+      margin: 10px 0 6px;
+      color:#fff;
+      text-align:center;
+    }
+    .project-card p{
+      margin: 0 auto 6px;
+      max-width: 720px;
+      color: rgba(255,255,255,.78);
+      line-height: 1.45;
+      text-align:center;
+    }
 
-  const refData = {
-    id: "",
-    referrername: "",
-    businessname: "",
-    discountcode: "",
-    bannertext: "",
-    buttontext: "Get free estimate",
-    emailsubject: "New Leaf Painting Inquiry",
-    activeinactive: ""
-  };
+    /* ===== Modal ===== */
+    .img-modal{
+      display:none;
+      position:fixed;
+      z-index: 9999;
+      inset:0;
+      background: rgba(0,0,0,.85);
+      padding: 24px 12px;
+    }
 
-  function cleanValue(value) {
-    return value ? value.replace(/^"|"$/g, "").trim() : "";
-  }
+    .modal-content{
+      margin: auto;
+      display:block;
+      max-width: min(980px, 92vw);
+      max-height: 82vh;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: 0 18px 50px rgba(0,0,0,.65);
+    }
 
-  async function loadReferrerData() {
-    const refParam = getRefParam();
-    if (!refParam) return;
+    .img-modal .close{
+      position: fixed;
+      top: 16px;
+      right: 18px;
+      color: #fff;
+      font-size: 40px;
+      font-weight: 900;
+      cursor: pointer;
+      text-shadow: 0 10px 24px rgba(0,0,0,.55);
+    }
 
-    try {
-      const res = await fetch(sheetURL);
-      const text = await res.text();
-      const rows = text.trim().split("\n").map(r => r.split(","));
-      const headers = rows.shift().map(h => h.trim().toLowerCase());
+    @media (max-width: 640px){
+      .ba-slider img.ba-base{ max-height: 420px; }
+      .project-card img{ width: 100%; margin-right:0; }
+    }
+  </style>
+</head>
 
-      const match = rows.find(row => (row[0] || "").trim().toLowerCase() === refParam.toLowerCase());
-      if (!match) return;
+<body>
 
-      headers.forEach((h, i) => {
-        refData[h] = cleanValue(match[i]);
+  <!-- GLOBAL HEADER (injects logo + links + contact button) -->
+  <div id="global-header"></div>
+
+  <!-- PAGE CONTENT -->
+  <section class="hero">
+    <h1>Our Completed Transformations</h1>
+    <p>Take a look at some of the spaces, surfaces, and projects we’ve transformed — and the clients we’ve delighted.</p>
+  </section>
+
+  <!-- ===== Project 1: Slider ===== -->
+  <div>
+    <h3>Kitchen Cabinet Refresh</h3>
+    <p>This cabinet respray gave this kitchen a nice new look.</p>
+  </div>
+
+  <div class="ba">
+    <div class="ba-slider" aria-label="Before and after slider">
+      <img class="ba-base" src="IMG_8455.jpeg" alt="Cabinet repaint after" loading="lazy">
+      <div class="ba-before">
+        <img src="IMG_8428.jpeg" alt="Cabinet repaint before" loading="lazy">
+      </div>
+
+      <div class="ba-label before">BEFORE</div>
+      <div class="ba-label after">AFTER</div>
+
+      <div class="ba-handle">
+        <div class="ba-knob" aria-hidden="true"><span>⇆</span></div>
+      </div>
+    </div>
+    <div class="ba-hint">Drag the green slider to reveal the transformation.</div>
+  </div>
+
+  <hr class="project-divider">
+
+  <!-- ===== Project 2: Slider + extra angles ===== -->
+  <div>
+    <h3>Kitchen Cabinet Painting</h3>
+    <p>This cabinet respray gave this kitchen a whole new look.</p>
+  </div>
+
+  <div class="ba">
+    <div class="ba-slider" aria-label="Before and after slider">
+      <img class="ba-base" src="IMG_8599.jpeg" alt="Cabinet repaint after" loading="lazy">
+      <div class="ba-before">
+        <img src="IMG_7625.jpeg" alt="Cabinet repaint before" loading="lazy">
+      </div>
+
+      <div class="ba-label before">BEFORE</div>
+      <div class="ba-label after">AFTER</div>
+
+      <div class="ba-handle">
+        <div class="ba-knob" aria-hidden="true"><span>⇆</span></div>
+      </div>
+    </div>
+    <div class="ba-hint">Drag the green slider to reveal the transformation.</div>
+  </div>
+
+  <div class="project-gallery">
+    <div class="image-wrap">
+      <img src="IMG_7628.jpeg" alt="Cabinet repaint before angle" class="clickable-img">
+      <p class="caption before">Before (Angle)</p>
+    </div>
+
+    <div class="image-wrap">
+      <img src="IMG_8601.jpeg" alt="Cabinet repaint after angle" class="clickable-img">
+      <p class="caption after">After (Angle)</p>
+    </div>
+  </div>
+
+  <hr class="project-divider">
+
+  <section class="projects">
+    <div class="project-card">
+      <img src="IMG_8114.jpeg" alt="Kitchen paint" class="clickable-img">
+      <img src="IMG_8117.jpeg" alt="Kitchen paint" class="clickable-img">
+      <img src="IMG_8125.jpeg" alt="Kitchen paint" class="clickable-img">
+      <h3>Kitchen Refresh</h3>
+      <p>Tile backsplash and new coat of paint gave this kitchen a nice new look.</p>
+    </div>
+  </section>
+
+  <section class="projects">
+    <div class="project-card">
+      <img src="IMG_8118.jpeg" alt="Master Bedroom paint" class="clickable-img">
+      <img src="IMG_8119.jpeg" alt="Master Bedroom paint" class="clickable-img">
+      <img src="IMG_8120.jpeg" alt="Master Bedroom paint" class="clickable-img">
+      <h3>Bedroom Makeover</h3>
+      <p>Freshly painted walls and contrasting trim create a serene and elegant master bedroom space.</p>
+    </div>
+  </section>
+
+  <!-- IMAGE MODAL -->
+  <div id="imgModal" class="img-modal">
+    <span class="close">&times;</span>
+    <img class="modal-content" id="modalImage" alt="">
+  </div>
+
+  <script>
+    // ===== Before/After slider logic =====
+    function initBASliders() {
+      document.querySelectorAll(".ba-slider").forEach(slider => {
+        const beforeWrap = slider.querySelector(".ba-before");
+        const handle = slider.querySelector(".ba-handle");
+        let dragging = false;
+
+        const setPos = (clientX) => {
+          const rect = slider.getBoundingClientRect();
+          const x = Math.min(Math.max(clientX - rect.left, 0), rect.width);
+          const pct = (x / rect.width) * 100;
+          beforeWrap.style.width = pct + "%";
+          handle.style.left = pct + "%";
+        };
+
+        slider.addEventListener("mousedown", (e) => { dragging = true; setPos(e.clientX); });
+        window.addEventListener("mousemove", (e) => { if (!dragging) return; setPos(e.clientX); });
+        window.addEventListener("mouseup", () => dragging = false);
+
+        slider.addEventListener("touchstart", (e) => { dragging = true; setPos(e.touches[0].clientX); }, { passive: true });
+        slider.addEventListener("touchmove", (e) => { if (!dragging) return; setPos(e.touches[0].clientX); }, { passive: true });
+        slider.addEventListener("touchend", () => dragging = false);
+
+        requestAnimationFrame(() => {
+          const rect = slider.getBoundingClientRect();
+          setPos(rect.left + rect.width / 2);
+        });
       });
-    } catch (err) {
-      console.error("Error loading spreadsheet:", err);
-    }
-  }
-
-  /* --------------------
-     GLOBAL.HTML INJECTION
-  ---------------------*/
-  async function injectGlobalHTML() {
-    const headerTarget = document.getElementById("global-header");
-    const footerTarget = document.getElementById("global-footer");
-    if (!headerTarget || !footerTarget) return;
-
-    const hasHeader = !!headerTarget.querySelector("header");
-    const hasFooter = !!footerTarget.querySelector("footer");
-    const hasPopup = !!document.querySelector("#contact-popup");
-    const hasBtn = !!document.querySelector("#contact-btn");
-
-    if (hasHeader && hasFooter && hasPopup && hasBtn) return;
-
-    const res = await fetch("global.html");
-    const html = await res.text();
-    const doc = new DOMParser().parseFromString(html, "text/html");
-
-    const header = doc.querySelector("header");
-    const footer = doc.querySelector("footer");
-    const popup = doc.querySelector("#contact-popup");
-    const btn = doc.querySelector("#contact-btn");
-
-    if (header && !hasHeader) headerTarget.replaceChildren(header);
-    if (footer && !hasFooter) footerTarget.replaceChildren(footer);
-    if (popup && !hasPopup) document.body.insertAdjacentElement("beforeend", popup);
-    if (btn && !hasBtn) document.body.insertAdjacentElement("beforeend", btn);
-
-    // ✅ Home should go to xp-home.html (not gate)
-    const mode = getMode();
-    const refParam = getRefParam();
-    const homeLink = document.getElementById("homeLink");
-    if (homeLink) {
-      let qs = `nav=1&mode=${encodeURIComponent(mode)}`;
-      if (refParam) qs += `&ref=${encodeURIComponent(refParam)}`;
-      homeLink.setAttribute("href", `xp-home.html?${qs}`);
-    }
-  }
-
-  /* --------------------
-     BANNER (OPTIONAL)
-  ---------------------*/
-  function createBanner(message) {
-    if (!message) return;
-    if (document.querySelector("#drop-banner")) return;
-
-    const banner = document.createElement("div");
-    banner.id = "drop-banner";
-    banner.textContent = message;
-    document.body.prepend(banner);
-  }
-
-  /* --------------------
-     ✅ MAILTO (NO SUBMIT)
-  ---------------------*/
-  function setupContactFormMailto() {
-    const TO_EMAIL = "newleafpaintingcompany@gmail.com";
-
-    if (document.documentElement.dataset.mailtoDelegated === "1") return;
-    document.documentElement.dataset.mailtoDelegated = "1";
-
-    function buildMailto() {
-      const name = document.getElementById("name")?.value || "";
-      const email = document.getElementById("email")?.value || "";
-      const phone = document.getElementById("phone")?.value || "";
-      const message = document.getElementById("message")?.value || "";
-      const discount = document.getElementById("discount-code")?.value || "";
-
-      const subject = encodeURIComponent(refData.emailsubject || "New Leaf Estimate Request");
-      const bodyLines = [
-        `Name: ${name}`,
-        `Email: ${email}`,
-        `Phone: ${phone}`,
-        ``,
-        `What they want done:`,
-        message,
-        ``,
-        `Discount Code: ${discount}`,
-        refData.referrername
-          ? `Referrer: ${refData.referrername}${refData.businessname ? " at " + refData.businessname : ""}`
-          : ""
-      ].filter(Boolean);
-
-      const body = encodeURIComponent(bodyLines.join("\n"));
-      return `mailto:${TO_EMAIL}?subject=${subject}&body=${body}`;
     }
 
-    // Block real submits
-    document.addEventListener("submit", (e) => {
-      const form = e.target?.closest?.("#contact-popup form");
-      if (!form) return;
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-    }, true);
+    // ===== Image Modal logic =====
+    function initImageModal() {
+      const modal = document.getElementById("imgModal");
+      const modalImg = document.getElementById("modalImage");
+      const closeBtn = modal.querySelector(".close");
 
-    // Send button opens mail client
-    document.addEventListener("click", (e) => {
-      const sendBtn = e.target?.closest?.("#estimate-send");
-      if (!sendBtn) return;
+      document.querySelectorAll(".clickable-img").forEach(img => {
+        img.onclick = () => {
+          modal.style.display = "flex";
+          modalImg.src = img.src;
+          modalImg.alt = img.alt || "Project image";
+        };
+      });
 
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-
-      const mailto = buildMailto();
-      if (window.top && window.top !== window) window.top.location.href = mailto;
-      else window.location.href = mailto;
-    }, true);
-  }
-
-  /* --------------------
-     INIT
-  ---------------------*/
-  async function init() {
-    const mode = getMode();
-    document.body.classList.remove("mode-hub", "mode-standard");
-    document.body.classList.add(mode === "hub" ? "mode-hub" : "mode-standard");
-
-    await loadReferrerData();
-
-    if ((refData.activeinactive || "").toLowerCase() === "inactive") {
-      document.body.innerHTML = "<h2>This referral is no longer active.</h2>";
-      return;
+      closeBtn.onclick = () => modal.style.display = "none";
+      window.onclick = e => { if (e.target === modal) modal.style.display = "none"; };
     }
 
-    await injectGlobalHTML();
+    document.addEventListener("DOMContentLoaded", () => {
+      initBASliders();
+      initImageModal();
+    });
+  </script>
 
-    forceNavVisible();
-    highlightActiveLink();
-    preserveParamsAcrossLinks();
-    setupPopupHandlers();
-    updatePopupHeadingAndButton(refData);
-    setHiddenFieldsOnContactOpen(refData);
-    setupContactFormMailto();
+  <!-- GLOBAL FOOTER -->
+  <div id="global-footer"></div>
 
-    if (refData.bannertext) createBanner(refData.bannertext);
-  }
+  <!-- global injector -->
+  <script src="global.js"></script>
 
-  init();
-})();
+</body>
+</html>
