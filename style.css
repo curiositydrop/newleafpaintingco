@@ -454,3 +454,138 @@ body.mode-hub header .nav-links a.active {
 #contact-popup textarea{
   margin-top:0 !important;
 }
+
+/* =========================
+   XP GLOBAL HEADER (BLACK)
+   ========================= */
+
+header.xp-header{
+  background:#000 !important;
+  color:#fff;
+  text-align:center;
+  padding: 18px 14px 14px;
+  border-bottom: 1px solid rgba(255,255,255,.10);
+}
+
+header.xp-header .logo-container{
+  margin: 0 auto 10px;
+}
+
+/* breathing logo wrapper */
+header.xp-header .nl-hub-logo-wrap{
+  position: relative;
+  display: inline-block;
+  width: min(260px, 70vw);
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+  overflow: hidden;
+  line-height: 0;
+}
+
+header.xp-header .nl-hub-logo{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit: contain;
+  display:block;
+}
+
+/* WHITE logo layer */
+header.xp-header .logo-white{
+  z-index:2;
+  filter:
+    grayscale(1)
+    brightness(0)
+    invert(1)
+    drop-shadow(0 0 18px rgba(255,255,255,.25));
+  animation: whiteBreath 9s ease-in-out infinite;
+}
+
+/* GREEN logo layer */
+header.xp-header .logo-green{
+  z-index:1;
+  filter: drop-shadow(0 0 22px rgba(80,255,160,.65));
+  animation: greenBreath 9s ease-in-out infinite;
+}
+
+@keyframes whiteBreath{
+  0%   { opacity: 1; }
+  25%  { opacity: .35; }
+  50%  { opacity: .12; }
+  75%  { opacity: .35; }
+  100% { opacity: 1; }
+}
+
+@keyframes greenBreath{
+  0%   { opacity: .12; transform: scale(.985); }
+  25%  { opacity: .35; transform: scale(.992); }
+  50%  { opacity: 1;  transform: scale(1); }
+  75%  { opacity: .35; transform: scale(.992); }
+  100% { opacity: .12; transform: scale(.985); }
+}
+
+/* Turn nav links into XP buttons */
+header.xp-header nav{
+  margin-top: 10px;
+}
+
+header.xp-header .nav-links{
+  list-style:none;
+  padding:0;
+  margin: 0 auto;
+  width:100%;
+  max-width: 560px;
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+header.xp-header .nav-links li{
+  margin:0;
+}
+
+header.xp-header .nav-links a{
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-weight: 900;
+  font-size: .95rem;
+  border: 2px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.10);
+  color:#fff !important;
+  text-decoration:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  min-width:0;
+  transition: transform .12s ease, filter .12s ease;
+}
+
+header.xp-header .nav-links a:hover{
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+}
+
+/* make the active link pop a bit */
+header.xp-header .nav-links a.active{
+  border-color: rgba(80,255,160,.55);
+  box-shadow: 0 0 18px rgba(80,255,160,.18);
+}
+
+/* Footer match XP vibe too */
+footer.xp-footer{
+  background:#000 !important;
+  color: rgba(255,255,255,.70);
+  text-align:center;
+  padding: 18px 14px;
+  border-top: 1px solid rgba(255,255,255,.10);
+}
+
+footer.xp-footer .footer-logo{
+  width: 120px;
+  height:auto;
+  display:block;
+  margin: 0 auto 10px;
+  opacity: .9;
+}
