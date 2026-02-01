@@ -1,11 +1,11 @@
 /* =========================================================
-   NEW LEAF GLOBAL.JS (ONE SOURCE OF TRUTH)
+   NEW LEAF GLOBAL.JS (XP VIBE)
    - Injects global.html into #global-header / #global-footer
    - Injects contact button + popup (once)
    - Forces nav links visible
    - Preserves nav=1, mode=hub|standard, and ref/drop/sample across links
-   - Forces Home link to go back to correct index mode (no gate)
-   - ✅ Mailto works in core AND XP because we DO NOT submit the form
+   - ✅ Home link goes to xp-home.html (NOT gate)
+   - ✅ Mailto works (no submit), populates body with form entries
    ========================================================= */
 
 (function () {
@@ -70,6 +70,8 @@
       if (isExternalHref(href)) return;
 
       const url = new URL(href, window.location.origin);
+
+      // Preserve your tracking params
       url.searchParams.set("nav", "1");
       url.searchParams.set("mode", mode);
 
@@ -213,17 +215,17 @@
 
     if (header && !hasHeader) headerTarget.replaceChildren(header);
     if (footer && !hasFooter) footerTarget.replaceChildren(footer);
-
     if (popup && !hasPopup) document.body.insertAdjacentElement("beforeend", popup);
     if (btn && !hasBtn) document.body.insertAdjacentElement("beforeend", btn);
 
+    // ✅ Home should go to xp-home.html (not gate)
     const mode = getMode();
     const refParam = getRefParam();
     const homeLink = document.getElementById("homeLink");
     if (homeLink) {
       let qs = `nav=1&mode=${encodeURIComponent(mode)}`;
       if (refParam) qs += `&ref=${encodeURIComponent(refParam)}`;
-      homeLink.setAttribute("href", `index.html?${qs}`);
+      homeLink.setAttribute("href", `xp-home.html?${qs}`);
     }
   }
 
@@ -246,7 +248,6 @@
   function setupContactFormMailto() {
     const TO_EMAIL = "newleafpaintingcompany@gmail.com";
 
-    // wire once using event delegation (works even if popup injected later)
     if (document.documentElement.dataset.mailtoDelegated === "1") return;
     document.documentElement.dataset.mailtoDelegated = "1";
 
@@ -263,7 +264,7 @@
         `Email: ${email}`,
         `Phone: ${phone}`,
         ``,
-        `Message:`,
+        `What they want done:`,
         message,
         ``,
         `Discount Code: ${discount}`,
@@ -276,7 +277,7 @@
       return `mailto:${TO_EMAIL}?subject=${subject}&body=${body}`;
     }
 
-    // Prevent enter key from submitting/reloading (especially in iframe)
+    // Block real submits
     document.addEventListener("submit", (e) => {
       const form = e.target?.closest?.("#contact-popup form");
       if (!form) return;
@@ -285,7 +286,7 @@
       e.stopImmediatePropagation();
     }, true);
 
-    // Click handler for our new button
+    // Send button opens mail client
     document.addEventListener("click", (e) => {
       const sendBtn = e.target?.closest?.("#estimate-send");
       if (!sendBtn) return;
@@ -295,8 +296,6 @@
       e.stopImmediatePropagation();
 
       const mailto = buildMailto();
-
-      // ✅ Works in core and XP iframe (top window opens mail client)
       if (window.top && window.top !== window) window.top.location.href = mailto;
       else window.location.href = mailto;
     }, true);
@@ -325,8 +324,6 @@
     setupPopupHandlers();
     updatePopupHeadingAndButton(refData);
     setHiddenFieldsOnContactOpen(refData);
-
-    // ✅ mailto wiring
     setupContactFormMailto();
 
     if (refData.bannertext) createBanner(refData.bannertext);
