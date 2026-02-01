@@ -6,7 +6,7 @@
   <title>New Leaf Painting Projects | Luxury & General Homes in Maine</title>
   <meta name="description" content="See past interior painting projects by New Leaf Painting Co., serving Cumberland, Falmouth, Cape Elizabeth, Yarmouth, Kennebunkport, and all of Southern Maine. High-quality painting on walls, trim, baseboards, cabinets, and doors for every home.">
 
-  <!-- Keep your normal site CSS (global.html has its own XP header styles) -->
+  <!-- Keep your normal site CSS (global header/footer + contact button styles live here) -->
   <link rel="stylesheet" href="style.css" />
 
   <!-- Google tag (gtag.js) -->
@@ -22,7 +22,6 @@
     :root{
       --bg:#000;
       --panel: rgba(255,255,255,.06);
-      --panel2: rgba(255,255,255,.09);
       --stroke: rgba(255,255,255,.14);
       --text: rgba(255,255,255,.92);
       --muted: rgba(255,255,255,.75);
@@ -30,7 +29,6 @@
       --glow: rgba(80,255,160,.30);
     }
 
-    /* page base */
     html, body{
       margin:0;
       padding:0;
@@ -39,17 +37,17 @@
       overflow-x:hidden;
     }
 
-    /* if style.css tries to force light backgrounds on sections, override it */
+    /* Override any light section bg coming from style.css */
     body{ background: var(--bg) !important; }
     section, .projects, .hero{ background: transparent !important; }
 
-    /* injected containers */
+    /* Injected containers */
     #global-header, #global-footer{ width:100%; }
 
     /* HERO */
     .hero{
       text-align:center;
-      padding: 30px 16px 10px;
+      padding: 34px 16px 10px;
       max-width: 980px;
       margin: 0 auto;
     }
@@ -73,10 +71,14 @@
       margin: 26px 0 8px;
       color:#fff;
       letter-spacing:.2px;
+      text-align:center;
     }
-    body p{ color: var(--muted); }
+    body p{
+      color: var(--muted);
+      text-align:center;
+    }
 
-    /* Wrap each project block */
+    /* Wrap each project “block” */
     .ba, .project-gallery, .projects{
       max-width: 980px;
       margin-left: auto;
@@ -192,6 +194,7 @@
       margin-top: 10px;
     }
 
+    /* divider glow bar */
     .project-divider{
       border:none;
       height: 6px;
@@ -241,7 +244,7 @@
       color: rgba(255,255,255,.82);
     }
 
-    /* ===== The older “3-up image rows” ===== */
+    /* ===== Older 3-up image rows ===== */
     .projects{
       padding: 0 12px;
       margin: 18px auto 0;
@@ -273,12 +276,14 @@
     .project-card h3{
       margin: 10px 0 6px;
       color:#fff;
+      text-align:center;
     }
     .project-card p{
       margin: 0 auto 6px;
       max-width: 720px;
       color: rgba(255,255,255,.78);
       line-height: 1.45;
+      text-align:center;
     }
 
     /* ===== Modal ===== */
@@ -321,7 +326,7 @@
 
 <body>
 
-  <!-- GLOBAL HEADER (XP-styled via global.html) -->
+  <!-- GLOBAL HEADER (injects logo + links + contact button) -->
   <div id="global-header"></div>
 
   <!-- PAGE CONTENT -->
@@ -331,7 +336,7 @@
   </section>
 
   <!-- ===== Project 1: Slider ===== -->
-  <div style="text-align: center;">
+  <div>
     <h3>Kitchen Cabinet Refresh</h3>
     <p>This cabinet respray gave this kitchen a nice new look.</p>
   </div>
@@ -355,8 +360,8 @@
 
   <hr class="project-divider">
 
-  <!-- ===== Project 2 ===== -->
-  <div style="text-align: center;">
+  <!-- ===== Project 2: Slider + extra angles ===== -->
+  <div>
     <h3>Kitchen Cabinet Painting</h3>
     <p>This cabinet respray gave this kitchen a whole new look.</p>
   </div>
@@ -415,7 +420,7 @@
   <!-- IMAGE MODAL -->
   <div id="imgModal" class="img-modal">
     <span class="close">&times;</span>
-    <img class="modal-content" id="modalImage">
+    <img class="modal-content" id="modalImage" alt="">
   </div>
 
   <script>
@@ -424,36 +429,22 @@
       document.querySelectorAll(".ba-slider").forEach(slider => {
         const beforeWrap = slider.querySelector(".ba-before");
         const handle = slider.querySelector(".ba-handle");
-
         let dragging = false;
 
         const setPos = (clientX) => {
           const rect = slider.getBoundingClientRect();
           const x = Math.min(Math.max(clientX - rect.left, 0), rect.width);
           const pct = (x / rect.width) * 100;
-
           beforeWrap.style.width = pct + "%";
           handle.style.left = pct + "%";
         };
 
-        slider.addEventListener("mousedown", (e) => {
-          dragging = true;
-          setPos(e.clientX);
-        });
-        window.addEventListener("mousemove", (e) => {
-          if (!dragging) return;
-          setPos(e.clientX);
-        });
+        slider.addEventListener("mousedown", (e) => { dragging = true; setPos(e.clientX); });
+        window.addEventListener("mousemove", (e) => { if (!dragging) return; setPos(e.clientX); });
         window.addEventListener("mouseup", () => dragging = false);
 
-        slider.addEventListener("touchstart", (e) => {
-          dragging = true;
-          setPos(e.touches[0].clientX);
-        }, { passive: true });
-        slider.addEventListener("touchmove", (e) => {
-          if (!dragging) return;
-          setPos(e.touches[0].clientX);
-        }, { passive: true });
+        slider.addEventListener("touchstart", (e) => { dragging = true; setPos(e.touches[0].clientX); }, { passive: true });
+        slider.addEventListener("touchmove", (e) => { if (!dragging) return; setPos(e.touches[0].clientX); }, { passive: true });
         slider.addEventListener("touchend", () => dragging = false);
 
         requestAnimationFrame(() => {
@@ -473,6 +464,7 @@
         img.onclick = () => {
           modal.style.display = "flex";
           modalImg.src = img.src;
+          modalImg.alt = img.alt || "Project image";
         };
       });
 
@@ -489,7 +481,7 @@
   <!-- GLOBAL FOOTER -->
   <div id="global-footer"></div>
 
-  <!-- ✅ ONE global injector for this page -->
+  <!-- global injector -->
   <script src="global.js"></script>
 
 </body>
