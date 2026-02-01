@@ -89,34 +89,39 @@
   }
 
   function setupPopupHandlers() {
-    const popup = document.getElementById("contact-popup");
-    const btn = document.getElementById("contact-btn");
-    const closeBtn = document.querySelector("#contact-popup .close");
-    if (!popup || !btn || !closeBtn) return;
+  const popup = document.getElementById("contact-popup");
+  const btn = document.getElementById("contact-btn");
+  const closeBtn = document.querySelector("#contact-popup .close");
+  if (!popup || !closeBtn) return;
 
+  // Floating button
+  if (btn) {
     btn.onclick = (e) => {
       e?.preventDefault?.();
       e?.stopPropagation?.();
       popup.style.display = "flex";
     };
-       // ALSO allow any element with data-contact-open="1" to open popup
-    document.querySelectorAll('[data-contact-open="1"]').forEach(el => {
-      el.onclick = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        popup.style.display = "flex";
-      };
-    });
-    closeBtn.onclick = (e) => {
-      e?.preventDefault?.();
-      e?.stopPropagation?.();
-      popup.style.display = "none";
-    };
-
-    window.addEventListener("click", e => {
-      if (e.target === popup) popup.style.display = "none";
-    });
   }
+
+  // Any element can open the popup (nav item, buttons, etc.)
+  document.querySelectorAll('[data-contact-open="1"]').forEach(el => {
+    el.onclick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      popup.style.display = "flex";
+    };
+  });
+
+  closeBtn.onclick = (e) => {
+    e?.preventDefault?.();
+    e?.stopPropagation?.();
+    popup.style.display = "none";
+  };
+
+  window.addEventListener("click", e => {
+    if (e.target === popup) popup.style.display = "none";
+  });
+}
 
   function updatePopupHeadingAndButton(refData) {
     const btn = document.getElementById("contact-btn");
