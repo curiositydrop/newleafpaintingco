@@ -44,45 +44,72 @@
     }
 
     /* FORM */
-    .testimonial-form {
-      background: #f7f7f7;
-      padding: 30px;
-      border-radius: 8px;
-      margin-top: 40px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
+   /* DARK MODE TESTIMONIAL FORM */
+.testimonial-form{
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 0 24px rgba(31,107,51,0.25);
+  padding: 30px;
+  border-radius: 14px;
+  margin-top: 40px;
+  color: #fff;
+}
 
-    .testimonial-form h3 {
-      margin-top: 0;
-    }
+.testimonial-form h3{
+  color: #1f6b33;
+  text-align: center;
+  margin-bottom: 8px;
+}
 
-    /* ✅ include select so it matches the other fields */
-    .testimonial-form input,
-    .testimonial-form textarea,
-    .testimonial-form select {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-      font-size: 1rem;
-      box-sizing: border-box;
-    }
+.testimonial-form p{
+  color: rgba(255,255,255,0.75);
+  text-align: center;
+  margin-bottom: 20px;
+}
 
-    .testimonial-form button {
-      background-color: #4caf50;
-      color: #fff;
-      padding: 14px 20px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: 0.2s ease;
-    }
+/* Inputs */
+.testimonial-form input,
+.testimonial-form textarea,
+.testimonial-form select{
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 8px;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  font-size: 1rem;
+}
 
-    .testimonial-form button:hover {
-      background-color: #43a047;
-    }
+.testimonial-form input::placeholder,
+.testimonial-form textarea::placeholder{
+  color: rgba(255,255,255,0.45);
+}
+
+.testimonial-form select{
+  color: #1f6b33;
+  font-weight: 600;
+}
+
+/* Button */
+.testimonial-form button{
+  background: linear-gradient(145deg, #1f6b33, #2ea65a);
+  color: #fff;
+  padding: 14px 22px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-top: 10px;
+  box-shadow: 0 6px 18px rgba(31,107,51,0.4);
+  transition: all 0.25s ease;
+}
+
+.testimonial-form button:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(31,107,51,0.55);
+}
 
     .testimonial-intro {
       text-align: center;
