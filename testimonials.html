@@ -91,6 +91,27 @@
 
     /* ✅ REMOVED the old mode-hub "hide global header/footer/button/popup" rules.
        Those were the reason nav + CTA disappeared when arriving from the Experience. */
+  /* ===== FORCE DARK HERO (kills white block from style.css) ===== */
+html, body{
+  background:#000 !important;
+}
+
+.hero{
+  background:#000 !important;
+  text-align:center;
+  padding: 34px 16px 14px !important;
+  margin: 0 auto !important;
+  max-width: 980px;
+}
+
+.hero h1{
+  color:#1f6b33 !important;  /* your green */
+  text-shadow: 0 0 14px rgba(80,255,160,.25);
+}
+
+.hero p{
+  color: rgba(255,255,255,.82) !important;
+}
   </style>
 </head>
 
