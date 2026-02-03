@@ -161,6 +161,8 @@ html, body{
 </head>
 
 <body>
+   <!-- CONTACT UI MOUNTS (xp-home only) -->
+<div id="xp-contact-mount"></div>
 <main id="nl-hub">
   <div class="nl-hub-inner">
 
@@ -192,5 +194,61 @@ html, body{
 
   </div>
 </main>
+   <script>
+(async function(){
+  try{
+    const res = await fetch("global.html", { cache: "no-store" });
+    const html = await res.text();
+    const temp = document.createElement("div");
+    temp.innerHTML = html;
+
+    // move styles into <head> so Safari behaves
+    temp.querySelectorAll("style").forEach(st => {
+      document.head.appendChild(st.cloneNode(true));
+      st.remove();
+    });
+
+    // pull ONLY the contact button + popup from global.html
+    const btn = temp.querySelector("#contact-btn");
+    const popup = temp.querySelector("#contact-popup");
+
+    // remove any existing duplicates
+    document.querySelectorAll("#contact-btn, #contact-popup").forEach(el => el.remove());
+
+    // mount them into xp-home
+    const mount = document.getElementById("xp-contact-mount");
+    if (btn) mount.appendChild(btn);
+    if (popup) mount.appendChild(popup);
+
+    // wire openers (both floating button + nav-style links if any)
+    const openPopup = (e) => {
+      if (e) e.preventDefault();
+      popup.style.display = "flex";
+    };
+    const closePopup = () => popup.style.display = "none";
+
+    document.querySelectorAll('#contact-btn, [data-contact-open="1"]').forEach(el => {
+      el.addEventListener("click", openPopup);
+    });
+
+    popup.querySelector(".close")?.addEventListener("click", closePopup);
+
+    window.addEventListener("click", (e) => {
+      if (e.target === popup) closePopup();
+    });
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closePopup();
+    });
+
+    // NOTE: send button wiring stays in your main global.js right now,
+    // but xp-home doesn't load it. If you want, we can paste that same
+    // send-handler right here too (next step).
+
+  } catch(err){
+    console.error("xp-home contact inject failed:", err);
+  }
+})();
+</script>
 </body>
 </html>
