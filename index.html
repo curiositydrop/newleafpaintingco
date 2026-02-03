@@ -1,933 +1,227 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>New Leaf Painting Co. | Interior Painting in Southern Maine</title>
-  <meta name="description" content="New Leaf Painting Co. provides expert interior painting for high-end homes in Cumberland, Falmouth, Cape Elizabeth, Yarmouth, Kennebunkport, and throughout Southern Maine. Services include walls, trim, baseboards, cabinets, and doors. Reliable, professional results for every home.">
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>New Leaf Painting Co.</title>
 
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZFESYBBBWD"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-ZFESYBBBWD');
-  </script>
+  <!-- IMPORTANT:
+       Do NOT include style.css on the gate page,
+       because your style.css sets a light background and other globals.
+  -->
 
   <style>
-    /* ===== Gate Overlay (shows on direct entry ONLY) ===== */
-    #nl-gate {
+    html, body { height: 100%; margin: 0; }
+    body { background:#000; overflow:hidden; font-family: Helvetica, Arial, sans-serif; }
+
+    /* Fullscreen Gate */
+    #nl-gate{
       position: fixed;
       inset: 0;
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      background: #000;
-      overflow: hidden; /* keeps fireworks clean */
-    }
-
-    #nl-gate .gate-inner {
-      text-align: center;
-      max-width: 760px;
-      width: 100%;
-      padding: 28px 18px;
-      position: relative;
-      z-index: 2; /* above fireworks */
-    }
-
-    /* fireworks canvas */
-    #nl-fireworks {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-      pointer-events: none;
-      opacity: 1;
-    }
-
-    /* fireworks fade-out */
-    #nl-fireworks.fade-out {
-      opacity: 0;
-      transition: opacity 1200ms ease;
-    }
-
-    #nl-gate .gate-logo {
-      width: min(300px, 75vw);
-      height: auto;
-      margin: 0 auto 18px auto;
-      display: block;
-      background: transparent;
-      border-radius: 0;
-      padding: 0;
-      filter: drop-shadow(0 0 22px rgba(80, 255, 160, 0.45));
-    }
-
-    #nl-gate .gate-line {
-      margin: 0 auto 18px auto;
-      font-size: 1.05rem;
-      color: rgba(255,255,255,.92);
-    }
-
-    .gate-btn-row{
       display:flex;
-      gap:12px;
+      align-items:center;
       justify-content:center;
-      flex-wrap:wrap;
-      margin-top: 10px;
+      padding: 24px;
+      background:#000;
+      z-index: 9999;
     }
 
-    #nl-gate .gate-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+    /* Fireworks canvas */
+    #nl-fireworks{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      pointer-events:none;
+      z-index: 1;
+    }
+
+    .gate-inner{
+      position: relative;
+      z-index: 2;
+      text-align:center;
+      width:100%;
+      max-width: 720px;
+      padding: 18px 14px;
+    }
+
+    .gate-logo{
+      width: min(320px, 78vw);
+      height:auto;
+      display:block;
+      margin: 0 auto 18px auto;
+      filter: drop-shadow(0 0 26px rgba(79,255,146,.55));
+    }
+    .gate-line{
+      margin: 0 auto 18px auto;
+      color: rgba(255,255,255,.92);
+      font-size: 1.05rem;
+      line-height: 1.35;
+    }
+
+    .gate-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
       gap: 10px;
-      padding: 14px 18px;
-      border-radius: 12px;
+      padding: 16px 18px;
+      border-radius: 999px;
       border: 2px solid rgba(255,255,255,.22);
       background: rgba(255,255,255,.92);
       color: #0f5f33;
       font-weight: 900;
-      letter-spacing: .2px;
+      font-size: 1rem;
       cursor: pointer;
-      transition: transform .15s ease, filter .15s ease;
-      min-width: 230px;
+      width: 100%;
+      max-width: 520px;
+      transition: transform .12s ease, filter .12s ease;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
     }
-    #nl-gate .gate-btn:hover { transform: translateY(-1px); filter: brightness(1.02); }
-    #nl-gate .gate-btn:active { transform: translateY(0px); filter: brightness(.98); }
+    .gate-btn:hover{ transform: translateY(-1px); filter: brightness(1.03); }
+    .gate-btn:active{ transform: translateY(0px); filter: brightness(.98); }
 
-    #nl-gate .gate-btn.alt {
-      background: rgba(0,0,0,.18);
-      color: #fff;
-      border-color: rgba(255,255,255,.18);
-      font-weight: 800;
+    /* Pulse glow */
+    .gate-btn.pulse{
+      animation: gatePulse 2.15s ease-in-out infinite;
+      box-shadow: 0 0 14px rgba(15,95,51,.55);
     }
-
-    /* glowing heartbeat for ENTER button only */
-    #nl-enter {
-      animation: nlPulseGlow 2.1s ease-in-out infinite;
-      box-shadow:
-        0 0 0 rgba(0,0,0,0),
-        0 0 18px rgba(0,0,0,0);
-    }
-
-    @keyframes nlPulseGlow {
-      0% {
-        box-shadow:
-          0 0 0 0 rgba(0,0,0,0),
-          0 0 10px rgba(15,95,51,.55);
+    @keyframes gatePulse{
+      0%{
+        box-shadow: 0 0 10px rgba(15,95,51,.55), 0 0 0 rgba(79,255,146,0);
         filter: brightness(1.00);
       }
-      50% {
-        box-shadow:
-          0 0 0 6px rgba(79, 255, 146, .18),
-          0 0 34px rgba(79, 255, 146, .85);
+      50%{
+        box-shadow: 0 0 34px rgba(79,255,146,.90), 0 0 0 10px rgba(79,255,146,.18);
         filter: brightness(1.08);
       }
-      100% {
-        box-shadow:
-          0 0 0 0 rgba(0,0,0,0),
-          0 0 10px rgba(15,95,51,.55);
+      100%{
+        box-shadow: 0 0 10px rgba(15,95,51,.55), 0 0 0 rgba(79,255,146,0);
         filter: brightness(1.00);
       }
     }
-
-    #nl-gate.fade-out {
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 1200ms ease;
-    }
-
-    /* ===== Modes ===== */
-    #nl-hub, #nl-standard { display: none; }
-
-    /* In HUB mode, hide anything global if it exists */
-    body.mode-hub #global-header,
-    body.mode-hub #global-footer,
-    body.mode-hub #contact-btn,
-   }
-
-    /* ===== HUB layout ===== */
-    #nl-hub{
-      min-height: 100vh;
-      background: #000;
-      display: grid;
-      place-items: center;
-      padding: 26px 14px;
-      position: relative;
-    }
-
-    /* keeps your hub content above the glow */
-    #nl-hub .nl-hub-inner{
-      position: relative;
-      z-index: 1;
-    }
-
-    .nl-hub-inner{
-      width: 100%;
-      max-width: 720px;
-      text-align: center;
-    }
-
-    /* HUB logo (MATCH gate glow) */
-    .nl-hub-logo{
-      width: min(300px, 75vw);
-      height: auto;
-      margin: 0 auto 2px auto;
-      display: block;
-      background: transparent;
-      border-radius: 0;
-      padding: 0;
-      filter: drop-shadow(0 0 22px rgba(80,255,160,.45));
-    }
-
-    /* ===== Spray reveal effect (WHITE -> GREEN) — Safari/iOS safe (SINGLE version) ===== */
-:root{
-  --sprayDur: 2.25s;
-  --sprayDelay: .25s;
+    /* ===== KILL ALL HORIZONTAL SCROLL (iOS SAFE) ===== */
+html, body{
+  width:100%;
+  max-width:100%;
+  overflow-x:hidden !important;
 }
 
-.nl-hub-logo-wrap{
-  position: relative;
-  display: inline-block;
-  line-height: 0;
-  width: min(300px, 75vw);   /* keeps wrap same as logo */
-  overflow: visible;         /* prevents glow clipping */
+body{
+  position:relative;
 }
 
-/* shared sizing */
-#nl-hub .nl-hub-logo{
-  width: 100%;
-  height: auto;
-  display: block;
-  margin: 0;
+/* helps when something tries to pan sideways on iOS */
+body, #nl-hub{
+  touch-action: pan-y;
 }
 
-/* WHITE logo sits on top and fades out */
-#nl-hub .nl-hub-logo.logo-white{
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-
-  /* turns your green PNG into white */
-  filter:
-    grayscale(1)
-    brightness(0)
-    invert(1)
-    drop-shadow(0 0 18px rgba(255,255,255,.10));
-
-  animation: whiteFade var(--sprayDur) ease-out forwards;
-  animation-delay: var(--sprayDelay);
-  will-change: opacity;
-}
-
-//* GREEN logo reveals via moving mask (best for iOS Safari) */
-#nl-hub .nl-hub-logo.logo-green{
-  position: relative;
-  z-index: 1;
-  filter: drop-shadow(0 0 22px rgba(80,255,160,.45));
-
-  /* start hidden (Safari luminance mask: WHITE shows, BLACK hides) */
-  -webkit-mask-image: linear-gradient(90deg,
-    transparent 0%,
-    transparent 42%,
-    #fff 52%,
-    #fff 100%);
-  -webkit-mask-size: 220% 100%;
-  -webkit-mask-position: 120% 0;
-  -webkit-mask-repeat: no-repeat;
-
-  mask-image: linear-gradient(90deg,
-    transparent 0%,
-    transparent 42%,
-    #fff 52%,
-    #fff 100%);
-  mask-size: 220% 100%;
-  mask-position: 120% 0;
-  mask-repeat: no-repeat;
-
-  animation: greenMask var(--sprayDur) cubic-bezier(.15,.9,.2,1) forwards;
-  animation-delay: var(--sprayDelay);
-  will-change: -webkit-mask-position, mask-position;
-}
-
-/* spray cloud sweep (synced to same duration/delay) */
-.nl-hub-logo-wrap::before{
-  content:"";
-  position:absolute;
-  top:-14%;
-  left:-160%;
-  width:160%;
-  height:128%;
-  z-index: 3;
-  pointer-events:none;
-
-  background:
-    radial-gradient(circle at 30% 55%,
-      rgba(255,255,255,.42),
-      rgba(255,255,255,.14) 38%,
-      rgba(255,255,255,0) 74%),
-    radial-gradient(circle at 52% 40%,
-      rgba(255,255,255,.18),
-      rgba(255,255,255,0) 66%),
-    radial-gradient(circle at 45% 72%,
-      rgba(255,255,255,.16),
-      rgba(255,255,255,0) 72%);
-
-  filter: blur(14px);
-  opacity: .55;
-  mix-blend-mode: screen;
-
-  animation: sprayPass var(--sprayDur) ease-out forwards;
-  animation-delay: var(--sprayDelay);
-}
-
-/* animations */
-@keyframes sprayPass{
-  from{ left:-160%; }
-  to{ left:160%; }
-}
-
-@keyframes greenMask{
-  from{
-    -webkit-mask-position: 120% 0;
-    mask-position: 120% 0;
-  }
-  to{
-    -webkit-mask-position: -20% 0;
-    mask-position: -20% 0;
-  }
-}
-
-@keyframes whiteFade{
-  0%   { opacity: 1; }
-  55%  { opacity: 1; }
-  100% { opacity: 0; }
-}
-
-    /* clarity line under logo */
-    .nl-hub-line{
-      margin: -30px auto 18px auto;
-      max-width: 620px;
-      font-size: 1.02rem;
-      color: rgba(255,255,255,.92);
-      line-height: 1.35;
-    }
-
-    .nl-hub-grid{
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-      width: 100%;
-      max-width: 560px;
-      margin: 0 auto;
-      padding: 0 12px;
-      box-sizing: border-box;
-    }
-
-    #nl-hub .nl-btn{
-      border-radius: 12px;
-      padding: 12px 14px;
-      font-weight: 800;
-      font-size: 0.95rem;
-      border: 2px solid rgba(255,255,255,.18);
-      background: rgba(255,255,255,.10);
-      color: #fff;
-      cursor: pointer;
-      text-decoration: none;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transition: transform .12s ease, filter .12s ease, background .12s ease;
-      width: 100%;
-      text-align: center;
-      box-sizing: border-box;
-      overflow: hidden;
-    }
-
-    #nl-hub .nl-btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
-
-    #nl-hub .nl-btn.primary{
-      background: rgba(255,255,255,.92);
-      color: #0f5f33;
-      border-color: rgba(255,255,255,.22);
-    }
-
-    #nl-hub .nl-btn.spin{
-  background: rgba(255,255,255,.10);
-  color: #fff;
-  border: 2px solid rgba(255,255,255,.18);
-}
-
-    #nl-hub .nl-btn.primary,
-    #nl-hub .nl-btn.full {
-      grid-column: 1 / -1;
-    }
-
-    @media (max-width: 360px) {
-      .nl-hub-grid { grid-template-columns: 1fr; }
-    }
-
-    /* “upgrade” link styling (boring mode) */
-    .nl-upgrade-link{
-      display:inline-block;
-      margin: 10px 0 0 0;
-      font-weight: 800;
-      text-decoration: underline;
-      cursor: pointer;
-    }
-
-    /* pulse animation */
-    @keyframes nlPulse {
-  0%,100% {
-    box-shadow:
-      0 0 0 rgba(46,255,140,0),
-      0 0 18px rgba(46,255,140,0);
-    transform: translateY(0);
-    filter: brightness(1);
-  }
-  50% {
-    box-shadow:
-      0 0 0 8px rgba(46,255,140,.25),
-      0 0 42px rgba(46,255,140,.9);
-    transform: translateY(-2px);
-    filter: brightness(1.15);
-  }
-}
-
-    #nl-hub .nl-btn.pulse{
-      animation: nlPulse 2.2s ease-in-out infinite;
-    }
-
-    #nl-hub .nl-btn.pulse:hover{
-      animation: none;
-    }
-    /* ===== XP (Hub) hard-black background fix ===== */
-html, body { margin: 0; } /* kills the default 8px browser margin */
-
-body.mode-hub,
-body.mode-hub #nl-hub{
-  background: #000 !important;
-}
-    /* FORCE XP LOOK */
-body.mode-hub{
-  background:#000;
-  color:#fff;
-}
-
-/* FORCE CORE LOOK */
-body.mode-standard{
-  background:#f3f3f3;
-  color:#111;
+/* make padding not create overflow */
+*, *::before, *::after{
+  box-sizing:border-box;
 }
   </style>
 </head>
 
 <body>
-
-  <!-- ===== Gate Overlay ===== -->
-  <div id="nl-gate" aria-label="New Leaf Gate" role="dialog" aria-modal="true">
+  <div id="nl-gate" aria-label="New Leaf Gate">
     <canvas id="nl-fireworks" aria-hidden="true"></canvas>
 
     <div class="gate-inner">
-      <img class="gate-logo" src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png" alt="New Leaf Painting Co.">
+      <!-- Use your correct logo file name here -->
+      <img class="gate-logo" src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png" alt="New Leaf Painting Co." />
+
       <p class="gate-line">Not your typical painter website.</p>
 
-      <div class="gate-btn-row">
-        <button id="nl-enter" class="gate-btn" type="button">
-          Enter the New Leaf Experience <span aria-hidden="true">→</span>
-        </button>
-
-        <button id="nl-skip" class="gate-btn alt" type="button">
-          Skip (I hate fun)
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== HUB MODE (Experience) ===== -->
-  <main id="nl-hub" aria-label="New Leaf Experience Hub">
-    <div class="nl-hub-inner">
-
-      <div class="nl-hub-logo-wrap">
-        <!-- GREEN logo (reveals) -->
-        <img class="nl-hub-logo logo-green"
-             src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png"
-             alt="New Leaf Painting Co.">
-
-        <!-- WHITE logo (starts visible, fades out) -->
-        <img class="nl-hub-logo logo-white"
-             src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png"
-             alt=""
-             aria-hidden="true">
-      </div>
-
-      <p class="nl-hub-line">
-        We make boring things fun — with rewards you won’t find on any other painter’s site.
-      </p>
-
-      <div class="nl-hub-grid">
-        <a class="nl-btn pulse" href="#games">Reveal your...</a>
-        <a class="nl-btn spin" href="#spinwin">Coming soon!</a>
-
-        <a class="nl-btn" href="past-projects.html">See Transformations</a>
-        <a class="nl-btn" href="referus.html">Refer New Leaf Painting Co.</a>
-
-        <button
-  type="button"
-  class="nl-btn primary"
-  onclick="window.openXpContact();">
-  Schedule a Free Estimate
-</button>
-
-        <a class="nl-btn" href="local-partners.html">Local Partners</a>
-        <a class="nl-btn" href="testimonials.html">testimonials</a>
-      </div>
-    </div>
-  </main>
-
-  <!-- ===== STANDARD MODE (Normal site) ===== -->
-  <div id="nl-standard">
-    <div id="global-header"></div>
-
-    <section class="hero">
-      <h1>Turn over a New Leaf — With a fresh new coat, one room at a time.</h1>
-      <p>Professional interior painting built on trust, quality, and care.</p>
-
-      <p>
-        <a class="nl-upgrade-link" id="nl-upgrade" href="index.html?nav=1&mode=hub">
-          I want the full experience →
-        </a>
-      </p>
-
-      <section class="about">
-        <h2>Why Choose New Leaf Painting Co.</h2>
-        <p>New Leaf Painting Co. isn’t just another painting service — we’re dedicated to giving your home the attention and renewal it deserves. Every brush stroke matters because your space deserves more than a quick coat; it deserves craftsmanship, precision, and pride.</p>
-
-        <ul>
-          <li><strong>Professional quality</strong> at fair, transparent prices</li>
-          <li><strong>Respect for your home</strong> — we show up on time, protect your space, and clean up fully</li>
-          <li><strong>Attention to detail</strong> that transforms a room, not just paints it</li>
-          <li><strong>A smooth process</strong> from estimate to final walkthrough</li>
-        </ul>
-      </section>
-
-      <button
-        type="button"
-        class="cta-button"
-        onclick="document.getElementById('contact-popup').style.display='flex';">
-        Schedule a Free Estimate
+      <button id="nl-enter" class="gate-btn pulse" type="button">
+        Enter your painting experience <span aria-hidden="true">→</span>
       </button>
-    </section>
-
-    <section class="services">
-      <h2>Our Services</h2>
-      <ul>
-        <li>Interior Painting</li>
-        <li>Cabinet Painting & Refinishing</li>
-        <li>Drywall Repair and Surface Prep</li>
-        <li>Drop Ceiling installation</li>
-        <li>Light Carpentry</li>
-        <li>Accent walls & color matching</li>
-        <li>Eco-friendly paint options</li>
-      </ul>
-    </section>
-
-    <section class="testimonial">
-      <blockquote>
-        “I am absolutely thrilled with the results of my kitchen cabinets. They completely transformed my kitchen and the finish looks perfect. I highly recommend!!”
-      </blockquote>
-      <p>— John M., Old Orchard Beach, ME</p>
-    </section>
-
-    <div id="global-footer"></div>
+    </div>
   </div>
 
   <script>
-    // ===== FORCE MODE LOCK (XP or CORE) =====
-(function enforceModeLock(){
-  const params = new URLSearchParams(window.location.search);
-  const mode = params.get("mode");
-
-  if (!mode) return;
-
-  // If someone is in XP, never allow core UI to load
-  if (mode === "hub") {
-    document.body.classList.add("mode-hub");
-    document.body.classList.remove("mode-standard");
-  }
-
-  // If someone is in CORE, never allow XP UI to load
-  if (mode === "standard") {
-    document.body.classList.add("mode-standard");
-    document.body.classList.remove("mode-hub");
-  }
-})();
-    function wireContactFormToMailto() {
-  const form = document.querySelector("#contact-popup form");
-  if (!form) return;
-
-  // Prevent double-binding
-  if (form.dataset.mailtoWired === "1") return;
-  form.dataset.mailtoWired = "1";
-
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    // --- Grab common fields safely (won't error if names differ) ---
-    const getVal = (sel) => (form.querySelector(sel)?.value || "").trim();
-
-    // Try a few common input name patterns
-    const name =
-      getVal('input[name="name"]') ||
-      getVal('input[name="full-name"]') ||
-      getVal('input[name="fullname"]') ||
-      getVal('input[name="your-name"]');
-
-    const email =
-      getVal('input[name="email"]') ||
-      getVal('input[type="email"]');
-
-    const phone =
-      getVal('input[name="phone"]') ||
-      getVal('input[type="tel"]');
-
-    const message =
-      getVal('textarea[name="message"]') ||
-      getVal('textarea') ||
-      getVal('input[name="message"]');
-
-    // --- IMPORTANT: set your actual destination email here ---
-    const TO_EMAIL = "info@curiositydrop.com"; // <-- CHANGE THIS if New Leaf has a different email
-
-    const subject = encodeURIComponent("New Leaf Estimate Request");
-    const body = encodeURIComponent(
-      `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\n\nMessage:\n${message}`
-    );
-
-    // Open the email app
-    window.location.href = `mailto:${TO_EMAIL}?subject=${subject}&body=${body}`;
-  });
-}
-    (function initNewLeafGateModes(){
-      const gate = document.getElementById("nl-gate");
-      const enterBtn = document.getElementById("nl-enter");
-      const skipBtn  = document.getElementById("nl-skip");
-
-      const hub = document.getElementById("nl-hub");
-      const standard = document.getElementById("nl-standard");
-
-      const params = new URLSearchParams(window.location.search);
-      const nav = params.get("nav");
-      const modeParam = (params.get("mode") || "").toLowerCase();
-
-      hub.style.display = "none";
-      standard.style.display = "none";
-
-      function buildModeQuery(mode){
-        return `?nav=1&mode=${encodeURIComponent(mode)}`;
-      }
-
-      function isExternalHref(href){
-        return (
-          href.startsWith("http://") ||
-          href.startsWith("https://") ||
-          href.startsWith("mailto:") ||
-          href.startsWith("tel:")
-        );
-      }
-
-      function decorateLinks(mode){
-  document.querySelectorAll('a[href]').forEach(a => {
-    const href = a.getAttribute("href");
-    if (!href) return;
-
-    // ignore in-page anchors and external links
-    if (href.startsWith("#")) return;
-    if (isExternalHref(href)) return;
-    if (href.startsWith("javascript:")) return;
-
-    // don't wrap xp.html into itself
-    const cleanPath = href.split("?")[0].split("#")[0];
-    if (cleanPath.endsWith("xp.html")) return;
-
-    // If link already has nav=1, leave it alone (prevents double-stacking params)
-    if (href.includes("nav=1")) return;
-
-    // Add nav/mode to the destination
-    const joiner = href.includes("?") ? "&" : "?";
-    const withMode = href + joiner + `nav=1&mode=${encodeURIComponent(mode)}`;
-
-    // HUB (XP) mode: open everything inside xp.html shell
-    if (mode === "hub") {
-      a.setAttribute("href", `xp.html?page=${encodeURIComponent(withMode)}`);
-    } else {
-      // STANDARD (core) mode: normal links
-      a.setAttribute("href", withMode);
-    }
-  });
-}
-
-      function closeGate(){
-        if (!gate) return;
-        gate.classList.add("fade-out");
-        setTimeout(() => gate.remove(), 1250);
-      }
-
-      async function loadGlobalForStandard(mode){
-        const res = await fetch("global.html");
-        const html = await res.text();
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, "text/html");
-
-        const header = doc.querySelector("header");
-        const footer = doc.querySelector("footer");
-        const popup  = doc.querySelector("#contact-popup");
-        const btn    = doc.querySelector("#contact-btn");
-
-        const headerTarget = document.getElementById("global-header");
-        const footerTarget = document.getElementById("global-footer");
-
-        if (headerTarget && header) headerTarget.replaceChildren(header);
-        if (footerTarget && footer) footerTarget.replaceChildren(footer);
-
-        if (popup && !document.querySelector("#contact-popup")) {
-          document.body.insertAdjacentElement("beforeend", popup);
-        }
-        if (btn && !document.querySelector("#contact-btn")) {
-          document.body.insertAdjacentElement("beforeend", btn);
-        }
-        if (popup && !document.querySelector("#contact-popup")) {
-  document.body.insertAdjacentElement("beforeend", popup);
-}
-if (btn && !document.querySelector("#contact-btn")) {
-  document.body.insertAdjacentElement("beforeend", btn);
-}
-
-wireContactFormToMailto();
-        
-        const funRow = document.getElementById("nl-experience-nav");
-        if (funRow) funRow.style.display = "none";
-
-        const popupEl = document.getElementById("contact-popup");
-        const btnEl = document.getElementById("contact-btn");
-        const popupClose = document.querySelector("#contact-popup .close");
-        if (popupEl && btnEl && popupClose) {
-          btnEl.onclick = () => popupEl.style.display = "flex";
-          popupClose.onclick = () => popupEl.style.display = "none";
-          window.addEventListener("click", e => { if (e.target === popupEl) popupEl.style.display = "none"; });
-        }
-
-        requestAnimationFrame(() => {
-  document.querySelectorAll(".nav-links a").forEach(a => a.style.visibility = "visible");
-
-  let currentPage = window.location.pathname.split("/").pop().toLowerCase() || "index.html";
-  document.querySelectorAll("nav a").forEach(link => {
-    const href = (link.getAttribute("href") || "").split("?")[0].split("/").pop().toLowerCase() || "index.html";
-    link.classList.toggle("active", href === currentPage);
-    link.style.visibility = "visible";
-  });
-
-  decorateLinks(mode);
-
-  // Auto-open contact popup if we came from hub with #contact
-  if (window.location.hash === "#contact") {
-    const popup = document.getElementById("contact-popup");
-    if (popup) popup.style.display = "flex";
-
-    // optional: remove the hash so refresh doesn't re-open
-    history.replaceState(null, "", window.location.pathname + window.location.search);
-  }
-});
-        
-      }
-// ===== XP: load ONLY the contact popup (no core UI behind it) =====
-async function ensureContactPopupLoaded(){
-  // already in the DOM?
-  if (document.getElementById("contact-popup")) return;
-
-  const res = await fetch("global.html");
-  const html = await res.text();
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, "text/html");
-
-  const popup  = doc.querySelector("#contact-popup");
-  if (!popup) return;
-
-  // insert popup only (no header/footer)
-  document.body.insertAdjacentElement("beforeend", popup);
-
-  // wire close behavior
-  const popupEl = document.getElementById("contact-popup");
-  const popupClose = popupEl?.querySelector(".close");
-
-  if (popupEl && popupClose) {
-    popupClose.onclick = () => popupEl.style.display = "none";
-    window.addEventListener("click", (e) => {
-      if (e.target === popupEl) popupEl.style.display = "none";
+    // Enter -> XP Home
+    document.getElementById("nl-enter").addEventListener("click", () => {
+      window.location.href = "xp-home.html";
     });
-  }
-}
 
-// global function so your button onclick can call it
-window.openXpContact = async function(){
-  await ensureContactPopupLoaded();
-  const popup = document.getElementById("contact-popup");
-  if (popup) popup.style.display = "flex";
-};
-      function setMode(mode){
-        document.body.classList.remove("mode-hub", "mode-standard");
+    // Simple fireworks (canvas)
+    (function fireworks(){
+      const canvas = document.getElementById("nl-fireworks");
+      const ctx = canvas.getContext("2d");
 
-        if (mode === "hub") {
-          document.body.classList.add("mode-hub");
-          hub.style.display = "block";
-          standard.style.display = "none";
-          decorateLinks("hub");
-        } else {
-          document.body.classList.add("mode-standard");
-          hub.style.display = "none";
-          standard.style.display = "block";
-          decorateLinks("standard");
-        }
-
-        window.scrollTo(0,0);
+      let w=0,h=0,dpr=Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+      function resize(){
+        w = canvas.clientWidth;
+        h = canvas.clientHeight;
+        canvas.width = Math.floor(w*dpr);
+        canvas.height = Math.floor(h*dpr);
+        ctx.setTransform(dpr,0,0,dpr,0,0);
       }
+      resize();
+      window.addEventListener("resize", resize);
 
-      (function initFireworks(){
-        const canvas = document.getElementById("nl-fireworks");
-        if (!canvas) return;
-        const ctx = canvas.getContext("2d");
-        let w = 0, h = 0, dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+      const colors = ["#ff4d4d","#ffd24d","#4dff88","#4dd2ff","#b84dff","#ff4dd2"];
+      const particles = [];
 
-        const colors = ["#ff4d4d","#ffd24d","#4dff88","#4dd2ff","#b84dff","#ff4dd2"];
-        const bursts = [];
-        const particles = [];
+      const rand = (a,b)=>Math.random()*(b-a)+a;
 
-        function resize(){
-          w = canvas.clientWidth;
-          h = canvas.clientHeight;
-          canvas.width = Math.floor(w * dpr);
-          canvas.height = Math.floor(h * dpr);
-          ctx.setTransform(dpr,0,0,dpr,0,0);
-        }
-        resize();
-        window.addEventListener("resize", resize);
+      function burst(){
+        const x = rand(w*0.15, w*0.85);
+        const y = rand(h*0.12, h*0.55);
+        const color = colors[(Math.random()*colors.length)|0];
+        const count = (Math.random()<0.35) ? 110 : 80;
 
-        function rand(min,max){ return Math.random()*(max-min)+min; }
-
-        function spawnBurst(){
-          bursts.push({
-            x: rand(w*0.15, w*0.85),
-            y: rand(h*0.12, h*0.55),
-            color: colors[(Math.random()*colors.length)|0],
-            life: 0
+        for(let i=0;i<count;i++){
+          const a = (Math.PI*2)*(i/count) + rand(-0.08,0.08);
+          const sp = rand(1.4, 4.8);
+          particles.push({
+            x,y,
+            vx: Math.cos(a)*sp,
+            vy: Math.sin(a)*sp,
+            g: rand(0.012,0.03),
+            drag: rand(0.985,0.992),
+            alpha: 1,
+            fade: rand(0.008,0.02),
+            r: rand(1.1,2.3),
+            color
           });
         }
-
-        function explode(b){
-          const count = (Math.random() < 0.35) ? 120 : 80;
-          for(let i=0;i<count;i++){
-            const a = (Math.PI*2) * (i/count) + rand(-0.08,0.08);
-            const sp = rand(1.4, 4.6);
-            particles.push({
-              x: b.x, y: b.y,
-              vx: Math.cos(a)*sp,
-              vy: Math.sin(a)*sp,
-              g: rand(0.012,0.03),
-              drag: rand(0.985,0.992),
-              alpha: 1,
-              fade: rand(0.008,0.02),
-              r: rand(1.1,2.2),
-              color: b.color
-            });
-          }
-        }
-
-        let t = 0;
-        function tick(){
-          t++;
-          if (t < 480 && t % 18 === 0) spawnBurst();
-
-          ctx.clearRect(0,0,w,h);
-
-          for(let i=bursts.length-1;i>=0;i--){
-            const b = bursts[i];
-            b.life++;
-            if(b.life === 1) explode(b);
-            if(b.life > 2) bursts.splice(i,1);
-          }
-
-          for(let i=particles.length-1;i>=0;i--){
-            const p = particles[i];
-            p.vx *= p.drag;
-            p.vy *= p.drag;
-            p.vy += p.g;
-            p.x += p.vx;
-            p.y += p.vy;
-            p.alpha -= p.fade;
-
-            if(p.alpha <= 0 || p.x < -50 || p.x > w+50 || p.y > h+80){
-              particles.splice(i,1);
-              continue;
-            }
-
-            ctx.globalAlpha = Math.max(0, p.alpha);
-            ctx.fillStyle = p.color;
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-            ctx.fill();
-          }
-
-          ctx.globalAlpha = 1;
-
-          if (document.getElementById("nl-gate")) {
-            requestAnimationFrame(tick);
-          }
-        }
-
-        requestAnimationFrame(tick);
-
-        setTimeout(() => {
-          canvas.classList.add("fade-out");
-        }, 8000);
-      })();
-
-      const isInternalNav = (nav === "1");
-
-      if (isInternalNav) {
-        if (gate) gate.remove();
-
-        const initialMode = (modeParam === "hub" || modeParam === "standard") ? modeParam : "standard";
-        setMode(initialMode);
-
-        if (initialMode === "standard") {
-          loadGlobalForStandard("standard");
-        }
-      } else {
-        hub.style.display = "none";
-        standard.style.display = "none";
       }
 
-      enterBtn.addEventListener("click", () => {
-        history.replaceState({}, "", "index.html" + buildModeQuery("hub"));
-        setMode("hub");
-        closeGate();
-      });
+      let t=0;
+      function tick(){
+        t++;
+        if (t < 520 && t % 18 === 0) burst();
 
-      skipBtn.addEventListener("click", async () => {
-        history.replaceState({}, "", "index.html" + buildModeQuery("standard"));
-        setMode("standard");
-        await loadGlobalForStandard("standard");
-        closeGate();
-      });
+        ctx.clearRect(0,0,w,h);
 
+        for(let i=particles.length-1;i>=0;i--){
+          const p = particles[i];
+          p.vx *= p.drag;
+          p.vy *= p.drag;
+          p.vy += p.g;
+          p.x += p.vx;
+          p.y += p.vy;
+          p.alpha -= p.fade;
+
+          if(p.alpha <= 0 || p.x < -60 || p.x > w+60 || p.y > h+90){
+            particles.splice(i,1);
+            continue;
+          }
+
+          ctx.globalAlpha = Math.max(0, p.alpha);
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+
+        requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
     })();
   </script>
-
 </body>
 </html>
