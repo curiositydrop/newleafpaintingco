@@ -46,11 +46,18 @@
     if (footerMount && footer) footerMount.appendChild(footer);
 
     // Inject contact UI into BODY (not inside header mount)
-    // Remove any existing duplicates first
-    document.querySelectorAll("#contact-btn, #contact-popup").forEach((el) => el.remove());
+// Remove any existing duplicates first
+document.querySelectorAll("#contact-btn, #contact-popup").forEach((el) => el.remove());
 
-    if (contactBtn) document.body.appendChild(contactBtn);
-    if (contactPopup) document.body.appendChild(contactPopup);
+// Detect page
+const currentPage = (location.pathname.split("/").pop() || "").toLowerCase();
+const isXpHome = currentPage === "xp-home.html";
+
+// ✅ Always inject the popup so links can open it
+if (contactPopup) document.body.appendChild(contactPopup);
+
+// ✅ Only inject floating button on NON xp-home pages
+if (!isXpHome && contactBtn) document.body.appendChild(contactBtn);
 
     // ---- 3) Active link highlight (green glow) ----
     const path = (location.pathname.split("/").pop() || "").toLowerCase();
