@@ -208,16 +208,14 @@ html, body{
     });
 
     // pull ONLY the contact button + popup from global.html
-    const btn = temp.querySelector("#contact-btn");
-    const popup = temp.querySelector("#contact-popup");
+   const popup = temp.querySelector("#contact-popup");
 
-    // remove any existing duplicates
-    document.querySelectorAll("#contact-btn, #contact-popup").forEach(el => el.remove());
+// remove any existing duplicates
+document.querySelectorAll("#contact-btn, #contact-popup").forEach(el => el.remove());
 
-    // mount them into xp-home
-    const mount = document.getElementById("xp-contact-mount");
-    if (btn) mount.appendChild(btn);
-    if (popup) mount.appendChild(popup);
+// mount ONLY the popup into xp-home
+const mount = document.getElementById("xp-contact-mount");
+if (popup) mount.appendChild(popup);
 
     // wire openers (both floating button + nav-style links if any)
     const openPopup = (e) => {
