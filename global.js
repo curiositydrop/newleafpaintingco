@@ -79,7 +79,52 @@
       if (!popup) return;
       popup.style.display = "none";
     };
+// ---- 5) Estimate "Send" button -> opens email with prefilled subject/body ----
+const sendBtn = document.getElementById("estimate-send");
 
+if (sendBtn) {
+  sendBtn.addEventListener("click", () => {
+    const name = (document.getElementById("name")?.value || "").trim();
+    const email = (document.getElementById("email")?.value || "").trim();
+    const phone = (document.getElementById("phone")?.value || "").trim();
+    const message = (document.getElementById("message")?.value || "").trim();
+
+    // Optional: require at least name + one contact method
+    if (!name || (!email && !phone)) {
+      alert("Please enter your name and either an email or phone number.");
+      return;
+    }
+
+    const to = "newleafpaintingcompany@gmail.com";
+
+    // Subject with their info (tight + useful)
+    const subject = encodeURIComponent(
+      `Estimate Request - ${name}${phone ? " - " + phone : ""}`
+    );
+
+    const body = encodeURIComponent(
+`Hi Mike,
+
+I'd like a free estimate. Here’s my info:
+
+Name: ${name}
+Email: ${email || "(not provided)"}
+Phone: ${phone || "(not provided)"}
+
+Message:
+${message || "(no message)"}
+
+Thanks!`
+    );
+
+    // Use location.href so iOS Mail pops reliably
+    window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+
+    // Optional: close popup after click
+    const popup = document.getElementById("contact-popup");
+    if (popup) popup.style.display = "none";
+  });
+}
     openers.forEach((btn) => btn.addEventListener("click", openPopup));
     if (closer) closer.addEventListener("click", closePopup);
 
