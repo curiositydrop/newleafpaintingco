@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Experience | New Leaf Painting Co.</title>
-  <meta name="description" content="A fun, interactive portal into the New Leaf Painting experience. Before & after reveals, pro tips, and a different kind of painting company." />
+  <meta name="description" content="A fun, interactive portal into the New Leaf Painting experience. Unlock one-time deals and claim discounts." />
 
   <style>
     :root{
@@ -17,10 +17,8 @@
       /* Your green */
       --green:#1f6b33;
 
-      /* Glow accent (used in your other pages) */
+      /* Glow accent */
       --glow: rgba(80,255,160,.28);
-
-      /* Optional vibe accent that can shift */
       --accent: rgba(80,255,160,.55);
     }
 
@@ -64,6 +62,7 @@
       align-items:center;
       gap: 12px;
       padding: 10px 0 16px;
+      flex-wrap: wrap;
     }
 
     .leaf-brand{
@@ -137,6 +136,7 @@
       cursor:pointer;
       transition: transform .12s ease, filter .12s ease, background .12s ease;
       -webkit-tap-highlight-color: transparent;
+      user-select:none;
     }
     .nl-btn:hover{ transform: translateY(-1px); filter: brightness(1.06); background: rgba(255,255,255,.09); }
 
@@ -149,6 +149,13 @@
     .nl-btn.ghost{
       background: transparent;
       border-color: rgba(255,255,255,.18);
+    }
+
+    .nl-btn:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+      transform:none !important;
+      filter:none !important;
     }
 
     /* ===== Portal hero ===== */
@@ -214,21 +221,14 @@
     }
     @keyframes blink{ 50%{ opacity:0; } }
 
-    /* ===== Sections ===== */
-    .grid{
-      display:grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: 14px;
-      margin-top: 14px;
-    }
-    @media (max-width: 920px){ .grid{ grid-template-columns: 1fr; } }
-
+    /* ===== Card ===== */
     .card{
       background: rgba(255,255,255,.05);
       border: 1px solid rgba(255,255,255,.12);
       border-radius: 18px;
       padding: 16px;
       box-shadow: 0 12px 28px rgba(0,0,0,.45);
+      margin-top: 14px;
     }
     .card h2{
       margin: 0 0 10px;
@@ -242,93 +242,15 @@
       line-height: 1.5;
     }
 
-    /* ===== Before/After slider ===== */
-    .ba-slider{
-      position: relative;
-      width: 100%;
-      border-radius: 16px;
-      overflow:hidden;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.04);
-      box-shadow: 0 0 28px rgba(80,255,160,.10);
-      user-select:none;
-      touch-action: pan-y;
-    }
-    .ba-slider img{
-      width:100%;
-      height: 360px;
-      object-fit: cover;
-      display:block;
-    }
-    .ba-before{
-      position:absolute;
-      top:0; left:0;
-      height:100%;
-      width:50%;
-      overflow:hidden;
-    }
-    .ba-handle{
-      position:absolute;
-      top:0;
-      left:50%;
-      transform: translateX(-50%);
-      height:100%;
-      width: 44px;
-      pointer-events:none;
+    /* ===== Deal Portal ===== */
+    .deal-choices{
       display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-    .ba-handle::before{
-      content:"";
-      position:absolute;
-      height:100%;
-      width:4px;
-      background: rgba(255,255,255,.92);
-      border-radius: 4px;
-    }
-    .knob{
-      position:relative;
-      width: 40px; height: 40px;
-      border-radius: 999px;
-      background: rgba(31,107,51,.92);
-      border: 2px solid rgba(255,255,255,.9);
-      display:grid;
-      place-items:center;
-      box-shadow: 0 10px 22px rgba(0,0,0,.35), 0 0 18px rgba(80,255,160,.30);
-      color:#fff;
-      font-weight: 900;
-    }
-    .ba-label{
-      position:absolute;
-      top: 12px;
-      padding: 7px 10px;
-      border-radius: 999px;
-      background: rgba(0,0,0,.55);
-      border: 1px solid rgba(255,255,255,.18);
-      color:#fff;
-      font-size: 12px;
-      font-weight: 900;
-      letter-spacing: .5px;
-      backdrop-filter: blur(8px);
-    }
-    .ba-label.before{ left: 12px; }
-    .ba-label.after{ right: 12px; }
-    .hint{
-      margin-top: 10px;
-      color: rgba(255,255,255,.70);
-      font-size: 13px;
-      text-align:center;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
     }
 
-    /* ===== Vibe picker ===== */
-    .vibes{
-      display:flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .vibe{
+    .deal-choice{
       padding: 10px 12px;
       border-radius: 12px;
       border: 1px solid rgba(255,255,255,.14);
@@ -336,42 +258,77 @@
       cursor:pointer;
       font-weight: 900;
       color: rgba(255,255,255,.88);
-      transition: transform .12s ease, filter .12s ease;
+      transition: transform .12s ease, filter .12s ease, background .12s ease, border-color .12s ease;
       user-select:none;
     }
-    .vibe:hover{ transform: translateY(-1px); filter: brightness(1.06); }
-    .vibe small{ display:block; font-weight:700; color: rgba(255,255,255,.62); margin-top: 4px; }
+    .deal-choice:hover{ transform: translateY(-1px); filter: brightness(1.06); }
+    .deal-choice.active{
+      border-color: rgba(80,255,160,.55);
+      box-shadow: 0 0 18px rgba(80,255,160,.16);
+      color: rgba(80,255,160,.98);
+    }
 
-    /* ===== Scratch reveal ===== */
-    .scratch-wrap{
+    .deal-note{
+      font-size: 13px;
+      color: rgba(255,255,255,.68);
+    }
+
+    .leaf-picks{
       display:grid;
-      gap: 10px;
-      margin-top: 10px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
     }
-    .scratch-box{
-      position: relative;
+    @media (max-width: 720px){
+      .leaf-picks{ grid-template-columns: 1fr; }
+    }
+
+    .leaf-pick{
       border-radius: 16px;
-      overflow:hidden;
       border: 1px solid rgba(255,255,255,.14);
-      background: rgba(10,10,10,.85);
-      box-shadow: 0 0 22px rgba(80,255,160,.10);
+      background: rgba(255,255,255,.05);
+      padding: 12px;
+      cursor:pointer;
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+      align-items:center;
+      transition: transform .12s ease, filter .12s ease, border-color .12s ease;
+      user-select:none;
     }
-    .scratch-under{
+    .leaf-pick:hover{
+      transform: translateY(-2px);
+      filter: brightness(1.06);
+      border-color: rgba(80,255,160,.35);
+    }
+    .leaf-pick img{
+      width: 90px;
+      height: 90px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 14px rgba(80,255,160,.22));
+    }
+    .leaf-pick span{
+      font-weight: 900;
+      color: rgba(255,255,255,.92);
+    }
+
+    .deal-box{
+      max-width: 860px;
       padding: 16px;
-      min-height: 120px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: 0 0 24px rgba(80,255,160,.10);
     }
-    .scratch-under h3{
-      margin: 0 0 8px;
-      color: rgba(80,255,160,.92);
-      letter-spacing: .2px;
+    .deal-title{
+      font-weight: 950;
+      font-size: 1.2rem;
+      color: rgba(80,255,160,.98);
+      margin-bottom: 8px;
     }
-    .scratch-under p{ margin:0; color: rgba(255,255,255,.82); line-height: 1.45; }
-    canvas#scratchCanvas{
-      position:absolute;
-      inset:0;
-      width:100%;
-      height:100%;
-      display:block;
+    .deal-details{
+      color: rgba(255,255,255,.85);
+      line-height: 1.5;
+      white-space: pre-line;
     }
 
     /* ===== Popup form ===== */
@@ -488,7 +445,7 @@
     <section class="hero">
       <h1>Welcome to The Experience</h1>
       <p>
-        This isn’t a boring painting website. It’s a preview of what it feels like when your home gets a *new leaf* —
+        This isn’t a boring painting website. It’s a preview of what it feels like when your home gets a <i>new leaf</i> —
         cleaner lines, brighter rooms, and work done the right way.
       </p>
 
@@ -497,65 +454,78 @@
       </div>
     </section>
 
-    <div class="grid">
+    <!-- ===== WOW DEAL PORTAL ===== -->
+    <section class="card">
+      <h2>Unlock a Deal</h2>
+      <p>Select what you’re thinking about painting. Then choose your Leaf. One pick. One deal.</p>
 
-      <!-- Left: before/after slider -->
-      <section class="card">
-        <h2>Slide to Reveal</h2>
-        <p>Drag the handle. One tiny movement = instant “okay wow” energy.</p>
-
-        <div class="ba-slider" id="ba1" aria-label="Before and after slider">
-          <!-- Use your own images (these are placeholders) -->
-          <img class="after" src="experience-after.jpg" alt="After photo (replace)" />
-          <div class="ba-before">
-            <img class="before" src="experience-before.jpg" alt="Before photo (replace)" />
-          </div>
-
-          <div class="ba-label before">BEFORE</div>
-          <div class="ba-label after">AFTER</div>
-          <div class="ba-handle"><div class="knob">⇆</div></div>
+      <!-- Step 1 -->
+      <div id="dealStep1">
+        <div class="deal-choices" id="serviceChoices">
+          <button class="deal-choice" type="button" data-key="walls">Walls / Ceilings</button>
+          <button class="deal-choice" type="button" data-key="trim">Trim / Doors</button>
+          <button class="deal-choice" type="button" data-key="cabinets">Kitchen Cabinets</button>
+          <button class="deal-choice" type="button" data-key="other">Not sure yet</button>
         </div>
 
-        <div class="hint">Tip: This is the exact “before → after” feeling clients get.</div>
-      </section>
+        <button class="nl-btn primary" id="toLeafStep" type="button" disabled style="margin-top:12px;">
+          Next → Choose Your Leaf
+        </button>
 
-      <!-- Right: vibe + scratch -->
-      <section class="card">
-        <h2>Pick a Vibe</h2>
-        <p>Choose a mood. The portal shifts — still New Leaf, but a different atmosphere.</p>
+        <p class="deal-note" style="margin-top:10px;">
+          (Pick all that apply — your deal will match your choices.)
+        </p>
+      </div>
 
-        <div class="vibes" aria-label="Vibe options">
-          <div class="vibe" data-accent="rgba(80,255,160,.55)">Fresh Mint <small>clean + bright</small></div>
-          <div class="vibe" data-accent="rgba(120,200,255,.45)">Cool Modern <small>sharp + sleek</small></div>
-          <div class="vibe" data-accent="rgba(255,180,90,.38)">Warm Cozy <small>inviting + soft</small></div>
-          <div class="vibe" data-accent="rgba(220,120,255,.38)">Night Luxe <small>premium + bold</small></div>
+      <!-- Step 2 -->
+      <div id="dealStep2" style="display:none; margin-top:16px;">
+        <h2 style="margin:0 0 8px; color: rgba(80,255,160,.92);">Choose your Leaf.</h2>
+        <p style="margin:0 0 12px; color: rgba(255,255,255,.78);">This is your one-time pick.</p>
+
+        <div class="leaf-picks">
+          <!-- TEMP: you can use the same image 3x for now if you want -->
+          <button class="leaf-pick" type="button" data-leaf="alpha">
+            <img src="LEAF_ALPHA.png" alt="Leaf Alpha">
+            <span>Leaf Alpha</span>
+          </button>
+
+          <button class="leaf-pick" type="button" data-leaf="rebel">
+            <img src="LEAF_REBEL.png" alt="Leaf Rebel">
+            <span>Leaf Rebel</span>
+          </button>
+
+          <button class="leaf-pick" type="button" data-leaf="lucky">
+            <img src="LEAF_LUCKY.png" alt="Leaf Lucky">
+            <span>Leaf Lucky</span>
+          </button>
         </div>
 
-        <div class="scratch-wrap">
-          <h2 style="margin-top:14px;">Scratch Reveal</h2>
-          <p style="margin-bottom:0;">Scratch the card. You’ll uncover a pro tip (or a hidden perk).</p>
+        <p class="deal-note" style="margin-top:10px;">
+          Tip: for now you can point all 3 images at <b>LEAF_MASCOT.png</b> if you don’t have variants yet.
+        </p>
+      </div>
 
-          <div class="scratch-box">
-            <div class="scratch-under">
-              <h3 id="revealTitle">Hidden Upgrade</h3>
-              <p id="revealText">“The cleanest paint jobs aren’t about paint — they’re about prep.”<br><br>
-                Want this level of finish? Hit <b>Get Free Estimate</b> and tell us what you're painting.</p>
-            </div>
-            <canvas id="scratchCanvas"></canvas>
-          </div>
+      <!-- Step 3 -->
+      <div id="dealStep3" style="display:none; margin-top:16px;">
+        <h2 style="margin:0 0 10px; color: rgba(80,255,160,.95);">Unlocked Deal</h2>
 
-          <button class="nl-btn" id="newReveal">Give me another reveal</button>
+        <div class="deal-box">
+          <div id="dealTitle" class="deal-title"></div>
+          <div id="dealDetails" class="deal-details"></div>
         </div>
-      </section>
 
-    </div>
+        <button class="nl-btn primary" id="claimDeal" type="button" style="margin-top:12px;">
+          Claim this deal
+        </button>
 
-    <!-- Little dopamine section -->
-    <section class="card" style="margin-top:14px;">
-      <h2>One More Button</h2>
-      <p>Because every great experience needs a little surprise. Tap it.</p>
-      <button class="nl-btn primary" id="spinWisdom">Drop a Paint Wisdom</button>
-      <p id="wisdomOut" style="margin-top:10px; color: rgba(255,255,255,.85); font-weight:800;"></p>
+        <button class="nl-btn ghost" id="resetDeal" type="button" style="margin-top:10px;">
+          Reset (for testing only)
+        </button>
+
+        <p class="deal-note" style="margin-top:10px;">
+          Deal locks to this browser (so people can’t spam it).
+        </p>
+      </div>
     </section>
 
     <div class="portal-footer">
@@ -597,176 +567,155 @@
   </div>
 
   <script>
-    // ===== 1) Portal typing line =====
+    // ===== 1) Portal typing line (SLOWER + readable pause) =====
     (function(){
       const lines = [
         "Portal scan complete… ✅",
         "You have entered: The New Leaf Experience.",
-        "Drag. Scratch. Explore. (No boring menus here.)",
+        "Unlock a one-time deal. Choose wisely.",
         "If you ever need painting — you’ll remember this."
       ];
+
       const el = document.getElementById("typeText");
       let i=0, j=0, current="", deleting=false;
 
+      const TYPE_SPEED = 55;     // slower typing
+      const DELETE_SPEED = 18;   // deleting faster
+      const END_PAUSE = 1400;    // pause after a full line
+
       function tick(){
         const target = lines[i];
-        if(!deleting){
+
+        if (!deleting){
           current = target.slice(0, j++);
           el.textContent = current;
-          if(j > target.length + 10){ deleting = true; }
+
+          if (j > target.length){
+            setTimeout(() => { deleting = true; tick(); }, END_PAUSE);
+            return;
+          }
         } else {
           current = target.slice(0, j--);
           el.textContent = current;
-          if(j <= 0){
+
+          if (j <= 0){
             deleting=false;
             i = (i+1) % lines.length;
             j = 0;
           }
         }
-        setTimeout(tick, deleting ? 22 : 34);
+
+        setTimeout(tick, deleting ? DELETE_SPEED : TYPE_SPEED);
       }
+
       tick();
     })();
 
-    // ===== 2) Before/After slider =====
-    function initBASlider(slider){
-      const beforeWrap = slider.querySelector(".ba-before");
-      const handle = slider.querySelector(".ba-handle");
-      let dragging = false;
+    // ===== 2) WOW Deal Portal Logic =====
+    (function(){
+      const step1 = document.getElementById("dealStep1");
+      const step2 = document.getElementById("dealStep2");
+      const step3 = document.getElementById("dealStep3");
 
-      const setPos = (clientX) => {
-        const rect = slider.getBoundingClientRect();
-        const x = Math.min(Math.max(clientX - rect.left, 0), rect.width);
-        const pct = (x / rect.width) * 100;
-        beforeWrap.style.width = pct + "%";
-        handle.style.left = pct + "%";
+      const selected = new Set();
+      let selectedDeal = null;
+
+      // Deal pools (edit these anytime)
+      const DEALS = {
+        walls: [
+          { title: "2+ Rooms Bonus", details: "Book 2+ rooms and get one small bedroom ceiling painted at ceiling-only pricing." },
+          { title: "$150 Off 2-Room Package", details: "Take $150 off when painting 2+ rooms (walls/ceilings)." },
+          { title: "Prep Upgrade Bonus", details: "Mention “EXPERIENCE” and I’ll include an upgraded prep plan in your quote." }
+        ],
+        trim: [
+          { title: "Trim Add-On Special", details: "Bundle trim/doors with a room and get discounted add-on pricing." },
+          { title: "Door Refresh Deal", details: "Reduced rate on interior door refresh when bundled with a room paint." }
+        ],
+        cabinets: [
+          { title: "$500 Off Full Cabinet Refresh", details: "Unlock $500 off a full cabinet repaint package." },
+          { title: "Cabinet Finish Bonus", details: "If we’re a fit, I’ll include a finish/flow plan so they lay down smooth." }
+        ],
+        other: [
+          { title: "New Leaf Starter Deal", details: "Not sure yet? Mention “EXPERIENCE” and I’ll help you build the best plan for your home." }
+        ]
       };
 
-      slider.addEventListener("mousedown", (e)=>{ dragging=true; setPos(e.clientX); });
-      window.addEventListener("mousemove", (e)=>{ if(!dragging) return; setPos(e.clientX); });
-      window.addEventListener("mouseup", ()=> dragging=false);
+      // If already locked, show saved deal
+      const locked = localStorage.getItem("xpDealLocked");
+      if (locked) {
+        selectedDeal = JSON.parse(locked);
+        step1.style.display = "none";
+        step2.style.display = "none";
+        step3.style.display = "";
+        document.getElementById("dealTitle").textContent = selectedDeal.title;
+        document.getElementById("dealDetails").textContent = selectedDeal.details;
+        return;
+      }
 
-      slider.addEventListener("touchstart", (e)=>{ dragging=true; setPos(e.touches[0].clientX); }, {passive:true});
-      slider.addEventListener("touchmove", (e)=>{ if(!dragging) return; setPos(e.touches[0].clientX); }, {passive:true});
-      slider.addEventListener("touchend", ()=> dragging=false);
+      // Multi-select service buttons
+      document.getElementById("serviceChoices").addEventListener("click", (e) => {
+        const btn = e.target.closest(".deal-choice");
+        if (!btn) return;
 
-      requestAnimationFrame(()=>{
-        const rect = slider.getBoundingClientRect();
-        setPos(rect.left + rect.width/2);
+        const key = btn.dataset.key;
+        if (selected.has(key)) {
+          selected.delete(key);
+          btn.classList.remove("active");
+        } else {
+          selected.add(key);
+          btn.classList.add("active");
+        }
+
+        document.getElementById("toLeafStep").disabled = selected.size === 0;
       });
-    }
-    initBASlider(document.getElementById("ba1"));
 
-    // ===== 3) Vibe picker (changes accent used in background glow) =====
-    document.querySelectorAll(".vibe").forEach(v=>{
-      v.addEventListener("click", ()=>{
-        const accent = v.getAttribute("data-accent");
-        document.documentElement.style.setProperty("--accent", accent);
-
-        // Slightly shift the portal background intensity using accent
-        document.querySelector(".portal-bg").style.background =
-          `radial-gradient(900px 420px at 50% 0%, ${accent.replace(")", ",.22)")}, transparent 60%),
-           radial-gradient(700px 420px at 15% 30%, rgba(31,107,51,.16), transparent 65%),
-           radial-gradient(700px 420px at 85% 35%, ${accent.replace(")", ",.14)")}, transparent 60%),
-           #000`;
+      // Step 1 -> Step 2
+      document.getElementById("toLeafStep").addEventListener("click", () => {
+        step1.style.display = "none";
+        step2.style.display = "";
       });
-    });
 
-    // ===== 4) Scratch reveal =====
-    const reveals = [
-      { t:"Hidden Upgrade", b:"“The cleanest paint jobs aren’t about paint — they’re about prep.”\n\nIf you want crisp lines and zero mess, we’ve got you." },
-      { t:"Pro Tip", b:"Two coats is standard. The difference is *how* it’s applied — and what happens *before* paint touches the wall." },
-      { t:"The Secret", b:"Most “cheap” paint jobs cost more later.\n\nFixing cut corners is always more expensive than doing it right once." },
-      { t:"Tiny Perk", b:"Mention “EXPERIENCE” in your estimate message.\nIf we’re a fit, I’ll build the quote with a little extra love." }
-    ];
+      // Leaf pick -> reveal deal
+      document.querySelectorAll(".leaf-pick").forEach(btn => {
+        btn.addEventListener("click", () => {
+          let pool = [];
+          selected.forEach(k => { if (DEALS[k]) pool = pool.concat(DEALS[k]); });
+          if (!pool.length) pool = DEALS.other;
 
-    const canvas = document.getElementById("scratchCanvas");
-    const box = canvas.parentElement;
-    const ctx = canvas.getContext("2d");
+          selectedDeal = pool[Math.floor(Math.random() * pool.length)];
 
-    function sizeCanvas(){
-      const r = box.getBoundingClientRect();
-      canvas.width = Math.floor(r.width * devicePixelRatio);
-      canvas.height = Math.floor(r.height * devicePixelRatio);
-      canvas.style.width = r.width + "px";
-      canvas.style.height = r.height + "px";
-      ctx.scale(devicePixelRatio, devicePixelRatio);
-    }
+          // Lock it (one-time)
+          localStorage.setItem("xpDealLocked", JSON.stringify(selectedDeal));
 
-    function resetScratch(){
-      // Resize fresh (prevents weird iOS scaling)
-      canvas.width = 0; canvas.height = 0;
-      sizeCanvas();
+          // Show Step 3
+          step2.style.display = "none";
+          step3.style.display = "";
+          document.getElementById("dealTitle").textContent = selectedDeal.title;
+          document.getElementById("dealDetails").textContent = selectedDeal.details;
+        });
+      });
 
-      const w = box.getBoundingClientRect().width;
-      const h = box.getBoundingClientRect().height;
+      // Claim deal -> open estimate popup + auto-append deal to message
+      document.getElementById("claimDeal").addEventListener("click", () => {
+        const popup = document.getElementById("contact-popup");
+        if (popup) popup.style.display = "flex";
 
-      // overlay "scratch layer"
-      ctx.setTransform(1,0,0,1,0,0);
-      ctx.fillStyle = "rgba(255,255,255,.10)";
-      ctx.fillRect(0,0,w,h);
+        const msg = document.getElementById("message");
+        if (msg && selectedDeal) {
+          const stamp =
+            `\n\n---\nUnlocked Deal: ${selectedDeal.title}\n${selectedDeal.details}\n---\n`;
+          if (!msg.value.includes("Unlocked Deal:")) msg.value += stamp;
+        }
+      });
 
-      // subtle diagonal sheen
-      const g = ctx.createLinearGradient(0,0,w,h);
-      g.addColorStop(0, "rgba(255,255,255,.10)");
-      g.addColorStop(.5,"rgba(80,255,160,.18)");
-      g.addColorStop(1, "rgba(255,255,255,.10)");
-      ctx.fillStyle = g;
-      ctx.fillRect(0,0,w,h);
+      // Reset (testing only)
+      document.getElementById("resetDeal").addEventListener("click", () => {
+        localStorage.removeItem("xpDealLocked");
+        location.reload();
+      });
+    })();
 
-      // text on top layer
-      ctx.fillStyle = "rgba(255,255,255,.85)";
-      ctx.font = "900 18px system-ui, -apple-system, Segoe UI, Roboto, Arial";
-      ctx.fillText("Scratch here to reveal", 16, 34);
-
-      ctx.globalCompositeOperation = "source-over";
-    }
-
-    function setReveal(){
-      const pick = reveals[Math.floor(Math.random()*reveals.length)];
-      document.getElementById("revealTitle").textContent = pick.t;
-      document.getElementById("revealText").textContent = pick.b;
-      resetScratch();
-    }
-
-    let scratching = false;
-    function scratchAt(x,y){
-      const rect = canvas.getBoundingClientRect();
-      const cx = x - rect.left;
-      const cy = y - rect.top;
-
-      ctx.globalCompositeOperation = "destination-out";
-      ctx.beginPath();
-      ctx.arc(cx, cy, 18, 0, Math.PI*2);
-      ctx.fill();
-    }
-
-    canvas.addEventListener("mousedown", (e)=>{ scratching=true; scratchAt(e.clientX, e.clientY); });
-    window.addEventListener("mouseup", ()=> scratching=false);
-    canvas.addEventListener("mousemove", (e)=>{ if(!scratching) return; scratchAt(e.clientX, e.clientY); });
-
-    canvas.addEventListener("touchstart", (e)=>{ scratching=true; scratchAt(e.touches[0].clientX, e.touches[0].clientY); }, {passive:true});
-    canvas.addEventListener("touchmove", (e)=>{ if(!scratching) return; scratchAt(e.touches[0].clientX, e.touches[0].clientY); }, {passive:true});
-    canvas.addEventListener("touchend", ()=> scratching=false);
-
-    document.getElementById("newReveal").addEventListener("click", setReveal);
-    window.addEventListener("resize", resetScratch);
-    setReveal();
-
-    // ===== 5) "Paint Wisdom" button =====
-    const wisdom = [
-      "Cut lines don’t have to be perfect — they have to be *clean*.",
-      "A great paint job is a cleaning job, then a prep job, then paint.",
-      "If the trim looks sharp, the whole room looks expensive.",
-      "Speed is fine — rushing is not.",
-      "You can’t hide bad prep with good paint."
-    ];
-    document.getElementById("spinWisdom").addEventListener("click", ()=>{
-      const out = document.getElementById("wisdomOut");
-      out.textContent = wisdom[Math.floor(Math.random()*wisdom.length)];
-    });
-
-    // ===== Popup wiring (portal page only) =====
+    // ===== 3) Popup wiring (portal page only) =====
     const popup = document.getElementById("contact-popup");
     const openers = document.querySelectorAll('[data-contact-open="1"]');
     const closeBtn = popup.querySelector(".close");
@@ -780,7 +729,7 @@
     window.addEventListener("click", (e)=>{ if(e.target === popup) closePopup(); });
     window.addEventListener("keydown", (e)=>{ if(e.key === "Escape") closePopup(); });
 
-    // ===== Send button wiring (mailto with their info) =====
+    // ===== 4) Send button wiring (mailto with their info) =====
     const sendBtn = document.getElementById("estimate-send");
     sendBtn.addEventListener("click", ()=>{
       const name = (document.getElementById("name").value || "").trim();
