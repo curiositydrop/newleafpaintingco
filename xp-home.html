@@ -223,7 +223,38 @@ if (popup) mount.appendChild(popup);
       popup.style.display = "flex";
     };
     const closePopup = () => popup.style.display = "none";
+// SEND button -> opens email with what they typed
+const sendBtn = document.getElementById("estimate-send");
+if (sendBtn) {
+  sendBtn.addEventListener("click", () => {
+    const name = (document.getElementById("name")?.value || "").trim();
+    const email = (document.getElementById("email")?.value || "").trim();
+    const phone = (document.getElementById("phone")?.value || "").trim();
+    const message = (document.getElementById("message")?.value || "").trim();
 
+    if (!name || (!email && !phone)) {
+      alert("Please enter your name and either an email or phone number.");
+      return;
+    }
+
+    const subject = encodeURIComponent(`Estimate Request - ${name}${phone ? " - " + phone : ""}`);
+    const body = encodeURIComponent(
+`Hi Mike,
+
+Name: ${name}
+Email: ${email || "(not provided)"}
+Phone: ${phone || "(not provided)"}
+
+Message:
+${message || "(no message)"}
+
+Thanks!`
+    );
+
+    window.location.href = `mailto:newleafpaintingcompany@gmail.com?subject=${subject}&body=${body}`;
+    popup.style.display = "none";
+  });
+}
     document.querySelectorAll('#contact-btn, [data-contact-open="1"]').forEach(el => {
       el.addEventListener("click", openPopup);
     });
