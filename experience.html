@@ -1045,6 +1045,51 @@ Thanks!`
         spinBtn.disabled = true;
       }
     })();
+    // ------------------------------
+// 9) Secret 5-tap reset (logo)
+// ------------------------------
+(function(){
+  const logo = document.querySelector(".leaf-logo");
+  let tapCount = 0;
+  let tapTimer = null;
+
+  logo.addEventListener("click", () => {
+    tapCount++;
+
+    if(tapCount === 1){
+      tapTimer = setTimeout(() => {
+        tapCount = 0;
+      }, 1500); // must tap 5 times within 1.5s
+    }
+
+    if(tapCount >= 5){
+      clearTimeout(tapTimer);
+      tapCount = 0;
+
+      // clear local storage lock
+      clearLock();
+
+      // hard reset state
+      leafWin = null;
+      leafPickName = null;
+      spinWin = null;
+      spun = false;
+
+      // reset UI
+      document.querySelectorAll(".leaf-card").forEach(c => {
+        c.classList.remove("disabled","selected");
+      });
+      leafStatus.textContent = "Not chosen";
+      spinStatus.textContent = "Not spun";
+      claimBtn.disabled = true;
+      spinBtn.disabled = true;
+      wheel.classList.add("locked");
+      wheel.style.transform = "rotate(0deg)";
+
+      alert("Experience reset ✔️");
+    }
+  });
+})();
   </script>
 </body>
 </html>
