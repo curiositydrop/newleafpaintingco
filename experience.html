@@ -328,6 +328,21 @@
     }
     .answer.show{ display:block; }
 
+    /* ✅ NEW: Ask-the-Leaf header row w/ small mascot */
+    .ask-leaf-head{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:10px;
+    }
+    .ask-leaf-head img{
+      width:96px;
+      height:auto;
+      opacity:.9;
+      filter: drop-shadow(0 0 10px rgba(80,255,160,.18));
+      flex:0 0 auto;
+    }
+
     /* Modal */
     .modal{
       display:none;
@@ -583,7 +598,12 @@ Serving Southern Maine
 
       <!-- ASK THE LEAF -->
       <section class="card">
-        <h2>Ask the Leaf</h2>
+        <!-- ✅ UPDATED: mascot left of the title -->
+        <div class="ask-leaf-head">
+          <!-- CHANGE THIS IMAGE SRC to your no-prop leaf file name -->
+          <img src="NO-PROP-LEAF.png" alt="Ask the Leaf">
+          <h2 style="margin:0;">Ask the Leaf</h2>
+        </div>
         <p>Quick answers (without the salesy vibes). Tap one:</p>
 
         <div class="qa">
@@ -653,6 +673,13 @@ Serving Southern Maine
 
   <script>
     // ------------------------------
+    // WHERE TO CHANGE THINGS (quick map)
+    // ------------------------------
+    // Leaf prizes:   const leafPrizes = [ ... ]
+    // Spin prizes:   const spinPrizes = [ ... ]
+    // Q&A text:      In HTML under <!-- ASK THE LEAF --> (buttons + answers)
+
+    // ------------------------------
     // 1) Calm typing line (no delete-loop twitch)
     // ------------------------------
     (function(){
@@ -666,9 +693,9 @@ Serving Southern Maine
       let lineIndex = 0;
       let charIndex = 0;
 
-      const typeSpeed = 45;     // slower typing
-      const holdTime  = 1400;   // longer pause so they can read
-      const clearTime = 450;    // quick clear before next line
+      const typeSpeed = 45;
+      const holdTime  = 1400;
+      const clearTime = 450;
 
       function typeLine(){
         const line = lines[lineIndex];
@@ -694,12 +721,11 @@ Serving Southern Maine
     // ------------------------------
     let leafWin = null;
     let leafPickName = null;
-
     let spinWin = null;
     let spun = false;
 
     // ------------------------------
-    // 2.5) LocalStorage lock (30 days)
+    // ✅ 2.5) LocalStorage lock (30 days)
     // ------------------------------
     const LS_KEY = "nl_experience_lock_v1";
     const LS_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
@@ -720,7 +746,6 @@ Serving Southern Maine
         }
         return data;
       } catch(e){
-        // if anything weird, reset
         try{ localStorage.removeItem(LS_KEY); }catch(_){}
         return null;
       }
@@ -729,15 +754,8 @@ Serving Southern Maine
     function saveLock(partial){
       const current = loadLock() || { createdAt: nowMs() };
       const next = Object.assign({}, current, partial);
-
-      // keep createdAt stable once set
       if(!current.createdAt) next.createdAt = nowMs();
-
       localStorage.setItem(LS_KEY, JSON.stringify(next));
-    }
-
-    function clearLock(){
-      localStorage.removeItem(LS_KEY);
     }
 
     // ------------------------------
@@ -747,7 +765,7 @@ Serving Southern Maine
     const leafStatus = document.getElementById("leafStatus");
     const claimBtn = document.getElementById("claimBtn");
 
-    // Leaf prizes (you can change these whenever)
+    // ✅ WHERE TO CHANGE LEAF PRIZES:
     const leafPrizes = [
       "10% off labor (up to $300)",
       "$150 off any interior project",
@@ -798,14 +816,12 @@ Serving Southern Maine
     }
 
     function lockLeafPick(selectedCard, {silent=false} = {}){
-      // lock UI
       document.querySelectorAll(".leaf-card").forEach(c => {
         c.classList.add("disabled");
         c.classList.remove("selected");
       });
       selectedCard.classList.add("selected");
 
-      // choose prize
       leafPickName = selectedCard.getAttribute("data-leaf");
       if(!leafWin){
         leafWin = leafPrizes[Math.floor(Math.random()*leafPrizes.length)];
@@ -814,19 +830,11 @@ Serving Southern Maine
       leafStatus.textContent = leafPickName;
       claimBtn.disabled = false;
 
-      // unlock wheel + button
       document.getElementById("wheel").classList.remove("locked");
       document.getElementById("spinBtn").disabled = false;
 
-      // persist lock
-      saveLock({
-        leafPickName,
-        leafWin,
-        spun,
-        spinWin
-      });
+      saveLock({ leafPickName, leafWin, spun, spinWin });
 
-      // obvious win modal (only when user actively picks)
       if(!silent){
         openWinModal({
           title: "✅ You Won a Deal!",
@@ -843,16 +851,15 @@ Serving Southern Maine
     leafGrid.addEventListener("click", (e) => {
       const card = e.target.closest(".leaf-card");
       if(!card) return;
-      if(leafWin) return; // already picked (session)
-      // if localStorage lock exists, don't allow reroll by clicking (30-day lock)
+
+      // ✅ hard lock for 30 days if anything exists
       const existing = loadLock();
-      if(existing && existing.leafWin){
-        return;
-      }
+      if(existing && existing.leafWin) return;
+
+      if(leafWin) return;
       lockLeafPick(card);
     });
 
-    // Claim button opens estimate popup (so email includes prizes)
     claimBtn.addEventListener("click", () => {
       openEstimatePopup();
       const msg = document.getElementById("message");
@@ -876,6 +883,7 @@ Serving Southern Maine
     const spinStatus = document.getElementById("spinStatus");
     const wheelLabels = document.getElementById("wheelLabels");
 
+    // ✅ WHERE TO CHANGE SPIN PRIZES:
     const spinPrizes = [
       "+$100 off",
       "Free gallon of paint*",
@@ -885,20 +893,6 @@ Serving Southern Maine
       "Free upgrade: extra prep detail"
     ];
 
-    // render labels roughly around wheel (visual only)
-   /* <!-- (function renderLabels(){
-      const labels = spinPrizes;
-      // 6 slices: 0,60,120,180,240,300
-      const angles = [ -90, -30, 30, 90, 150, 210 ];
-      labels.forEach((txt, i) => {
-        const s = document.createElement("span");
-        // place label outward from center
-        s.style.transform = `translate(-50%, -50%) rotate(${angles[i]}deg) translate(0px, -108px) rotate(${-(angles[i])}deg)`;
-        s.textContent = txt;
-        wheelLabels.appendChild(s);
-      });
-    })(); */
-
     spinBtn.addEventListener("click", () => {
       if(!leafWin) return;
       if(spun) return;
@@ -906,17 +900,11 @@ Serving Southern Maine
       spun = true;
       spinBtn.disabled = true;
 
-      // choose prize
       spinWin = spinPrizes[Math.floor(Math.random()*spinPrizes.length)];
       spinStatus.textContent = "Spinning…";
 
-      // persist spin immediately so refresh can't retry mid-spin
-      saveLock({
-        leafPickName,
-        leafWin,
-        spun: true,
-        spinWin
-      });
+      // ✅ store immediately so refresh can't retry
+      saveLock({ leafPickName, leafWin, spun: true, spinWin });
 
       const extraTurns = 6;
       const stopIndex = spinPrizes.indexOf(spinWin);
@@ -931,14 +919,7 @@ Serving Southern Maine
 
       setTimeout(() => {
         spinStatus.textContent = spinWin;
-
-        // update stored result (final)
-        saveLock({
-          leafPickName,
-          leafWin,
-          spun: true,
-          spinWin
-        });
+        saveLock({ leafPickName, leafWin, spun: true, spinWin });
 
         openWinModal({
           title: "🎉 Bonus Spin Result!",
@@ -1034,26 +1015,23 @@ Thanks!`
     });
 
     // ------------------------------
-    // 8) Restore session from localStorage (30-day lock)
+    // ✅ 8) Restore session from localStorage (30-day lock)
     // ------------------------------
     (function restoreFromLocal(){
       const data = loadLock();
       if(!data) return;
 
-      // restore state
       leafWin = data.leafWin || null;
       leafPickName = data.leafPickName || null;
       spinWin = data.spinWin || null;
       spun = !!data.spun;
 
-      // if a leaf was already picked, lock UI to that choice
       if(leafWin && leafPickName){
         const cards = Array.from(document.querySelectorAll(".leaf-card"));
         const match = cards.find(c => (c.getAttribute("data-leaf") === leafPickName));
         if(match){
           lockLeafPick(match, {silent:true});
         } else {
-          // if mismatch (you renamed cards), keep locked but show status
           leafStatus.textContent = leafPickName;
           claimBtn.disabled = false;
           document.querySelectorAll(".leaf-card").forEach(c => c.classList.add("disabled"));
@@ -1062,7 +1040,6 @@ Thanks!`
         }
       }
 
-      // restore spin
       if(spun){
         spinStatus.textContent = spinWin ? spinWin : "Spun";
         spinBtn.disabled = true;
