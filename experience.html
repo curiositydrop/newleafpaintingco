@@ -53,6 +53,8 @@
       box-shadow: 0 0 22px rgba(80,255,160,.18);
       display:grid; place-items:center; overflow:hidden;
       flex:0 0 auto;
+      touch action: manipulation;
+      cursor:pointer;
     }
     .leaf-logo img{ width:140%; height:140%; object-fit:contain; display:block; filter: drop-shadow(0 0 12px rgba(80,255,160,.25)); }
 
@@ -1046,14 +1048,21 @@ Thanks!`
       }
     })();
     // ------------------------------
-// 9) Secret 5-tap reset (logo)
+// ------------------------------
+// 9) Secret 5-tap reset (logo) - iOS safe
 // ------------------------------
 (function(){
   const logo = document.querySelector(".leaf-logo");
   let tapCount = 0;
   let tapTimer = null;
 
-  logo.addEventListener("click", () => {
+  function registerTap(e){
+    // Prevent iOS double-tap zoom from hijacking taps
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
     tapCount++;
 
     if(tapCount === 1){
@@ -1088,7 +1097,12 @@ Thanks!`
 
       alert("Experience reset ✔️");
     }
-  });
+  }
+
+  // iOS: touchend is the reliable one (must be passive:false to allow preventDefault)
+  logo.addEventListener("touchend", registerTap, { passive: false });
+  // Desktop / fallback
+  logo.addEventListener("click", registerTap);
 })();
   </script>
 </body>
