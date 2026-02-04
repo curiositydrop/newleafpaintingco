@@ -1077,7 +1077,7 @@ Thanks!`
 
     function resetExperience(){
       // clear lock
-      clearLock();
+      localStorage.removeItem(LS_KEY);
 
       // reset state
       leafWin = null;
@@ -1108,6 +1108,7 @@ Thanks!`
       if(subtitle) subtitle.textContent = originalSubtitle;
       tapCount = 0;
       alert("Experience reset ✔️");
+      location.reload();
     }
 
     function registerTap(e){
