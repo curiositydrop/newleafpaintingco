@@ -1049,36 +1049,37 @@ Thanks!`
     })();
     // ------------------------------
 // ------------------------------
-// 9) Secret 5-tap reset (logo) - iOS safe
+// ------------------------------
+// 9) Secret 5-tap reset (logo) - iOS safe + visible counter
 // ------------------------------
 (function(){
-  const logo = document.querySelector(".leaf-logo");
-  let tapCount = 0;
-  let tapTimer = null;
+  // Wait a tick to ensure everything above is initialized
+  setTimeout(() => {
+    const logo = document.querySelector(".leaf-logo");
+    if(!logo) return;
 
-  function registerTap(e){
-    // Prevent iOS double-tap zoom from hijacking taps
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
+    let tapCount = 0;
+    let tapTimer = null;
 
-    tapCount++;
+    // little visual feedback so you know taps are counting
+    const subtitle = document.querySelector(".leaf-title span");
+    const originalSubtitle = subtitle ? subtitle.textContent : "";
 
-    if(tapCount === 1){
+    function showCount(){
+      if(!subtitle) return;
+      subtitle.textContent = `Tap reset: ${tapCount}/5`;
+      clearTimeout(tapTimer);
       tapTimer = setTimeout(() => {
         tapCount = 0;
-      }, 1500); // must tap 5 times within 1.5s
+        subtitle.textContent = originalSubtitle;
+      }, 1500);
     }
 
-    if(tapCount >= 5){
-      clearTimeout(tapTimer);
-      tapCount = 0;
-
-      // clear local storage lock
+    function resetExperience(){
+      // clear lock
       clearLock();
 
-      // hard reset state
+      // reset state
       leafWin = null;
       leafPickName = null;
       spinWin = null;
@@ -1088,21 +1089,49 @@ Thanks!`
       document.querySelectorAll(".leaf-card").forEach(c => {
         c.classList.remove("disabled","selected");
       });
-      leafStatus.textContent = "Not chosen";
-      spinStatus.textContent = "Not spun";
-      claimBtn.disabled = true;
-      spinBtn.disabled = true;
-      wheel.classList.add("locked");
-      wheel.style.transform = "rotate(0deg)";
 
+      const leafStatusEl = document.getElementById("leafStatus");
+      const spinStatusEl = document.getElementById("spinStatus");
+      const claimBtnEl = document.getElementById("claimBtn");
+      const spinBtnEl = document.getElementById("spinBtn");
+      const wheelEl = document.getElementById("wheel");
+
+      if(leafStatusEl) leafStatusEl.textContent = "Not chosen";
+      if(spinStatusEl) spinStatusEl.textContent = "Not spun";
+      if(claimBtnEl) claimBtnEl.disabled = true;
+      if(spinBtnEl) spinBtnEl.disabled = true;
+      if(wheelEl){
+        wheelEl.classList.add("locked");
+        wheelEl.style.transform = "rotate(0deg)";
+      }
+
+      if(subtitle) subtitle.textContent = originalSubtitle;
+      tapCount = 0;
       alert("Experience reset ✔️");
     }
-  }
 
-  // iOS: touchend is the reliable one (must be passive:false to allow preventDefault)
-  logo.addEventListener("touchend", registerTap, { passive: false });
-  // Desktop / fallback
-  logo.addEventListener("click", registerTap);
+    function registerTap(e){
+      // stop iOS double tap behavior + keep it from clicking anything else
+      e.preventDefault();
+      e.stopPropagation();
+
+      tapCount++;
+      showCount();
+
+      if(tapCount >= 5){
+        resetExperience();
+      }
+    }
+
+    logo.style.cursor = "pointer";
+    logo.style.userSelect = "none";
+    logo.style.webkitUserSelect = "none";
+
+    // iOS reliable tap
+    logo.addEventListener("touchend", registerTap, { passive: false });
+    // fallback
+    logo.addEventListener("click", registerTap);
+  }, 0);
 })();
   </script>
 </body>
