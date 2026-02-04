@@ -257,7 +257,7 @@
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.22);
-      <!-- backdrop-filter: blur(6px); -->
+      /* backdrop-filter: blur(6px); */ /* (fixed: CSS comment style) */
     }
     .wheel-labels{
       position:absolute;
@@ -679,7 +679,6 @@ Serving Southern Maine
           setTimeout(typeLine, typeSpeed);
         } else {
           setTimeout(() => {
-            // clear gently without doing a frantic delete animation
             el.textContent = "";
             charIndex = 0;
             lineIndex = (lineIndex + 1) % lines.length;
@@ -698,6 +697,48 @@ Serving Southern Maine
 
     let spinWin = null;
     let spun = false;
+
+    // ------------------------------
+    // 2.5) LocalStorage lock (30 days)
+    // ------------------------------
+    const LS_KEY = "nl_experience_lock_v1";
+    const LS_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+
+    function nowMs(){ return Date.now(); }
+
+    function loadLock(){
+      try{
+        const raw = localStorage.getItem(LS_KEY);
+        if(!raw) return null;
+        const data = JSON.parse(raw);
+        if(!data || !data.createdAt) return null;
+
+        const age = nowMs() - data.createdAt;
+        if(age > LS_TTL_MS){
+          localStorage.removeItem(LS_KEY);
+          return null;
+        }
+        return data;
+      } catch(e){
+        // if anything weird, reset
+        try{ localStorage.removeItem(LS_KEY); }catch(_){}
+        return null;
+      }
+    }
+
+    function saveLock(partial){
+      const current = loadLock() || { createdAt: nowMs() };
+      const next = Object.assign({}, current, partial);
+
+      // keep createdAt stable once set
+      if(!current.createdAt) next.createdAt = nowMs();
+
+      localStorage.setItem(LS_KEY, JSON.stringify(next));
+    }
+
+    function clearLock(){
+      localStorage.removeItem(LS_KEY);
+    }
 
     // ------------------------------
     // 3) Leaf pick logic + obvious win modal
@@ -756,7 +797,7 @@ Serving Southern Maine
       modal.onclick = (e) => { if(e.target === modal) close(); };
     }
 
-    function lockLeafPick(selectedCard){
+    function lockLeafPick(selectedCard, {silent=false} = {}){
       // lock UI
       document.querySelectorAll(".leaf-card").forEach(c => {
         c.classList.add("disabled");
@@ -766,7 +807,9 @@ Serving Southern Maine
 
       // choose prize
       leafPickName = selectedCard.getAttribute("data-leaf");
-      leafWin = leafPrizes[Math.floor(Math.random()*leafPrizes.length)];
+      if(!leafWin){
+        leafWin = leafPrizes[Math.floor(Math.random()*leafPrizes.length)];
+      }
 
       leafStatus.textContent = leafPickName;
       claimBtn.disabled = false;
@@ -775,31 +818,43 @@ Serving Southern Maine
       document.getElementById("wheel").classList.remove("locked");
       document.getElementById("spinBtn").disabled = false;
 
-      // obvious win modal
-      openWinModal({
-        title: "✅ You Won a Deal!",
-        pill: `Leaf Prize: <b>${leafWin}</b>`,
-        text: "Nice. Your deal is locked in. Want a chance at a small bonus too?",
-        nextLabel: "Bonus Spin",
-        onNext: () => {
-          // smooth scroll to spin section (but not twitchy)
-          document.getElementById("spinCard").scrollIntoView({behavior:"smooth", block:"start"});
-        }
+      // persist lock
+      saveLock({
+        leafPickName,
+        leafWin,
+        spun,
+        spinWin
       });
+
+      // obvious win modal (only when user actively picks)
+      if(!silent){
+        openWinModal({
+          title: "✅ You Won a Deal!",
+          pill: `Leaf Prize: <b>${leafWin}</b>`,
+          text: "Nice. Your deal is locked in. Want a chance at a small bonus too?",
+          nextLabel: "Bonus Spin",
+          onNext: () => {
+            document.getElementById("spinCard").scrollIntoView({behavior:"smooth", block:"start"});
+          }
+        });
+      }
     }
 
     leafGrid.addEventListener("click", (e) => {
       const card = e.target.closest(".leaf-card");
       if(!card) return;
-      if(leafWin) return; // already picked
-
+      if(leafWin) return; // already picked (session)
+      // if localStorage lock exists, don't allow reroll by clicking (30-day lock)
+      const existing = loadLock();
+      if(existing && existing.leafWin){
+        return;
+      }
       lockLeafPick(card);
     });
 
     // Claim button opens estimate popup (so email includes prizes)
     claimBtn.addEventListener("click", () => {
       openEstimatePopup();
-      // helpful prefill in message box so they see it instantly
       const msg = document.getElementById("message");
       const pre = [];
       if (leafWin) pre.push(`Leaf Prize: ${leafWin}`);
@@ -855,18 +910,35 @@ Serving Southern Maine
       spinWin = spinPrizes[Math.floor(Math.random()*spinPrizes.length)];
       spinStatus.textContent = "Spinning…";
 
-      // spin animation: many turns + random stopping
-      const extraTurns = 6; // full rotations
-      const stopIndex = spinPrizes.indexOf(spinWin); // 0..5
+      // persist spin immediately so refresh can't retry mid-spin
+      saveLock({
+        leafPickName,
+        leafWin,
+        spun: true,
+        spinWin
+      });
+
+      const extraTurns = 6;
+      const stopIndex = spinPrizes.indexOf(spinWin);
       const sliceDeg = 360 / spinPrizes.length;
 
-      // pointer is at top; we want selected slice to land at top
-      const targetDeg = (360 - (stopIndex * sliceDeg)) + (extraTurns * 360) + (Math.random() * (sliceDeg*0.6) - (sliceDeg*0.3));
+      const targetDeg =
+        (360 - (stopIndex * sliceDeg)) +
+        (extraTurns * 360) +
+        (Math.random() * (sliceDeg*0.6) - (sliceDeg*0.3));
+
       wheel.style.transform = `rotate(${targetDeg}deg)`;
 
-      // show win after animation completes
       setTimeout(() => {
         spinStatus.textContent = spinWin;
+
+        // update stored result (final)
+        saveLock({
+          leafPickName,
+          leafWin,
+          spun: true,
+          spinWin
+        });
 
         openWinModal({
           title: "🎉 Bonus Spin Result!",
@@ -874,7 +946,6 @@ Serving Southern Maine
           text: "If you want to lock it in, hit Claim — it will include BOTH wins in the email.",
           nextLabel: "Claim",
           onNext: () => {
-            // nudge them to claim
             claimBtn.scrollIntoView({behavior:"smooth", block:"center"});
           }
         });
@@ -961,6 +1032,42 @@ Thanks!`
       window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
       closeEstimatePopup();
     });
+
+    // ------------------------------
+    // 8) Restore session from localStorage (30-day lock)
+    // ------------------------------
+    (function restoreFromLocal(){
+      const data = loadLock();
+      if(!data) return;
+
+      // restore state
+      leafWin = data.leafWin || null;
+      leafPickName = data.leafPickName || null;
+      spinWin = data.spinWin || null;
+      spun = !!data.spun;
+
+      // if a leaf was already picked, lock UI to that choice
+      if(leafWin && leafPickName){
+        const cards = Array.from(document.querySelectorAll(".leaf-card"));
+        const match = cards.find(c => (c.getAttribute("data-leaf") === leafPickName));
+        if(match){
+          lockLeafPick(match, {silent:true});
+        } else {
+          // if mismatch (you renamed cards), keep locked but show status
+          leafStatus.textContent = leafPickName;
+          claimBtn.disabled = false;
+          document.querySelectorAll(".leaf-card").forEach(c => c.classList.add("disabled"));
+          document.getElementById("wheel").classList.remove("locked");
+          document.getElementById("spinBtn").disabled = false;
+        }
+      }
+
+      // restore spin
+      if(spun){
+        spinStatus.textContent = spinWin ? spinWin : "Spun";
+        spinBtn.disabled = true;
+      }
+    })();
   </script>
 </body>
 </html>
