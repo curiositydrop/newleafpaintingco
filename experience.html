@@ -257,7 +257,7 @@
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.22);
-      backdrop-filter: blur(6px);
+      <!-- backdrop-filter: blur(6px); -->
     }
     .wheel-labels{
       position:absolute;
@@ -566,7 +566,7 @@ Serving Southern Maine
           <div class="wheel-area">
             <div class="pointer" aria-hidden="true"></div>
             <div class="wheel locked" id="wheel">
-              <div class="wheel-labels" aria-hidden="true" id="wheelLabels"></div>
+              <!-- <div class="wheel-labels" aria-hidden="true" id="wheelLabels"></div> -->
             </div>
             <button class="nl-btn primary" id="spinBtn" disabled>Spin (1 try)</button>
           </div>
@@ -831,7 +831,7 @@ Serving Southern Maine
     ];
 
     // render labels roughly around wheel (visual only)
-    (function renderLabels(){
+   /* <!-- (function renderLabels(){
       const labels = spinPrizes;
       // 6 slices: 0,60,120,180,240,300
       const angles = [ -90, -30, 30, 90, 150, 210 ];
@@ -842,7 +842,7 @@ Serving Southern Maine
         s.textContent = txt;
         wheelLabels.appendChild(s);
       });
-    })();
+    })(); */
 
     spinBtn.addEventListener("click", () => {
       if(!leafWin) return;
