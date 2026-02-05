@@ -26,6 +26,7 @@
       align-items:center;
       justify-content:center;
       overflow:hidden;
+      perspective: 900px; /* adds depth to the approach */
     }
 
     /* Full-screen fade overlay (for final fade-out) */
@@ -64,7 +65,7 @@
       align-items:center;
       justify-content:center;
       opacity:0;
-      transform: translateY(0) scale(0.55) rotateY(0deg);
+      transform: translateY(0) scale(0.55) rotateX(10deg) rotateZ(0deg);
       will-change: transform, opacity;
       z-index:10;
     }
@@ -131,8 +132,8 @@
     <div class="intro" id="introText">Just a moment, preparing your experience.</div>
 
     <div class="leafWrap" id="leafWrap" aria-hidden="true">
-      <!-- Replace src with your prop-free leaf image -->
-      <img class="leafImg" src="3853F55F-F2AB-4931-BCDE-033BBDB26E1C.png" alt="" />
+      <!-- Replace with your prop-free leaf image path -->
+      <img class="leafImg" src="/assets/3853F55F-F2AB-4931-BCDE-033BBDB26E1C.png" alt="" />
     </div>
 
     <div class="bubble" id="bubble">your experience begins now.</div>
@@ -141,8 +142,9 @@
   </main>
 
   <script>
-    // ====== CONFIG ======
+    // ====== CONFIG (ONLY CHANGE THIS URL IF NEEDED) ======
     const EXPERIENCE_URL = "/experience/"; // <-- set your actual experience page URL
+
     const timings = {
       introHold: 550,        // time text stays before fading out
       introFade: 650,        // matches CSS intro transition
@@ -168,27 +170,27 @@
 
     function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
     function easeOutBack(t){
-      // nice little "land" feel
       const c1 = 1.70158;
       const c3 = c1 + 1;
       return 1 + c3*Math.pow(t-1,3) + c1*Math.pow(t-1,2);
     }
 
-    function setLeaf(opacity, scale, rotYdeg){
+    // Z-axis spin (wheel spin) + optional X-tilt for depth
+    function setLeaf(opacity, scale, rotZdeg, tiltXdeg = 10){
       leafWrap.style.opacity = opacity;
-      leafWrap.style.transform = `translateY(0px) scale(${scale}) rotateY(${rotYdeg}deg)`;
+      leafWrap.style.transform =
+        `translateY(0px) scale(${scale}) rotateX(${tiltXdeg}deg) rotateZ(${rotZdeg}deg)`;
     }
 
     async function wait(ms){ return new Promise(r => setTimeout(r, ms)); }
 
     async function run(){
-      // If reduced motion, just do a quick, classy sequence
+      // Reduced motion: quick, classy sequence
       if (reduceMotion){
-        intro.textContent = "Just a moment, preparing your experience.";
         await wait(350);
         intro.classList.add("off");
         await wait(200);
-        setLeaf(1, 1.0, 0);
+        setLeaf(1, 1.0, 0, 0);
         bubble.classList.add("on");
         await wait(700);
         overlay.classList.add("on");
@@ -213,13 +215,16 @@
         // scale from 0.55 -> 1.08 (slight overshoot)
         const scale = 0.55 + (1.08 - 0.55) * e;
 
-        // rotateY from 0 -> 720 degrees (2 full spins)
-        const rot = 720 * t;
+        // Z-spin from 0 -> 900 degrees (~2.5 spins) for "medium pace"
+        const rot = 900 * t;
+
+        // tilt decreases as it approaches so it "lands" flatter
+        const tilt = 14 + (4 - 14) * e;
 
         // opacity from 0 -> 1 quickly in first half
         const opacity = Math.min(1, t * 1.6);
 
-        setLeaf(opacity, scale, rot);
+        setLeaf(opacity, scale, rot, tilt);
 
         if (t < 1){
           requestAnimationFrame(frame);
@@ -235,7 +240,8 @@
             // bring scale from 1.08 down to 1.00
             const s = 1.08 + (1.00 - 1.08) * ee;
 
-            setLeaf(1, s, 0);
+            // land upright (no tilt, no rotation)
+            setLeaf(1, s, 0, 0);
 
             if (tt < 1) requestAnimationFrame(settleFrame);
             else afterLand();
@@ -259,7 +265,6 @@
       window.location.href = EXPERIENCE_URL;
     }
 
-    // Kick it off
     run();
   </script>
 </body>
