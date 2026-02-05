@@ -8,7 +8,7 @@
   <style>
     :root{
       --bg:#ffffff;
-      --green:#1f7a3a; /* update if needed */
+      --green:#1f7a3a; /* swap with your exact site green */
       --text:#1f7a3a;
     }
 
@@ -26,46 +26,49 @@
       align-items:center;
       justify-content:center;
       overflow:hidden;
-      perspective:900px;
+
+      /* CHANGED: higher perspective = less “oval” distortion */
+      perspective: 1200px;
     }
 
-    /* Fade overlay for exit */
+    /* Full-screen fade overlay (for final fade-out) */
     .fadeOverlay{
       position:absolute;
       inset:0;
       background:var(--bg);
       opacity:0;
       pointer-events:none;
-      transition:opacity 700ms ease;
+      transition: opacity 700ms ease;
       z-index:50;
     }
     .fadeOverlay.on{ opacity:1; }
 
-    /* Intro text */
+    /* Intro line */
     .intro{
       position:absolute;
       text-align:center;
       color:var(--text);
       font-weight:700;
-      font-size:clamp(16px,2.2vw,22px);
+      letter-spacing:.2px;
+      font-size: clamp(16px, 2.2vw, 22px);
       opacity:1;
-      transition:opacity 650ms ease;
-      padding:0 18px;
+      transition: opacity 650ms ease;
+      padding: 0 18px;
       z-index:5;
     }
     .intro.off{ opacity:0; }
 
-    /* Leaf container */
+    /* Leaf wrapper so we can animate via JS transforms */
     .leafWrap{
       position:absolute;
-      width:min(340px,72vw);
-      aspect-ratio:1/1;
+      width:min(340px, 72vw);
+      aspect-ratio: 1 / 1;
       display:flex;
       align-items:center;
       justify-content:center;
       opacity:0;
-      transform:scale(0.55) rotateX(12deg) rotateZ(0deg);
-      will-change:transform, opacity;
+      transform: translateY(0) scale(0.55) rotateX(6deg) rotateZ(0deg);
+      will-change: transform, opacity;
       z-index:10;
     }
 
@@ -73,28 +76,32 @@
       width:100%;
       height:auto;
       display:block;
-      pointer-events:none;
       user-select:none;
       -webkit-user-drag:none;
-      filter:drop-shadow(0 18px 24px rgba(0,0,0,.12));
+      pointer-events:none;
+      filter: drop-shadow(0 18px 24px rgba(0,0,0,.12));
     }
 
     /* Speech bubble */
     .bubble{
       position:absolute;
-      top:52%;
-      left:50%;
-      transform:translate(-50%,-50%) scale(.95);
+
+      /* CHANGED: moved up so it sits above the image more */
+      top: 40%;
+
+      left: 50%;
+      transform: translate(-50%, -50%) scale(.96);
       background:#fff;
       border:2px solid rgba(31,122,58,.18);
       color:var(--green);
-      padding:12px 14px;
-      border-radius:14px;
+      padding: 12px 14px;
+      border-radius: 14px;
       font-weight:800;
-      font-size:clamp(14px,2vw,18px);
+      letter-spacing:.1px;
+      font-size: clamp(14px, 2vw, 18px);
       opacity:0;
-      transition:opacity 450ms ease, transform 450ms ease;
-      box-shadow:0 12px 22px rgba(0,0,0,.08);
+      transition: opacity 450ms ease, transform 450ms ease;
+      box-shadow: 0 12px 22px rgba(0,0,0,.08);
       z-index:20;
       white-space:nowrap;
     }
@@ -102,140 +109,167 @@
     .bubble::after{
       content:"";
       position:absolute;
-      left:18px;
-      bottom:-10px;
-      width:14px;
-      height:14px;
+
+      /* CHANGED: point tail downward from bubble (works better when bubble is above) */
+      left: 22px;
+      bottom: -10px;
+
+      width: 14px;
+      height: 14px;
       background:#fff;
       border-left:2px solid rgba(31,122,58,.18);
       border-bottom:2px solid rgba(31,122,58,.18);
-      transform:rotate(45deg);
+      transform: rotate(45deg);
     }
 
     .bubble.on{
       opacity:1;
-      transform:translate(-50%,-50%) scale(1);
+      transform: translate(-50%, -50%) scale(1);
     }
 
+    /* Reduced motion accessibility */
     @media (prefers-reduced-motion: reduce){
-      .intro,.fadeOverlay,.bubble{transition:none!important;}
+      .intro, .fadeOverlay, .bubble{ transition: none !important; }
+      .leafWrap{ will-change:auto; }
     }
   </style>
 </head>
 
 <body>
-  <main class="stage">
-    <div class="intro" id="introText">
-      Just a moment, preparing your experience.
+  <main class="stage" aria-label="Preparing your experience">
+    <div class="intro" id="introText">Just a moment, preparing your experience.</div>
+
+    <div class="leafWrap" id="leafWrap" aria-hidden="true">
+      <!-- NOTE: you said you don't have /assets; use a relative path if needed -->
+      <!-- If the PNG is in the same folder as this HTML file, use: src="3853F55F-F2AB-4931-BCDE-033BBDB26E1C.png" -->
+      <img class="leafImg" src="3853F55F-F2AB-4931-BCDE-033BBDB26E1C.png" alt="" />
     </div>
 
-    <div class="leafWrap" id="leafWrap">
-      <!-- IMAGE IS IN SAME FOLDER AS THIS FILE -->
-      <img class="leafImg"
-           src="3853F55F-F2AB-4931-BCDE-033BBDB26E1C.png"
-           alt="">
-    </div>
-
-    <div class="bubble" id="bubble">
-      your experience begins now.
-    </div>
+    <div class="bubble" id="bubble">your experience begins now.</div>
 
     <div class="fadeOverlay" id="fadeOverlay"></div>
   </main>
 
   <script>
-    /* ===== ONLY CHANGE THIS IF NEEDED ===== */
-    const EXPERIENCE_URL = "/experience/";
+    // ====== CONFIG (ONLY CHANGE THIS URL IF NEEDED) ======
+    const EXPERIENCE_URL = "/experience/"; // <-- set your actual experience page URL
 
     const timings = {
-      introHold: 550,
-      introFade: 650,
-      leafApproach: 1650,
-      leafSettle: 260,
-      bubbleDelay: 120,
-      bubbleHold: 900,
-      fadeOut: 700
+      introHold: 550,        // time text stays before fading out
+      introFade: 650,        // matches CSS intro transition
+      leafApproach: 1650,    // duration of spin+zoom-in
+      leafSettle: 280,       // small settle after landing
+      bubbleDelay: 120,      // delay before bubble shows after landing
+      bubbleHold: 900,       // time bubble stays visible
+      fadeOut: 700           // matches overlay transition
     };
 
+    const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
     const intro = document.getElementById("introText");
-    const leaf = document.getElementById("leafWrap");
+    const leafWrap = document.getElementById("leafWrap");
     const bubble = document.getElementById("bubble");
     const overlay = document.getElementById("fadeOverlay");
 
-    function easeOutCubic(t){
-      return 1 - Math.pow(1 - t, 3);
-    }
+    // Preload the next page a bit (helps the transition feel real)
+    const preload = document.createElement("link");
+    preload.rel = "prefetch";
+    preload.href = EXPERIENCE_URL;
+    document.head.appendChild(preload);
 
+    function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
     function easeOutBack(t){
-      const c1 = 1.7;
-      return 1 + c1 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+      const c1 = 1.70158;
+      const c3 = c1 + 1;
+      return 1 + c3*Math.pow(t-1,3) + c1*Math.pow(t-1,2);
     }
 
-    function setLeaf(opacity, scale, rotZ, tiltX){
-      leaf.style.opacity = opacity;
-      leaf.style.transform =
-        `scale(${scale}) rotateX(${tiltX}deg) rotateZ(${rotZ}deg)`;
+    // Z-axis spin (wheel spin) + optional X-tilt for depth
+    function setLeaf(opacity, scale, rotZdeg, tiltXdeg = 0){
+      leafWrap.style.opacity = opacity;
+      leafWrap.style.transform =
+        `translateY(0px) scale(${scale}) rotateX(${tiltXdeg}deg) rotateZ(${rotZdeg}deg)`;
     }
 
-    function wait(ms){
-      return new Promise(r => setTimeout(r, ms));
-    }
+    async function wait(ms){ return new Promise(r => setTimeout(r, ms)); }
 
     async function run(){
+      // Reduced motion: quick, classy sequence
+      if (reduceMotion){
+        await wait(350);
+        intro.classList.add("off");
+        await wait(200);
+        setLeaf(1, 1.0, 0, 0);
+        bubble.classList.add("on");
+        await wait(700);
+        overlay.classList.add("on");
+        await wait(350);
+        window.location.href = EXPERIENCE_URL;
+        return;
+      }
+
+      // 1) Hold intro, then fade it out
       await wait(timings.introHold);
       intro.classList.add("off");
       await wait(timings.introFade);
 
+      // 2) Animate leaf approaching: fade in + spin + scale up
       const start = performance.now();
+      const dur = timings.leafApproach;
 
-      function animate(now){
-        const t = Math.min(1, (now - start) / timings.leafApproach);
+      function frame(now){
+        const t = Math.min(1, (now - start) / dur);
         const e = easeOutCubic(t);
 
+        // scale from 0.55 -> 1.08 (slight overshoot)
         const scale = 0.55 + (1.08 - 0.55) * e;
-        const rot   = 900 * t;
-        const tilt  = 14 + (4 - 14) * e;
-        const op    = Math.min(1, t * 1.6);
 
-        setLeaf(op, scale, rot, tilt);
+        // Z-spin from 0 -> 900 degrees (~2.5 spins) for "medium pace"
+        const rot = 900 * t;
 
-        if(t < 1){
-          requestAnimationFrame(animate);
+        /* CHANGED: smaller tilt range = more “circular” looking spin */
+        const tilt = 6 + (0 - 6) * e;
+
+        // opacity from 0 -> 1 quickly in first half
+        const opacity = Math.min(1, t * 1.6);
+
+        setLeaf(opacity, scale, rot, tilt);
+
+        if (t < 1){
+          requestAnimationFrame(frame);
         } else {
-          settle();
-        }
-      }
+          // 3) Settle/land upright with a tiny "back" ease
+          const settleStart = performance.now();
+          const settleDur = timings.leafSettle;
 
-      function settle(){
-        const start2 = performance.now();
+          function settleFrame(n2){
+            const tt = Math.min(1, (n2 - settleStart) / settleDur);
+            const ee = easeOutBack(tt);
 
-        function settleFrame(now2){
-          const t = Math.min(1, (now2 - start2) / timings.leafSettle);
-          const e = easeOutBack(t);
-          const s = 1.08 + (1.0 - 1.08) * e;
+            // bring scale from 1.08 down to 1.00
+            const s = 1.08 + (1.00 - 1.08) * ee;
 
-          setLeaf(1, s, 0, 0);
+            // land upright (no tilt, no rotation)
+            setLeaf(1, s, 0, 0);
 
-          if(t < 1){
-            requestAnimationFrame(settleFrame);
-          } else {
-            afterLand();
+            if (tt < 1) requestAnimationFrame(settleFrame);
+            else afterLand();
           }
+          requestAnimationFrame(settleFrame);
         }
-
-        requestAnimationFrame(settleFrame);
       }
 
-      requestAnimationFrame(animate);
+      requestAnimationFrame(frame);
     }
 
     async function afterLand(){
+      // 4) Bubble appears
       await wait(timings.bubbleDelay);
       bubble.classList.add("on");
 
+      // 5) Hold bubble, then fade out to experience page
       await wait(timings.bubbleHold);
       overlay.classList.add("on");
-
       await wait(timings.fadeOut);
       window.location.href = EXPERIENCE_URL;
     }
