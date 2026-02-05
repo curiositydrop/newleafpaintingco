@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Preparing Your Experience… | New Leaf Painting Co.</title>
+
+  <style>
+    :root{
+      --bg:#ffffff;
+      --green:#1f7a3a; /* swap with your exact site green */
+      --text:#1f7a3a;
+    }
+
+    html,body{
+      height:100%;
+      margin:0;
+      background:var(--bg);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .stage{
+      position:relative;
+      height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+    }
+
+    /* Full-screen fade overlay (for final fade-out) */
+    .fadeOverlay{
+      position:absolute;
+      inset:0;
+      background:var(--bg);
+      opacity:0;
+      pointer-events:none;
+      transition: opacity 700ms ease;
+      z-index:50;
+    }
+    .fadeOverlay.on{ opacity:1; }
+
+    /* Intro line */
+    .intro{
+      position:absolute;
+      text-align:center;
+      color:var(--text);
+      font-weight:700;
+      letter-spacing:.2px;
+      font-size: clamp(16px, 2.2vw, 22px);
+      opacity:1;
+      transition: opacity 650ms ease;
+      padding: 0 18px;
+      z-index:5;
+    }
+    .intro.off{ opacity:0; }
+
+    /* Leaf wrapper so we can animate via JS transforms */
+    .leafWrap{
+      position:absolute;
+      width:min(340px, 72vw);
+      aspect-ratio: 1 / 1;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      opacity:0;
+      transform: translateY(0) scale(0.55) rotateY(0deg);
+      will-change: transform, opacity;
+      z-index:10;
+    }
+
+    .leafImg{
+      width:100%;
+      height:auto;
+      display:block;
+      user-select:none;
+      -webkit-user-drag:none;
+      pointer-events:none;
+      filter: drop-shadow(0 18px 24px rgba(0,0,0,.12));
+    }
+
+    /* Speech bubble */
+    .bubble{
+      position:absolute;
+      top: 52%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(.96);
+      background:#fff;
+      border:2px solid rgba(31,122,58,.18);
+      color:var(--green);
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-weight:800;
+      letter-spacing:.1px;
+      font-size: clamp(14px, 2vw, 18px);
+      opacity:0;
+      transition: opacity 450ms ease, transform 450ms ease;
+      box-shadow: 0 12px 22px rgba(0,0,0,.08);
+      z-index:20;
+      white-space:nowrap;
+    }
+
+    .bubble::after{
+      content:"";
+      position:absolute;
+      left: 18px;
+      bottom: -10px;
+      width: 14px;
+      height: 14px;
+      background:#fff;
+      border-left:2px solid rgba(31,122,58,.18);
+      border-bottom:2px solid rgba(31,122,58,.18);
+      transform: rotate(45deg);
+    }
+
+    .bubble.on{
+      opacity:1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    /* Reduced motion accessibility */
+    @media (prefers-reduced-motion: reduce){
+      .intro, .fadeOverlay, .bubble{ transition: none !important; }
+      .leafWrap{ will-change:auto; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="stage" aria-label="Preparing your experience">
+    <div class="intro" id="introText">Just a moment, preparing your experience.</div>
+
+    <div class="leafWrap" id="leafWrap" aria-hidden="true">
+      <!-- Replace src with your prop-free leaf image -->
+      <img class="leafImg" src="3853F55F-F2AB-4931-BCDE-033BBDB26E1C.png" alt="" />
+    </div>
+
+    <div class="bubble" id="bubble">your experience begins now.</div>
+
+    <div class="fadeOverlay" id="fadeOverlay"></div>
+  </main>
+
+  <script>
+    // ====== CONFIG ======
+    const EXPERIENCE_URL = "/experience/"; // <-- set your actual experience page URL
+    const timings = {
+      introHold: 550,        // time text stays before fading out
+      introFade: 650,        // matches CSS intro transition
+      leafApproach: 1650,    // duration of spin+zoom-in
+      leafSettle: 280,       // small settle after landing
+      bubbleDelay: 120,      // delay before bubble shows after landing
+      bubbleHold: 900,       // time bubble stays visible
+      fadeOut: 700           // matches overlay transition
+    };
+
+    const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const intro = document.getElementById("introText");
+    const leafWrap = document.getElementById("leafWrap");
+    const bubble = document.getElementById("bubble");
+    const overlay = document.getElementById("fadeOverlay");
+
+    // Preload the next page a bit (helps the transition feel real)
+    const preload = document.createElement("link");
+    preload.rel = "prefetch";
+    preload.href = EXPERIENCE_URL;
+    document.head.appendChild(preload);
+
+    function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
+    function easeOutBack(t){
+      // nice little "land" feel
+      const c1 = 1.70158;
+      const c3 = c1 + 1;
+      return 1 + c3*Math.pow(t-1,3) + c1*Math.pow(t-1,2);
+    }
+
+    function setLeaf(opacity, scale, rotYdeg){
+      leafWrap.style.opacity = opacity;
+      leafWrap.style.transform = `translateY(0px) scale(${scale}) rotateY(${rotYdeg}deg)`;
+    }
+
+    async function wait(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+    async function run(){
+      // If reduced motion, just do a quick, classy sequence
+      if (reduceMotion){
+        intro.textContent = "Just a moment, preparing your experience.";
+        await wait(350);
+        intro.classList.add("off");
+        await wait(200);
+        setLeaf(1, 1.0, 0);
+        bubble.classList.add("on");
+        await wait(700);
+        overlay.classList.add("on");
+        await wait(350);
+        window.location.href = EXPERIENCE_URL;
+        return;
+      }
+
+      // 1) Hold intro, then fade it out
+      await wait(timings.introHold);
+      intro.classList.add("off");
+      await wait(timings.introFade);
+
+      // 2) Animate leaf approaching: fade in + spin + scale up
+      const start = performance.now();
+      const dur = timings.leafApproach;
+
+      function frame(now){
+        const t = Math.min(1, (now - start) / dur);
+        const e = easeOutCubic(t);
+
+        // scale from 0.55 -> 1.08 (slight overshoot)
+        const scale = 0.55 + (1.08 - 0.55) * e;
+
+        // rotateY from 0 -> 720 degrees (2 full spins)
+        const rot = 720 * t;
+
+        // opacity from 0 -> 1 quickly in first half
+        const opacity = Math.min(1, t * 1.6);
+
+        setLeaf(opacity, scale, rot);
+
+        if (t < 1){
+          requestAnimationFrame(frame);
+        } else {
+          // 3) Settle/land upright with a tiny "back" ease
+          const settleStart = performance.now();
+          const settleDur = timings.leafSettle;
+
+          function settleFrame(n2){
+            const tt = Math.min(1, (n2 - settleStart) / settleDur);
+            const ee = easeOutBack(tt);
+
+            // bring scale from 1.08 down to 1.00
+            const s = 1.08 + (1.00 - 1.08) * ee;
+
+            setLeaf(1, s, 0);
+
+            if (tt < 1) requestAnimationFrame(settleFrame);
+            else afterLand();
+          }
+          requestAnimationFrame(settleFrame);
+        }
+      }
+
+      requestAnimationFrame(frame);
+    }
+
+    async function afterLand(){
+      // 4) Bubble appears
+      await wait(timings.bubbleDelay);
+      bubble.classList.add("on");
+
+      // 5) Hold bubble, then fade out to experience page
+      await wait(timings.bubbleHold);
+      overlay.classList.add("on");
+      await wait(timings.fadeOut);
+      window.location.href = EXPERIENCE_URL;
+    }
+
+    // Kick it off
+    run();
+  </script>
+</body>
+</html>
