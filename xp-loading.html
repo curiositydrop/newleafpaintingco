@@ -8,7 +8,7 @@
   <style>
     :root{
       --bg:#ffffff;
-      --green:#1f7a3a; /* swap with your exact site green */
+      --green:#1f7a3a; /* update if needed */
       --text:#1f7a3a;
     }
 
@@ -26,9 +26,7 @@
       align-items:center;
       justify-content:center;
       overflow:hidden;
-
-      /* CHANGED: higher perspective = less “oval” distortion */
-      perspective: 1200px;
+      perspective:1200px; /* flatter perspective = less “oval” */
     }
 
     /* Full-screen fade overlay (for final fade-out) */
@@ -58,7 +56,7 @@
     }
     .intro.off{ opacity:0; }
 
-    /* Leaf wrapper so we can animate via JS transforms */
+    /* Leaf wrapper: handles scale + optional 3D tilt */
     .leafWrap{
       position:absolute;
       width:min(340px, 72vw);
@@ -67,11 +65,12 @@
       align-items:center;
       justify-content:center;
       opacity:0;
-      transform: translateY(0) scale(0.55) rotateX(6deg) rotateZ(0deg);
+      transform: translateY(0px) scale(0.55) rotateX(6deg);
       will-change: transform, opacity;
       z-index:10;
     }
 
+    /* Leaf image: handles rotation (spin pivot lives here) */
     .leafImg{
       width:100%;
       height:auto;
@@ -80,16 +79,19 @@
       -webkit-user-drag:none;
       pointer-events:none;
       filter: drop-shadow(0 18px 24px rgba(0,0,0,.12));
+      will-change: transform;
+
+      /* ✅ TUNE THIS if it still “wobbles”
+         Try: 50% 52%  /  50% 55%  /  50% 58%  /  50% 60% */
+      transform-origin: 50% 55%;
+      transform: rotateZ(0deg);
     }
 
     /* Speech bubble */
     .bubble{
       position:absolute;
-
-      /* CHANGED: moved up so it sits above the image more */
-      top: 40%;
-
-      left: 50%;
+      top:40%; /* moved up above the image */
+      left:50%;
       transform: translate(-50%, -50%) scale(.96);
       background:#fff;
       border:2px solid rgba(31,122,58,.18);
@@ -109,13 +111,10 @@
     .bubble::after{
       content:"";
       position:absolute;
-
-      /* CHANGED: point tail downward from bubble (works better when bubble is above) */
-      left: 22px;
-      bottom: -10px;
-
-      width: 14px;
-      height: 14px;
+      left:22px;
+      bottom:-10px;
+      width:14px;
+      height:14px;
       background:#fff;
       border-left:2px solid rgba(31,122,58,.18);
       border-bottom:2px solid rgba(31,122,58,.18);
@@ -130,7 +129,7 @@
     /* Reduced motion accessibility */
     @media (prefers-reduced-motion: reduce){
       .intro, .fadeOverlay, .bubble{ transition: none !important; }
-      .leafWrap{ will-change:auto; }
+      .leafWrap, .leafImg{ will-change:auto; }
     }
   </style>
 </head>
@@ -140,9 +139,10 @@
     <div class="intro" id="introText">Just a moment, preparing your experience.</div>
 
     <div class="leafWrap" id="leafWrap" aria-hidden="true">
-      <!-- NOTE: you said you don't have /assets; use a relative path if needed -->
-      <!-- If the PNG is in the same folder as this HTML file, use: src="3853F55F-F2AB-4931-BCDE-033BBDB26E1C.png" -->
-      <img class="leafImg" src="3853F55F-F2AB-4931-BCDE-033BBDB26E1C.png" alt="" />
+      <!-- Put the PNG in the same folder as this HTML file -->
+      <img class="leafImg" id="leafImg"
+           src="3853F55F-F2AB-4931-BCDE-033BBDB26E1C.png"
+           alt="" />
     </div>
 
     <div class="bubble" id="bubble">your experience begins now.</div>
@@ -155,19 +155,20 @@
     const EXPERIENCE_URL = "/experience/"; // <-- set your actual experience page URL
 
     const timings = {
-      introHold: 550,        // time text stays before fading out
-      introFade: 650,        // matches CSS intro transition
-      leafApproach: 1650,    // duration of spin+zoom-in
-      leafSettle: 280,       // small settle after landing
-      bubbleDelay: 120,      // delay before bubble shows after landing
-      bubbleHold: 900,       // time bubble stays visible
-      fadeOut: 700           // matches overlay transition
+      introHold: 550,
+      introFade: 650,
+      leafApproach: 1650,
+      leafSettle: 280,
+      bubbleDelay: 120,
+      bubbleHold: 900,
+      fadeOut: 700
     };
 
     const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const intro = document.getElementById("introText");
     const leafWrap = document.getElementById("leafWrap");
+    const leafImg  = document.getElementById("leafImg");
     const bubble = document.getElementById("bubble");
     const overlay = document.getElementById("fadeOverlay");
 
@@ -184,11 +185,13 @@
       return 1 + c3*Math.pow(t-1,3) + c1*Math.pow(t-1,2);
     }
 
-    // Z-axis spin (wheel spin) + optional X-tilt for depth
+    // Wrapper: translate/scale/tilt. Image: rotateZ spin (stable pivot).
     function setLeaf(opacity, scale, rotZdeg, tiltXdeg = 0){
       leafWrap.style.opacity = opacity;
       leafWrap.style.transform =
-        `translateY(0px) scale(${scale}) rotateX(${tiltXdeg}deg) rotateZ(${rotZdeg}deg)`;
+        `translateY(0px) scale(${scale}) rotateX(${tiltXdeg}deg)`;
+
+      leafImg.style.transform = `rotateZ(${rotZdeg}deg)`;
     }
 
     async function wait(ms){ return new Promise(r => setTimeout(r, ms)); }
@@ -227,7 +230,7 @@
         // Z-spin from 0 -> 900 degrees (~2.5 spins) for "medium pace"
         const rot = 900 * t;
 
-        /* CHANGED: smaller tilt range = more “circular” looking spin */
+        // smaller tilt range = more “circular” looking spin
         const tilt = 6 + (0 - 6) * e;
 
         // opacity from 0 -> 1 quickly in first half
