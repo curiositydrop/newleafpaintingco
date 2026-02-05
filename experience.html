@@ -769,12 +769,12 @@ Serving Southern Maine
 
     // ✅ WHERE TO CHANGE LEAF PRIZES:
     const leafPrizes = [
-      "10% off labor (up to $300)",
-      "$150 off any interior project",
-      "Free color consult + sample plan",
-      "Free upgrade: crisp trim touch-ups (small add-on)",
-      "You found the decoy 😈 ($50 off — still a win)"
-    ];
+  "$100 off any interior project",
+  "10% off labor (up to $350)",
+  "Free premium trim upgrade (doors + baseboards for one room)",
+  "One free can of paint for your project",
+  "Free upgrade to washable, scuff-resistant wall paint"
+];
 
     function openWinModal({title, pill, text, nextLabel="Next", onNext=null}){
       const modal = document.getElementById("winModal");
@@ -887,13 +887,13 @@ Serving Southern Maine
 
     // ✅ WHERE TO CHANGE SPIN PRIZES:
     const spinPrizes = [
-      "+$100 off",
-      "Free gallon of paint*",
-      "5% off invoice",
-      "Free color consult",
-      "Nothing this time 😈",
-      "Free upgrade: extra prep detail"
-    ];
+  "Additional $75 off your project",
+  "Additional $100 off your project",
+  "Free accent wall (labor only)",
+  "Free closet repaint",
+  "Free small bathroom repaint",
+  "Nothing this time 😈"
+];
 
     spinBtn.addEventListener("click", () => {
       if(!leafWin) return;
