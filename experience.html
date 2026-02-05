@@ -21,6 +21,16 @@
     html,body{ margin:0; padding:0; background:var(--bg); color:var(--text); overflow-x:hidden; }
     a{ color:inherit; text-decoration:none; }
 
+    /* ✅ Fade IN the experience page from black (pairs with the loader’s fade to black) */
+    .experienceFadeIn{
+      opacity: 0;
+      animation: fadeInFromBlack 650ms ease forwards;
+    }
+    @keyframes fadeInFromBlack{
+      from{ opacity: 0; }
+      to{ opacity: 1; }
+    }
+
     /* Ambient portal background (stable) */
     .portal-bg{
       position:fixed; inset:0; z-index:-2;
@@ -533,525 +543,526 @@
 </head>
 
 <body>
-  <div class="portal-bg"></div>
-  <div class="grain"></div>
+  <div class="experienceFadeIn">
+    <div class="portal-bg"></div>
+    <div class="grain"></div>
 
-  <div class="wrap">
-    <!-- Top bar -->
-    <div class="topbar">
-      <div class="leaf-brand">
-        <div class="leaf-logo">
-          <!-- Experience logo: holiday / special vibe -->
-          <img src="FD7AB547-3907-41B6-9529-9560297A038C.png" alt="New Leaf Mascot">
+    <div class="wrap">
+      <!-- Top bar -->
+      <div class="topbar">
+        <div class="leaf-brand">
+          <div class="leaf-logo">
+            <!-- Experience logo: holiday / special vibe -->
+            <img src="FD7AB547-3907-41B6-9529-9560297A038C.png" alt="New Leaf Mascot">
+          </div>
+          <div class="leaf-title">
+            <strong>New Leaf Painting Co.</strong>
+            <span>The Experience Portal</span>
+          </div>
         </div>
-        <div class="leaf-title">
-          <strong>New Leaf Painting Co.</strong>
-          <span>The Experience Portal</span>
+
+        <div class="top-actions">
+          <a class="nl-btn ghost" href="xp-home.html">Home</a>
+          <a class="nl-btn" href="past-projects.html">Past Projects</a>
+          <a class="nl-btn primary" href="#" data-contact-open="1">Get Free Estimate</a>
         </div>
       </div>
 
-      <div class="top-actions">
-        <a class="nl-btn ghost" href="xp-home.html">Home</a>
-        <a class="nl-btn" href="past-projects.html">Past Projects</a>
-        <a class="nl-btn primary" href="#" data-contact-open="1">Get Free Estimate</a>
-      </div>
-    </div>
-
-    <!-- Hero -->
-    <section class="hero">
-      <h1>Welcome to The Experience</h1>
-      <p>
-        At New Leaf Painting, we make boring… fun.
+      <!-- Hero -->
+      <section class="hero">
+        <h1>Welcome to The Experience</h1>
+        <p>
+          At New Leaf Painting, we make boring… fun.
 You just found a quality, local painter who does things different — on purpose.
 <b><u>Pick a Leaf, win something, then try your bonus spin.</u></b>
 Serving Southern Maine
-      </p>
-
-      <div class="type-line" aria-label="Portal message">
-        <span id="typeText"></span><span class="cursor"></span>
-      </div>
-    </section>
-
-    <div class="grid">
-
-      <!-- PICK A LEAF -->
-      <section class="card">
-        <h2>Pick a Leaf</h2>
-        <p><b>One pick per project address, must schedule estimate within 14 days of winning.</b> Choose wisely… then we’ll unlock a bonus spin.</p>
-
-        <div class="leaf-grid" id="leafGrid">
-          <div class="leaf-card" data-leaf="Chest Leaf" data-img="60D479FE-6981-4386-AA4A-189873CE108B.png">
-            <img src="60D479FE-6981-4386-AA4A-189873CE108B.png" alt="Leaf holding treasure chest">
-            <strong>Chest Leaf</strong>
-            <small>This one looks expensive… 👀 but he loves a good plot twist.</small>
-          </div>
-
-          <div class="leaf-card" data-leaf="Roller Leaf" data-img="0C935B1F-E633-43E1-A472-29A628845FB3.png">
-            <img src="0C935B1F-E633-43E1-A472-29A628845FB3.png" alt="Leaf holding paint roller">
-            <strong>Roller Leaf</strong>
-            <small>This one feels safe... But safe isnt always lucky.</small>
-          </div>
-
-          <div class="leaf-card" data-leaf="Brush Leaf" data-img="D20E363A-FA00-4FC9-8E3F-E29E9DAB17DB.png">
-            <img src="D20E363A-FA00-4FC9-8E3F-E29E9DAB17DB.png" alt="Leaf holding paint brush">
-            <strong>Brush Leaf</strong>
-            <small>This one is creative... bit you never know wuat you'll get.</small>
-          </div>
-        </div>
-
-        <div class="status-row">
-          <div class="status-pill">Leaf pick: <b id="leafStatus">Not chosen</b></div>
-          <button class="nl-btn primary" id="claimBtn" disabled>Claim your win</button>
-        </div>
-      </section>
-
-      <!-- BONUS SPIN -->
-      <section class="card" id="spinCard">
-        <h2>Bonus Spin</h2>
-        <p class="spin-note">
-          After you pick a Leaf, you get <b>one</b> bonus spin for a small extra perk.
-          You won’t always hit — that’s the fun.
         </p>
 
-        <div class="spin-wrap">
-          <div class="wheel-area">
-            <div class="pointer" aria-hidden="true"></div>
-            <div class="wheel locked" id="wheel">
-              <!-- <div class="wheel-labels" aria-hidden="true" id="wheelLabels"></div> -->
+        <div class="type-line" aria-label="Portal message">
+          <span id="typeText"></span><span class="cursor"></span>
+        </div>
+      </section>
+
+      <div class="grid">
+
+        <!-- PICK A LEAF -->
+        <section class="card">
+          <h2>Pick a Leaf</h2>
+          <p><b>One pick per project address, must schedule estimate within 14 days of winning.</b> Choose wisely… then we’ll unlock a bonus spin.</p>
+
+          <div class="leaf-grid" id="leafGrid">
+            <div class="leaf-card" data-leaf="Chest Leaf" data-img="60D479FE-6981-4386-AA4A-189873CE108B.png">
+              <img src="60D479FE-6981-4386-AA4A-189873CE108B.png" alt="Leaf holding treasure chest">
+              <strong>Chest Leaf</strong>
+              <small>This one looks expensive… 👀 but he loves a good plot twist.</small>
             </div>
-            <button class="nl-btn primary" id="spinBtn" disabled>Spin (1 try)</button>
+
+            <div class="leaf-card" data-leaf="Roller Leaf" data-img="0C935B1F-E633-43E1-A472-29A628845FB3.png">
+              <img src="0C935B1F-E633-43E1-A472-29A628845FB3.png" alt="Leaf holding paint roller">
+              <strong>Roller Leaf</strong>
+              <small>This one feels safe... But safe isnt always lucky.</small>
+            </div>
+
+            <div class="leaf-card" data-leaf="Brush Leaf" data-img="D20E363A-FA00-4FC9-8E3F-E29E9DAB17DB.png">
+              <img src="D20E363A-FA00-4FC9-8E3F-E29E9DAB17DB.png" alt="Leaf holding paint brush">
+              <strong>Brush Leaf</strong>
+              <small>This one is creative... bit you never know wuat you'll get.</small>
+            </div>
           </div>
 
-          <div>
-            <div class="status-pill">Spin result: <b id="spinStatus">Not spun</b></div>
-            <p style="margin-top:10px; color: rgba(255,255,255,.76);">
-              Tip: If you claim your win, your email will automatically include what you won from
-              <b>Pick a Leaf</b> and your <b>Bonus Spin</b>.
-            </p>
+          <div class="status-row">
+            <div class="status-pill">Leaf pick: <b id="leafStatus">Not chosen</b></div>
+            <button class="nl-btn primary" id="claimBtn" disabled>Claim your win</button>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <!-- ASK THE LEAF -->
-      <section class="card">
-        <!-- ✅ UPDATED: mascot left of the title -->
-        <div class="ask-leaf-head">
-          <!-- CHANGE THIS IMAGE SRC to your no-prop leaf file name -->
-          <img src="3853F55F-F2AB-4931-BCDE-033BBDB26E1C.png" alt="Ask the Leaf">
-          <h2 style="margin:0;">Ask the Leaf</h2>
-        </div>
-        <p>Quick answers (without the salesy vibes). Tap one:</p>
+        <!-- BONUS SPIN -->
+        <section class="card" id="spinCard">
+          <h2>Bonus Spin</h2>
+          <p class="spin-note">
+            After you pick a Leaf, you get <b>one</b> bonus spin for a small extra perk.
+            You won’t always hit — that’s the fun.
+          </p>
 
-        <div class="qa">
-          <button type="button" data-a="a1">How do I know you’re not “one of those painters”?</button>
-          <div class="answer" id="a1">Fair question. The difference is prep + protection + cleanup. We mask properly, protect floors, cut clean lines, and leave the place looking better than we found it.</div>
+          <div class="spin-wrap">
+            <div class="wheel-area">
+              <div class="pointer" aria-hidden="true"></div>
+              <div class="wheel locked" id="wheel">
+                <!-- <div class="wheel-labels" aria-hidden="true" id="wheelLabels"></div> -->
+              </div>
+              <button class="nl-btn primary" id="spinBtn" disabled>Spin (1 try)</button>
+            </div>
 
-          <button type="button" data-a="a2">Do you always do two coats?</button>
-          <div class="answer" id="a2">Yes — two coats is standard. If coverage needs more, we don’t play games. The goal is a finished look, not a rushed look.</div>
+            <div>
+              <div class="status-pill">Spin result: <b id="spinStatus">Not spun</b></div>
+              <p style="margin-top:10px; color: rgba(255,255,255,.76);">
+                Tip: If you claim your win, your email will automatically include what you won from
+                <b>Pick a Leaf</b> and your <b>Bonus Spin</b>.
+              </p>
+            </div>
+          </div>
+        </section>
 
-          <button type="button" data-a="a3">Cabinets… can you really make them look factory?</button>
-          <div class="answer" id="a3">That’s the goal. Proper cleaning/degreasing, sanding, correct primer, and the right topcoat + spray technique makes all the difference.</div>
-        
-          <button type="button" data-a="a4">Do you guarantee your work?</button>
-          <div class="answer" id="a4">Absolutely. If something isn’t right, we fix it. We stand behind our work because our name is on every job we do.</div>
+        <!-- ASK THE LEAF -->
+        <section class="card">
+          <!-- ✅ UPDATED: mascot left of the title -->
+          <div class="ask-leaf-head">
+            <!-- CHANGE THIS IMAGE SRC to your no-prop leaf file name -->
+            <img src="3853F55F-F2AB-4931-BCDE-033BBDB26E1C.png" alt="Ask the Leaf">
+            <h2 style="margin:0;">Ask the Leaf</h2>
+          </div>
+          <p>Quick answers (without the salesy vibes). Tap one:</p>
+
+          <div class="qa">
+            <button type="button" data-a="a1">How do I know you’re not “one of those painters”?</button>
+            <div class="answer" id="a1">Fair question. The difference is prep + protection + cleanup. We mask properly, protect floors, cut clean lines, and leave the place looking better than we found it.</div>
+
+            <button type="button" data-a="a2">Do you always do two coats?</button>
+            <div class="answer" id="a2">Yes — two coats is standard. If coverage needs more, we don’t play games. The goal is a finished look, not a rushed look.</div>
+
+            <button type="button" data-a="a3">Cabinets… can you really make them look factory?</button>
+            <div class="answer" id="a3">That’s the goal. Proper cleaning/degreasing, sanding, correct primer, and the right topcoat + spray technique makes all the difference.</div>
           
-          <button type="button" data-a="a5">How long does a typical room take?</button>
-          <div class="answer" id="a5">Most standard rooms take 1 day. Larger rooms or heavy prep can take a bit longer, but we’ll always give you a clear timeline before we start.</div>
+            <button type="button" data-a="a4">Do you guarantee your work?</button>
+            <div class="answer" id="a4">Absolutely. If something isn’t right, we fix it. We stand behind our work because our name is on every job we do.</div>
+            
+            <button type="button" data-a="a5">How long does a typical room take?</button>
+            <div class="answer" id="a5">Most standard rooms take 1 day. Larger rooms or heavy prep can take a bit longer, but we’ll always give you a clear timeline before we start.</div>
 
-          <button type="button" data-a="a6">Do I need to move furniture?</button>
-          <div class="answer" id="a6">We can help move light furniture and cover everything. We just ask that small valuables and fragile items be cleared beforehand.</div>
+            <button type="button" data-a="a6">Do I need to move furniture?</button>
+            <div class="answer" id="a6">We can help move light furniture and cover everything. We just ask that small valuables and fragile items be cleared beforehand.</div>
 
-          <button type="button" data-a="a7">Do you protect floors and surfaces?</button>
-          <div class="answer" id="a7">Yes — drop cloths, plastic, masking, the whole deal. We treat your home like it’s our own and leave it clean when we’re done.</div>
+            <button type="button" data-a="a7">Do you protect floors and surfaces?</button>
+            <div class="answer" id="a7">Yes — drop cloths, plastic, masking, the whole deal. We treat your home like it’s our own and leave it clean when we’re done.</div>
 
-          <button type="button" data-a="a8">Why do painter prices vary so much?</button>
-          <div class="answer" id="a8">Prep, materials, experience, and time. Some painters rush and skip steps. We focus on doing it right so it actually lasts.</div>
+            <button type="button" data-a="a8">Why do painter prices vary so much?</button>
+            <div class="answer" id="a8">Prep, materials, experience, and time. Some painters rush and skip steps. We focus on doing it right so it actually lasts.</div>
 
-          <button type="button" data-a="a9">Can you give a price without seeing the job?</button>
-          <div class="answer" id="a9">We can give a rough idea, but accurate pricing always requires seeing the space. That way there are no surprises for either of us.</div>
-       
-          <button type="button" data-a="a10">What paint do you use?</button>
-          <div class="answer" id="a10">We use high-quality, professional grade paints from trusted brands. You can choose colors, finishes, and brands — we’ll guide you.</div>
+            <button type="button" data-a="a9">Can you give a price without seeing the job?</button>
+            <div class="answer" id="a9">We can give a rough idea, but accurate pricing always requires seeing the space. That way there are no surprises for either of us.</div>
+         
+            <button type="button" data-a="a10">What paint do you use?</button>
+            <div class="answer" id="a10">We use high-quality, professional grade paints from trusted brands. You can choose colors, finishes, and brands — we’ll guide you.</div>
 
-          <button type="button" data-a="a11">How long before I can use the room again?</button>
-          <div class="answer" id="a11">Most rooms are dry to the touch within a few hours. Full cure takes longer, but you can usually move back in the same day.</div>
-        </div>
-      </section>
+            <button type="button" data-a="a11">How long before I can use the room again?</button>
+            <div class="answer" id="a11">Most rooms are dry to the touch within a few hours. Full cure takes longer, but you can usually move back in the same day.</div>
+          </div>
+        </section>
 
-    </div>
+      </div>
 
-    <div class="portal-footer">
-      Powered by New Leaf Painting Co. • Southern Maine • “Different on purpose.”
-    </div>
-  </div>
-
-  <!-- WIN MODAL (reused for leaf + spin) -->
-  <div id="winModal" class="modal" role="dialog" aria-modal="true" aria-label="Win modal">
-    <div class="modal-box">
-      <button class="modal-close" type="button" aria-label="Close">&times;</button>
-      <h3 id="winTitle">You won!</h3>
-      <div class="win-pill" id="winPill">Prize: <b>—</b></div>
-      <p id="winText">—</p>
-      <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
-        <button class="nl-btn" id="winClose">Close</button>
-        <button class="nl-btn primary" id="winNext">Next</button>
+      <div class="portal-footer">
+        Powered by New Leaf Painting Co. • Southern Maine • “Different on purpose.”
       </div>
     </div>
-  </div>
 
-  <!-- Estimate Popup -->
-  <div id="contact-popup" class="popup" aria-modal="true" role="dialog" aria-label="Get free estimate popup">
-    <div class="popup-content">
-      <button type="button" class="close" aria-label="Close">&times;</button>
-      <h2>Get free estimate</h2>
-
-      <form id="estimate-form" novalidate>
-        <div class="field">
-          <label for="name">Name</label>
-          <input type="text" id="name" name="name" placeholder="Your name">
+    <!-- WIN MODAL (reused for leaf + spin) -->
+    <div id="winModal" class="modal" role="dialog" aria-modal="true" aria-label="Win modal">
+      <div class="modal-box">
+        <button class="modal-close" type="button" aria-label="Close">&times;</button>
+        <h3 id="winTitle">You won!</h3>
+        <div class="win-pill" id="winPill">Prize: <b>—</b></div>
+        <p id="winText">—</p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+          <button class="nl-btn" id="winClose">Close</button>
+          <button class="nl-btn primary" id="winNext">Next</button>
         </div>
-
-        <div class="field">
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" placeholder="you@email.com">
-        </div>
-
-        <div class="field">
-          <label for="phone">Phone</label>
-          <input type="tel" id="phone" name="phone" placeholder="(207) 555-1234">
-        </div>
-
-        <div class="field">
-          <label for="message">Message</label>
-          <textarea id="message" name="message" rows="4" placeholder="Tell me what you’re looking to paint…"></textarea>
-        </div>
-
-        <button id="estimate-send" type="button">Send</button>
-      </form>
+      </div>
     </div>
-  </div>
 
-  <script>
-    // ------------------------------
-    // WHERE TO CHANGE THINGS (quick map)
-    // ------------------------------
-    // Leaf prizes:   const leafPrizes = [ ... ]
-    // Spin prizes:   const spinPrizes = [ ... ]
-    // Q&A text:      In HTML under <!-- ASK THE LEAF --> (buttons + answers)
+    <!-- Estimate Popup -->
+    <div id="contact-popup" class="popup" aria-modal="true" role="dialog" aria-label="Get free estimate popup">
+      <div class="popup-content">
+        <button type="button" class="close" aria-label="Close">&times;</button>
+        <h2>Get free estimate</h2>
 
-    // ------------------------------
-    // 1) Calm typing line (no delete-loop twitch)
-    // ------------------------------
-    (function(){
-      const lines = [
-        "Portal scan complete… ✅",
-        "Welcome to: The New Leaf Experience.",
-        "Pick a Leaf. Win a deal. Spin for a bonus.",
-        "No spam. Just a fun way to remember us."
-      ];
-      const el = document.getElementById("typeText");
-      let lineIndex = 0;
-      let charIndex = 0;
+        <form id="estimate-form" novalidate>
+          <div class="field">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Your name">
+          </div>
 
-      const typeSpeed = 45;
-      const holdTime  = 1400;
-      const clearTime = 450;
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="you@email.com">
+          </div>
 
-      function typeLine(){
-        const line = lines[lineIndex];
-        el.textContent = line.slice(0, charIndex);
-        charIndex++;
+          <div class="field">
+            <label for="phone">Phone</label>
+            <input type="tel" id="phone" name="phone" placeholder="(207) 555-1234">
+          </div>
 
-        if(charIndex <= line.length){
-          setTimeout(typeLine, typeSpeed);
-        } else {
-          setTimeout(() => {
-            el.textContent = "";
-            charIndex = 0;
-            lineIndex = (lineIndex + 1) % lines.length;
-            setTimeout(typeLine, clearTime);
-          }, holdTime);
+          <div class="field">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="4" placeholder="Tell me what you’re looking to paint…"></textarea>
+          </div>
+
+          <button id="estimate-send" type="button">Send</button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // ------------------------------
+      // WHERE TO CHANGE THINGS (quick map)
+      // ------------------------------
+      // Leaf prizes:   const leafPrizes = [ ... ]
+      // Spin prizes:   const spinPrizes = [ ... ]
+      // Q&A text:      In HTML under <!-- ASK THE LEAF --> (buttons + answers)
+
+      // ------------------------------
+      // 1) Calm typing line (no delete-loop twitch)
+      // ------------------------------
+      (function(){
+        const lines = [
+          "Portal scan complete… ✅",
+          "Welcome to: The New Leaf Experience.",
+          "Pick a Leaf. Win a deal. Spin for a bonus.",
+          "No spam. Just a fun way to remember us."
+        ];
+        const el = document.getElementById("typeText");
+        let lineIndex = 0;
+        let charIndex = 0;
+
+        const typeSpeed = 45;
+        const holdTime  = 1400;
+        const clearTime = 450;
+
+        function typeLine(){
+          const line = lines[lineIndex];
+          el.textContent = line.slice(0, charIndex);
+          charIndex++;
+
+          if(charIndex <= line.length){
+            setTimeout(typeLine, typeSpeed);
+          } else {
+            setTimeout(() => {
+              el.textContent = "";
+              charIndex = 0;
+              lineIndex = (lineIndex + 1) % lines.length;
+              setTimeout(typeLine, clearTime);
+            }, holdTime);
+          }
         }
-      }
-      typeLine();
-    })();
+        typeLine();
+      })();
 
-    // ------------------------------
-    // 2) State
-    // ------------------------------
-    let leafWin = null;
-    let leafPickName = null;
-    let spinWin = null;
-    let spun = false;
+      // ------------------------------
+      // 2) State
+      // ------------------------------
+      let leafWin = null;
+      let leafPickName = null;
+      let spinWin = null;
+      let spun = false;
 
-    // ------------------------------
-    // ✅ 2.5) LocalStorage lock (30 days)
-    // ------------------------------
-    const LS_KEY = "nl_experience_lock_v1";
-    const LS_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+      // ------------------------------
+      // ✅ 2.5) LocalStorage lock (30 days)
+      // ------------------------------
+      const LS_KEY = "nl_experience_lock_v1";
+      const LS_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
-    function nowMs(){ return Date.now(); }
+      function nowMs(){ return Date.now(); }
 
-    function loadLock(){
-      try{
-        const raw = localStorage.getItem(LS_KEY);
-        if(!raw) return null;
-        const data = JSON.parse(raw);
-        if(!data || !data.createdAt) return null;
+      function loadLock(){
+        try{
+          const raw = localStorage.getItem(LS_KEY);
+          if(!raw) return null;
+          const data = JSON.parse(raw);
+          if(!data || !data.createdAt) return null;
 
-        const age = nowMs() - data.createdAt;
-        if(age > LS_TTL_MS){
-          localStorage.removeItem(LS_KEY);
+          const age = nowMs() - data.createdAt;
+          if(age > LS_TTL_MS){
+            localStorage.removeItem(LS_KEY);
+            return null;
+          }
+          return data;
+        } catch(e){
+          try{ localStorage.removeItem(LS_KEY); }catch(_){}
           return null;
         }
-        return data;
-      } catch(e){
-        try{ localStorage.removeItem(LS_KEY); }catch(_){}
-        return null;
-      }
-    }
-
-    function saveLock(partial){
-      const current = loadLock() || { createdAt: nowMs() };
-      const next = Object.assign({}, current, partial);
-      if(!current.createdAt) next.createdAt = nowMs();
-      localStorage.setItem(LS_KEY, JSON.stringify(next));
-    }
-
-    // ------------------------------
-    // 3) Leaf pick logic + obvious win modal
-    // ------------------------------
-    const leafGrid = document.getElementById("leafGrid");
-    const leafStatus = document.getElementById("leafStatus");
-    const claimBtn = document.getElementById("claimBtn");
-
-    // ✅ WHERE TO CHANGE LEAF PRIZES:
-    const leafPrizes = [
-  "$100 off any interior project",
-  "10% off labor (up to $350)",
-  "Free premium trim upgrade (doors + baseboards for one room)",
-  "One free can of paint for your project",
-  "Free upgrade to washable, scuff-resistant wall paint"
-];
-
-    function openWinModal({title, pill, text, nextLabel="Next", onNext=null}){
-      const modal = document.getElementById("winModal");
-      document.getElementById("winTitle").textContent = title;
-      document.getElementById("winPill").innerHTML = pill;
-      document.getElementById("winText").textContent = text;
-
-      modal.style.display = "flex";
-
-      const closeX = modal.querySelector(".modal-close");
-      const closeBtn = document.getElementById("winClose");
-      const nextBtn = document.getElementById("winNext");
-
-      nextBtn.textContent = nextLabel;
-
-      const close = () => { modal.style.display = "none"; cleanup(); };
-      const next = () => {
-        modal.style.display = "none";
-        cleanup();
-        if (typeof onNext === "function") onNext();
-      };
-
-      function cleanup(){
-        closeX.onclick = null;
-        closeBtn.onclick = null;
-        nextBtn.onclick = null;
-        window.removeEventListener("keydown", escClose);
-        modal.onclick = null;
       }
 
-      function escClose(e){
-        if(e.key === "Escape") close();
+      function saveLock(partial){
+        const current = loadLock() || { createdAt: nowMs() };
+        const next = Object.assign({}, current, partial);
+        if(!current.createdAt) next.createdAt = nowMs();
+        localStorage.setItem(LS_KEY, JSON.stringify(next));
       }
 
-      closeX.onclick = close;
-      closeBtn.onclick = close;
-      nextBtn.onclick = next;
+      // ------------------------------
+      // 3) Leaf pick logic + obvious win modal
+      // ------------------------------
+      const leafGrid = document.getElementById("leafGrid");
+      const leafStatus = document.getElementById("leafStatus");
+      const claimBtn = document.getElementById("claimBtn");
 
-      window.addEventListener("keydown", escClose);
-      modal.onclick = (e) => { if(e.target === modal) close(); };
-    }
+      // ✅ WHERE TO CHANGE LEAF PRIZES:
+      const leafPrizes = [
+    "$100 off any interior project",
+    "10% off labor (up to $350)",
+    "Free premium trim upgrade (doors + baseboards for one room)",
+    "One free can of paint for your project",
+    "Free upgrade to washable, scuff-resistant wall paint"
+  ];
 
-    function lockLeafPick(selectedCard, {silent=false} = {}){
-      document.querySelectorAll(".leaf-card").forEach(c => {
-        c.classList.add("disabled");
-        c.classList.remove("selected");
-      });
-      selectedCard.classList.add("selected");
+      function openWinModal({title, pill, text, nextLabel="Next", onNext=null}){
+        const modal = document.getElementById("winModal");
+        document.getElementById("winTitle").textContent = title;
+        document.getElementById("winPill").innerHTML = pill;
+        document.getElementById("winText").textContent = text;
 
-      leafPickName = selectedCard.getAttribute("data-leaf");
-      if(!leafWin){
-        leafWin = leafPrizes[Math.floor(Math.random()*leafPrizes.length)];
+        modal.style.display = "flex";
+
+        const closeX = modal.querySelector(".modal-close");
+        const closeBtn = document.getElementById("winClose");
+        const nextBtn = document.getElementById("winNext");
+
+        nextBtn.textContent = nextLabel;
+
+        const close = () => { modal.style.display = "none"; cleanup(); };
+        const next = () => {
+          modal.style.display = "none";
+          cleanup();
+          if (typeof onNext === "function") onNext();
+        };
+
+        function cleanup(){
+          closeX.onclick = null;
+          closeBtn.onclick = null;
+          nextBtn.onclick = null;
+          window.removeEventListener("keydown", escClose);
+          modal.onclick = null;
+        }
+
+        function escClose(e){
+          if(e.key === "Escape") close();
+        }
+
+        closeX.onclick = close;
+        closeBtn.onclick = close;
+        nextBtn.onclick = next;
+
+        window.addEventListener("keydown", escClose);
+        modal.onclick = (e) => { if(e.target === modal) close(); };
       }
 
-      leafStatus.textContent = leafPickName;
-      claimBtn.disabled = false;
-
-      document.getElementById("wheel").classList.remove("locked");
-      document.getElementById("spinBtn").disabled = false;
-
-      saveLock({ leafPickName, leafWin, spun, spinWin });
-
-      if(!silent){
-        openWinModal({
-          title: "✅ You Won a Deal!",
-          pill: `Leaf Prize: <b>${leafWin}</b>`,
-          text: "Nice. Your deal is locked in. Want a chance at a small bonus too?",
-          nextLabel: "Bonus Spin",
-          onNext: () => {
-            document.getElementById("spinCard").scrollIntoView({behavior:"smooth", block:"start"});
-          }
+      function lockLeafPick(selectedCard, {silent=false} = {}){
+        document.querySelectorAll(".leaf-card").forEach(c => {
+          c.classList.add("disabled");
+          c.classList.remove("selected");
         });
-      }
-    }
+        selectedCard.classList.add("selected");
 
-    leafGrid.addEventListener("click", (e) => {
-      const card = e.target.closest(".leaf-card");
-      if(!card) return;
+        leafPickName = selectedCard.getAttribute("data-leaf");
+        if(!leafWin){
+          leafWin = leafPrizes[Math.floor(Math.random()*leafPrizes.length)];
+        }
 
-      // ✅ hard lock for 30 days if anything exists
-      const existing = loadLock();
-      if(existing && existing.leafWin) return;
+        leafStatus.textContent = leafPickName;
+        claimBtn.disabled = false;
 
-      if(leafWin) return;
-      lockLeafPick(card);
-    });
+        document.getElementById("wheel").classList.remove("locked");
+        document.getElementById("spinBtn").disabled = false;
 
-    claimBtn.addEventListener("click", () => {
-      openEstimatePopup();
-      const msg = document.getElementById("message");
-      const pre = [];
-      if (leafWin) pre.push(`Leaf Prize: ${leafWin}`);
-      if (spinWin) pre.push(`Bonus Spin: ${spinWin}`);
-      if (pre.length){
-        msg.value = (msg.value || "").trim();
-        const add = pre.join("\n");
-        if(!msg.value.includes("Leaf Prize:") && !msg.value.includes("Bonus Spin:")){
-          msg.value = (msg.value ? msg.value + "\n\n" : "") + add;
+        saveLock({ leafPickName, leafWin, spun, spinWin });
+
+        if(!silent){
+          openWinModal({
+            title: "✅ You Won a Deal!",
+            pill: `Leaf Prize: <b>${leafWin}</b>`,
+            text: "Nice. Your deal is locked in. Want a chance at a small bonus too?",
+            nextLabel: "Bonus Spin",
+            onNext: () => {
+              document.getElementById("spinCard").scrollIntoView({behavior:"smooth", block:"start"});
+            }
+          });
         }
       }
-    });
 
-    // ------------------------------
-    // 4) Bonus spin wheel
-    // ------------------------------
-    const spinBtn = document.getElementById("spinBtn");
-    const wheel = document.getElementById("wheel");
-    const spinStatus = document.getElementById("spinStatus");
-    const wheelLabels = document.getElementById("wheelLabels");
+      leafGrid.addEventListener("click", (e) => {
+        const card = e.target.closest(".leaf-card");
+        if(!card) return;
 
-    // ✅ WHERE TO CHANGE SPIN PRIZES:
-    const spinPrizes = [
-  "Additional $75 off your project",
-  "Additional $100 off your project",
-  "Free accent wall (labor only)",
-  "Free closet repaint",
-  "Free small bathroom repaint",
-  "Nothing this time 😈"
-];
+        // ✅ hard lock for 30 days if anything exists
+        const existing = loadLock();
+        if(existing && existing.leafWin) return;
 
-    spinBtn.addEventListener("click", () => {
-      if(!leafWin) return;
-      if(spun) return;
+        if(leafWin) return;
+        lockLeafPick(card);
+      });
 
-      spun = true;
-      spinBtn.disabled = true;
+      claimBtn.addEventListener("click", () => {
+        openEstimatePopup();
+        const msg = document.getElementById("message");
+        const pre = [];
+        if (leafWin) pre.push(`Leaf Prize: ${leafWin}`);
+        if (spinWin) pre.push(`Bonus Spin: ${spinWin}`);
+        if (pre.length){
+          msg.value = (msg.value || "").trim();
+          const add = pre.join("\n");
+          if(!msg.value.includes("Leaf Prize:") && !msg.value.includes("Bonus Spin:")){
+            msg.value = (msg.value ? msg.value + "\n\n" : "") + add;
+          }
+        }
+      });
 
-      spinWin = spinPrizes[Math.floor(Math.random()*spinPrizes.length)];
-      spinStatus.textContent = "Spinning…";
+      // ------------------------------
+      // 4) Bonus spin wheel
+      // ------------------------------
+      const spinBtn = document.getElementById("spinBtn");
+      const wheel = document.getElementById("wheel");
+      const spinStatus = document.getElementById("spinStatus");
+      const wheelLabels = document.getElementById("wheelLabels");
 
-      // ✅ store immediately so refresh can't retry
-      saveLock({ leafPickName, leafWin, spun: true, spinWin });
+      // ✅ WHERE TO CHANGE SPIN PRIZES:
+      const spinPrizes = [
+    "Additional $75 off your project",
+    "Additional $100 off your project",
+    "Free accent wall (labor only)",
+    "Free closet repaint",
+    "Free small bathroom repaint",
+    "Nothing this time 😈"
+  ];
 
-      const extraTurns = 6;
-      const stopIndex = spinPrizes.indexOf(spinWin);
-      const sliceDeg = 360 / spinPrizes.length;
+      spinBtn.addEventListener("click", () => {
+        if(!leafWin) return;
+        if(spun) return;
 
-      const targetDeg =
-        (360 - (stopIndex * sliceDeg)) +
-        (extraTurns * 360) +
-        (Math.random() * (sliceDeg*0.6) - (sliceDeg*0.3));
+        spun = true;
+        spinBtn.disabled = true;
 
-      wheel.style.transform = `rotate(${targetDeg}deg)`;
+        spinWin = spinPrizes[Math.floor(Math.random()*spinPrizes.length)];
+        spinStatus.textContent = "Spinning…";
 
-      setTimeout(() => {
-        spinStatus.textContent = spinWin;
+        // ✅ store immediately so refresh can't retry
         saveLock({ leafPickName, leafWin, spun: true, spinWin });
 
-        openWinModal({
-          title: "🎉 Bonus Spin Result!",
-          pill: `Bonus: <b>${spinWin}</b>`,
-          text: "If you want to lock it in, hit Claim — it will include BOTH wins in the email.",
-          nextLabel: "Claim",
-          onNext: () => {
-            claimBtn.scrollIntoView({behavior:"smooth", block:"center"});
-          }
-        });
-      }, 2700);
-    });
+        const extraTurns = 6;
+        const stopIndex = spinPrizes.indexOf(spinWin);
+        const sliceDeg = 360 / spinPrizes.length;
 
-    // ------------------------------
-    // 5) Ask the leaf toggles
-    // ------------------------------
-    document.querySelectorAll(".qa button[data-a]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const id = btn.getAttribute("data-a");
-        const ans = document.getElementById(id);
-        ans.classList.toggle("show");
+        const targetDeg =
+          (360 - (stopIndex * sliceDeg)) +
+          (extraTurns * 360) +
+          (Math.random() * (sliceDeg*0.6) - (sliceDeg*0.3));
+
+        wheel.style.transform = `rotate(${targetDeg}deg)`;
+
+        setTimeout(() => {
+          spinStatus.textContent = spinWin;
+          saveLock({ leafPickName, leafWin, spun: true, spinWin });
+
+          openWinModal({
+            title: "🎉 Bonus Spin Result!",
+            pill: `Bonus: <b>${spinWin}</b>`,
+            text: "If you want to lock it in, hit Claim — it will include BOTH wins in the email.",
+            nextLabel: "Claim",
+            onNext: () => {
+              claimBtn.scrollIntoView({behavior:"smooth", block:"center"});
+            }
+          });
+        }, 2700);
       });
-    });
 
-    // ------------------------------
-    // 6) Estimate popup wiring
-    // ------------------------------
-    const popup = document.getElementById("contact-popup");
-    const openers = document.querySelectorAll('[data-contact-open="1"]');
-    const closeBtn = popup.querySelector(".close");
+      // ------------------------------
+      // 5) Ask the leaf toggles
+      // ------------------------------
+      document.querySelectorAll(".qa button[data-a]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-a");
+          const ans = document.getElementById(id);
+          ans.classList.toggle("show");
+        });
+      });
 
-    function openEstimatePopup(e){
-      if(e) e.preventDefault();
-      popup.style.display = "flex";
-    }
-    function closeEstimatePopup(){ popup.style.display = "none"; }
+      // ------------------------------
+      // 6) Estimate popup wiring
+      // ------------------------------
+      const popup = document.getElementById("contact-popup");
+      const openers = document.querySelectorAll('[data-contact-open="1"]');
+      const closeBtn = popup.querySelector(".close");
 
-    openers.forEach(o => o.addEventListener("click", openEstimatePopup));
-    closeBtn.addEventListener("click", closeEstimatePopup);
-    window.addEventListener("click", (e)=>{ if(e.target === popup) closeEstimatePopup(); });
-    window.addEventListener("keydown", (e)=>{ if(e.key === "Escape") closeEstimatePopup(); });
-
-    // ------------------------------
-    // 7) Send button -> mailto includes BOTH wins
-    // ------------------------------
-    const sendBtn = document.getElementById("estimate-send");
-    sendBtn.addEventListener("click", ()=>{
-      const name = (document.getElementById("name").value || "").trim();
-      const email = (document.getElementById("email").value || "").trim();
-      const phone = (document.getElementById("phone").value || "").trim();
-      const message = (document.getElementById("message").value || "").trim();
-
-      if (!name || (!email && !phone)) {
-        alert("Please enter your name and either an email or phone number.");
-        return;
+      function openEstimatePopup(e){
+        if(e) e.preventDefault();
+        popup.style.display = "flex";
       }
+      function closeEstimatePopup(){ popup.style.display = "none"; }
 
-      const to = "newleafpaintingcompany@gmail.com";
+      openers.forEach(o => o.addEventListener("click", openEstimatePopup));
+      closeBtn.addEventListener("click", closeEstimatePopup);
+      window.addEventListener("click", (e)=>{ if(e.target === popup) closeEstimatePopup(); });
+      window.addEventListener("keydown", (e)=>{ if(e.key === "Escape") closeEstimatePopup(); });
 
-      const subject = encodeURIComponent(
-        `Estimate Request - ${name}${phone ? " - " + phone : ""}`
-      );
+      // ------------------------------
+      // 7) Send button -> mailto includes BOTH wins
+      // ------------------------------
+      const sendBtn = document.getElementById("estimate-send");
+      sendBtn.addEventListener("click", ()=>{
+        const name = (document.getElementById("name").value || "").trim();
+        const email = (document.getElementById("email").value || "").trim();
+        const phone = (document.getElementById("phone").value || "").trim();
+        const message = (document.getElementById("message").value || "").trim();
 
-      const leafLine = leafWin
-        ? `Leaf Prize: ${leafWin}`
-        : "Leaf Prize: (not selected)";
+        if (!name || (!email && !phone)) {
+          alert("Please enter your name and either an email or phone number.");
+          return;
+        }
 
-      const spinLine = spinWin
-        ? `Bonus Spin: ${spinWin}`
-        : "Bonus Spin: (not spun)";
+        const to = "newleafpaintingcompany@gmail.com";
 
-      const body = encodeURIComponent(
+        const subject = encodeURIComponent(
+          `Estimate Request - ${name}${phone ? " - " + phone : ""}`
+        );
+
+        const leafLine = leafWin
+          ? `Leaf Prize: ${leafWin}`
+          : "Leaf Prize: (not selected)";
+
+        const spinLine = spinWin
+          ? `Bonus Spin: ${spinWin}`
+          : "Bonus Spin: (not spun)";
+
+        const body = encodeURIComponent(
 `Hi Mike,
 
 I'd like a free estimate. Here’s my info:
@@ -1068,130 +1079,131 @@ Project details / message:
 ${message || "(no message)"}
 
 Thanks!`
-      );
+        );
 
-      window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
-      closeEstimatePopup();
-    });
-
-    // ------------------------------
-    // ✅ 8) Restore session from localStorage (30-day lock)
-    // ------------------------------
-    (function restoreFromLocal(){
-      const data = loadLock();
-      if(!data) return;
-
-      leafWin = data.leafWin || null;
-      leafPickName = data.leafPickName || null;
-      spinWin = data.spinWin || null;
-      spun = !!data.spun;
-
-      if(leafWin && leafPickName){
-        const cards = Array.from(document.querySelectorAll(".leaf-card"));
-        const match = cards.find(c => (c.getAttribute("data-leaf") === leafPickName));
-        if(match){
-          lockLeafPick(match, {silent:true});
-        } else {
-          leafStatus.textContent = leafPickName;
-          claimBtn.disabled = false;
-          document.querySelectorAll(".leaf-card").forEach(c => c.classList.add("disabled"));
-          document.getElementById("wheel").classList.remove("locked");
-          document.getElementById("spinBtn").disabled = false;
-        }
-      }
-
-      if(spun){
-        spinStatus.textContent = spinWin ? spinWin : "Spun";
-        spinBtn.disabled = true;
-      }
-    })();
-    // ------------------------------
-// ------------------------------
-// ------------------------------
-// 9) Secret 5-tap reset (logo) - iOS safe + visible counter
-// ------------------------------
-(function(){
-  // Wait a tick to ensure everything above is initialized
-  setTimeout(() => {
-    const logo = document.querySelector(".leaf-logo");
-    if(!logo) return;
-
-    let tapCount = 0;
-    let tapTimer = null;
-
-    // little visual feedback so you know taps are counting
-    const subtitle = document.querySelector(".leaf-title span");
-    const originalSubtitle = subtitle ? subtitle.textContent : "";
-
-    function showCount(){
-      if(!subtitle) return;
-      subtitle.textContent = `Tap reset: ${tapCount}/5`;
-      clearTimeout(tapTimer);
-      tapTimer = setTimeout(() => {
-        tapCount = 0;
-        subtitle.textContent = originalSubtitle;
-      }, 1500);
-    }
-
-    function resetExperience(){
-      // clear lock
-      localStorage.removeItem(LS_KEY);
-
-      // reset state
-      leafWin = null;
-      leafPickName = null;
-      spinWin = null;
-      spun = false;
-
-      // reset UI
-      document.querySelectorAll(".leaf-card").forEach(c => {
-        c.classList.remove("disabled","selected");
+        window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+        closeEstimatePopup();
       });
 
-      const leafStatusEl = document.getElementById("leafStatus");
-      const spinStatusEl = document.getElementById("spinStatus");
-      const claimBtnEl = document.getElementById("claimBtn");
-      const spinBtnEl = document.getElementById("spinBtn");
-      const wheelEl = document.getElementById("wheel");
+      // ------------------------------
+      // ✅ 8) Restore session from localStorage (30-day lock)
+      // ------------------------------
+      (function restoreFromLocal(){
+        const data = loadLock();
+        if(!data) return;
 
-      if(leafStatusEl) leafStatusEl.textContent = "Not chosen";
-      if(spinStatusEl) spinStatusEl.textContent = "Not spun";
-      if(claimBtnEl) claimBtnEl.disabled = true;
-      if(spinBtnEl) spinBtnEl.disabled = true;
-      if(wheelEl){
-        wheelEl.classList.add("locked");
-        wheelEl.style.transform = "rotate(0deg)";
-      }
+        leafWin = data.leafWin || null;
+        leafPickName = data.leafPickName || null;
+        spinWin = data.spinWin || null;
+        spun = !!data.spun;
 
-      if(subtitle) subtitle.textContent = originalSubtitle;
-      tapCount = 0;
-      alert("Experience reset ✔️");
-      location.reload();
-    }
+        if(leafWin && leafPickName){
+          const cards = Array.from(document.querySelectorAll(".leaf-card"));
+          const match = cards.find(c => (c.getAttribute("data-leaf") === leafPickName));
+          if(match){
+            lockLeafPick(match, {silent:true});
+          } else {
+            leafStatus.textContent = leafPickName;
+            claimBtn.disabled = false;
+            document.querySelectorAll(".leaf-card").forEach(c => c.classList.add("disabled"));
+            document.getElementById("wheel").classList.remove("locked");
+            document.getElementById("spinBtn").disabled = false;
+          }
+        }
 
-    function registerTap(e){
-      // stop iOS double tap behavior + keep it from clicking anything else
-      e.preventDefault();
-      e.stopPropagation();
+        if(spun){
+          spinStatus.textContent = spinWin ? spinWin : "Spun";
+          spinBtn.disabled = true;
+        }
+      })();
+      // ------------------------------
+      // ------------------------------
+      // ------------------------------
+      // 9) Secret 5-tap reset (logo) - iOS safe + visible counter
+      // ------------------------------
+      (function(){
+        // Wait a tick to ensure everything above is initialized
+        setTimeout(() => {
+          const logo = document.querySelector(".leaf-logo");
+          if(!logo) return;
 
-      tapCount++;
-      showCount();
+          let tapCount = 0;
+          let tapTimer = null;
 
-      if(tapCount >= 5){
-        resetExperience();
-      }
-    }
+          // little visual feedback so you know taps are counting
+          const subtitle = document.querySelector(".leaf-title span");
+          const originalSubtitle = subtitle ? subtitle.textContent : "";
 
-    logo.style.cursor = "pointer";
-    logo.style.userSelect = "none";
-    logo.style.webkitUserSelect = "none";
+          function showCount(){
+            if(!subtitle) return;
+            subtitle.textContent = `Tap reset: ${tapCount}/5`;
+            clearTimeout(tapTimer);
+            tapTimer = setTimeout(() => {
+              tapCount = 0;
+              subtitle.textContent = originalSubtitle;
+            }, 1500);
+          }
 
-    // iOS reliable tap
-    logo.addEventListener("touchend", registerTap, { passive: false });
-    // fallback
-    logo.addEventListener("click", registerTap);
-  }, 0);
-})();
-  </script>
+          function resetExperience(){
+            // clear lock
+            localStorage.removeItem(LS_KEY);
+
+            // reset state
+            leafWin = null;
+            leafPickName = null;
+            spinWin = null;
+            spun = false;
+
+            // reset UI
+            document.querySelectorAll(".leaf-card").forEach(c => {
+              c.classList.remove("disabled","selected");
+            });
+
+            const leafStatusEl = document.getElementById("leafStatus");
+            const spinStatusEl = document.getElementById("spinStatus");
+            const claimBtnEl = document.getElementById("claimBtn");
+            const spinBtnEl = document.getElementById("spinBtn");
+            const wheelEl = document.getElementById("wheel");
+
+            if(leafStatusEl) leafStatusEl.textContent = "Not chosen";
+            if(spinStatusEl) spinStatusEl.textContent = "Not spun";
+            if(claimBtnEl) claimBtnEl.disabled = true;
+            if(spinBtnEl) spinBtnEl.disabled = true;
+            if(wheelEl){
+              wheelEl.classList.add("locked");
+              wheelEl.style.transform = "rotate(0deg)";
+            }
+
+            if(subtitle) subtitle.textContent = originalSubtitle;
+            tapCount = 0;
+            alert("Experience reset ✔️");
+            location.reload();
+          }
+
+          function registerTap(e){
+            // stop iOS double tap behavior + keep it from clicking anything else
+            e.preventDefault();
+            e.stopPropagation();
+
+            tapCount++;
+            showCount();
+
+            if(tapCount >= 5){
+              resetExperience();
+            }
+          }
+
+          logo.style.cursor = "pointer";
+          logo.style.userSelect = "none";
+          logo.style.webkitUserSelect = "none";
+
+          // iOS reliable tap
+          logo.addEventListener("touchend", registerTap, { passive: false });
+          // fallback
+          logo.addEventListener("click", registerTap);
+        }, 0);
+      })();
+    </script>
+  </div>
 </body>
 </html>
