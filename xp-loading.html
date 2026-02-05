@@ -209,11 +209,10 @@
       // ✅ Fade to black, then redirect
       overlay.classList.add("on");
 
-// redirect BEFORE fade fully completes
-await wait(timings.fadeOut * 0.65);
-window.location.href = EXPERIENCE_URL;
+// redirect a bit sooner (65% through the fade)
+await wait(Math.round(timings.fadeOut * 0.65));
 
-    run();
+window.location.href = EXPERIENCE_URL;
   </script>
 </body>
 </html>
