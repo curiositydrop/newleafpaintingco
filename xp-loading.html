@@ -126,17 +126,16 @@
 </head>
 
 <body>
-  <main class="stage" aria-label="Preparing your experience">
+  <main class="stage">
     <div class="intro" id="introText">Just a moment, preparing your experience.</div>
 
-    <div class="leafWrap" id="leafWrap" aria-hidden="true">
+    <div class="leafWrap" id="leafWrap">
       <img class="leafImg" id="leafImg"
            src="3853F55F-F2AB-4931-BCDE-033BBDB26E1C.png"
            alt="" />
     </div>
 
     <div class="bubble" id="bubble">your experience begins now.</div>
-
     <div class="fadeOverlay" id="fadeOverlay"></div>
   </main>
 
@@ -144,16 +143,14 @@
     const EXPERIENCE_URL = "/experience/";
 
     const timings = {
-      introHold: 3000,  // ✅ longer: 3 seconds
+      introHold: 2000,  // ✅ 2 seconds
       introFade: 650,
       leafApproach: 1650,
       leafSettle: 220,
-      bubbleDelay: 350, // ✅ slight pause before bubble appears
-      bubbleHold: 2500, // ✅ longer: 2.5 seconds to read
+      bubbleDelay: 350,
+      bubbleHold: 2500,
       fadeOut: 700
     };
-
-    const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const intro = document.getElementById("introText");
     const leafWrap = document.getElementById("leafWrap");
@@ -161,17 +158,7 @@
     const bubble = document.getElementById("bubble");
     const overlay = document.getElementById("fadeOverlay");
 
-    const preload = document.createElement("link");
-    preload.rel = "prefetch";
-    preload.href = EXPERIENCE_URL;
-    document.head.appendChild(preload);
-
     function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
-    function easeOutBack(t){
-      const c1 = 1.70158;
-      const c3 = c1 + 1;
-      return 1 + c3*Math.pow(t-1,3) + c1*Math.pow(t-1,2);
-    }
 
     function setLeaf(opacity, scale, rotZdeg, tiltXdeg = 0){
       leafWrap.style.opacity = opacity;
@@ -180,37 +167,23 @@
       leafImg.style.transform = `rotateZ(${rotZdeg}deg)`;
     }
 
-    async function wait(ms){ return new Promise(r => setTimeout(r, ms)); }
+    function wait(ms){ return new Promise(r => setTimeout(r, ms)); }
 
     async function run(){
-      if (reduceMotion){
-        await wait(600);
-        intro.classList.add("off");
-        await wait(250);
-        setLeaf(1, 1.0, 0, 0);
-        bubble.classList.add("on");
-        await wait(1800);
-        overlay.classList.add("on");
-        await wait(350);
-        window.location.href = EXPERIENCE_URL;
-        return;
-      }
-
       await wait(timings.introHold);
       intro.classList.add("off");
       await wait(timings.introFade);
 
       const start = performance.now();
-      const dur = timings.leafApproach;
 
       function frame(now){
-        const t = Math.min(1, (now - start) / dur);
+        const t = Math.min(1, (now - start) / timings.leafApproach);
         const e = easeOutCubic(t);
 
         const scale = 0.55 + (1.00 - 0.55) * e;
 
-        // ✅ slower / fewer spins
-        const rot = 520 * t;
+        // ✅ adjusted spin so it finishes upright
+        const rot = 560 * t;
 
         const tilt = 6 + (0 - 6) * e;
         const opacity = Math.min(1, t * 1.6);
@@ -220,17 +193,8 @@
         if (t < 1){
           requestAnimationFrame(frame);
         } else {
-          const settleStart = performance.now();
-          const settleDur = timings.leafSettle;
-
-          function settleFrame(n2){
-            const tt = Math.min(1, (n2 - settleStart) / settleDur);
-            easeOutBack(tt); // keeps motion profile consistent
-            setLeaf(1, 1.00, 0, 0);
-            if (tt < 1) requestAnimationFrame(settleFrame);
-            else afterLand();
-          }
-          requestAnimationFrame(settleFrame);
+          setLeaf(1, 1.00, 0, 0);
+          afterLand();
         }
       }
 
