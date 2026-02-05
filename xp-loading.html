@@ -143,7 +143,7 @@
     const EXPERIENCE_URL = "/experience/";
 
     const timings = {
-      introHold: 1800,  // ✅ 2 seconds
+      introHold: 1600,  // ✅ 2 seconds
       introFade: 650,
       leafApproach: 1650,
       leafSettle: 220,
@@ -183,7 +183,7 @@
         const scale = 0.55 + (1.00 - 0.55) * e;
 
         // ✅ adjusted spin so it finishes upright
-        const rot = 580 * t;
+        const rot = 600 * t;
 
         const tilt = 6 + (0 - 6) * e;
         const opacity = Math.min(1, t * 1.6);
