@@ -1,3 +1,4 @@
+<!-- ===== XP LOADING PAGE (updated: fades WHITE -> BLACK before redirect) ===== -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -29,10 +30,11 @@
       perspective:1200px;
     }
 
+    /* ✅ Fade overlay now fades to BLACK */
     .fadeOverlay{
       position:absolute;
       inset:0;
-      background:var(--bg);
+      background:#000;
       opacity:0;
       pointer-events:none;
       transition: opacity 700ms ease;
@@ -126,10 +128,10 @@
 </head>
 
 <body>
-  <main class="stage">
+  <main class="stage" aria-label="Preparing your experience">
     <div class="intro" id="introText">Just a moment, preparing your experience.</div>
 
-    <div class="leafWrap" id="leafWrap">
+    <div class="leafWrap" id="leafWrap" aria-hidden="true">
       <img class="leafImg" id="leafImg"
            src="3853F55F-F2AB-4931-BCDE-033BBDB26E1C.png"
            alt="" />
@@ -143,13 +145,13 @@
     const EXPERIENCE_URL = "/experience/";
 
     const timings = {
-      introHold: 1600,  // ✅ 2 seconds
+      introHold: 2000,
       introFade: 650,
       leafApproach: 1650,
       leafSettle: 220,
       bubbleDelay: 350,
-      bubbleHold: 1800,
-      fadeOut: 600
+      bubbleHold: 1800, // tweak this if you want faster/slower
+      fadeOut: 600      // slightly quicker looks nicer for black fades
     };
 
     const intro = document.getElementById("introText");
@@ -181,10 +183,7 @@
         const e = easeOutCubic(t);
 
         const scale = 0.55 + (1.00 - 0.55) * e;
-
-        // ✅ adjusted spin so it finishes upright
-        const rot = 680 * t;
-
+        const rot = 560 * t;        // ✅ ends upright
         const tilt = 6 + (0 - 6) * e;
         const opacity = Math.min(1, t * 1.6);
 
@@ -206,8 +205,9 @@
       bubble.classList.add("on");
 
       await wait(timings.bubbleHold);
-      overlay.classList.add("on");
 
+      // ✅ Fade to black, then redirect
+      overlay.classList.add("on");
       await wait(timings.fadeOut);
       window.location.href = EXPERIENCE_URL;
     }
