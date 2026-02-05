@@ -142,77 +142,80 @@
   </main>
 
   <script>
-    const EXPERIENCE_URL = "/experience/";
+  const EXPERIENCE_URL = "/experience/";
 
-    const timings = {
-      introHold: 2000,
-      introFade: 650,
-      leafApproach: 1650,
-      leafSettle: 220,
-      bubbleDelay: 350,
-      bubbleHold: 1800, // tweak this if you want faster/slower
-      fadeOut: 600      // slightly quicker looks nicer for black fades
-    };
+  const timings = {
+    introHold: 2000,
+    introFade: 650,
+    leafApproach: 1650,
+    leafSettle: 220,
+    bubbleDelay: 350,
+    bubbleHold: 1800, // tweak this if you want faster/slower
+    fadeOut: 600      // slightly quicker looks nicer for black fades
+  };
 
-    const intro = document.getElementById("introText");
-    const leafWrap = document.getElementById("leafWrap");
-    const leafImg  = document.getElementById("leafImg");
-    const bubble = document.getElementById("bubble");
-    const overlay = document.getElementById("fadeOverlay");
+  const intro = document.getElementById("introText");
+  const leafWrap = document.getElementById("leafWrap");
+  const leafImg  = document.getElementById("leafImg");
+  const bubble = document.getElementById("bubble");
+  const overlay = document.getElementById("fadeOverlay");
 
-    function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
+  function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
 
-    function setLeaf(opacity, scale, rotZdeg, tiltXdeg = 0){
-      leafWrap.style.opacity = opacity;
-      leafWrap.style.transform =
-        `translateY(0px) scale(${scale}) rotateX(${tiltXdeg}deg)`;
-      leafImg.style.transform = `rotateZ(${rotZdeg}deg)`;
-    }
+  function setLeaf(opacity, scale, rotZdeg, tiltXdeg = 0){
+    leafWrap.style.opacity = opacity;
+    leafWrap.style.transform =
+      `translateY(0px) scale(${scale}) rotateX(${tiltXdeg}deg)`;
+    leafImg.style.transform = `rotateZ(${rotZdeg}deg)`;
+  }
 
-    function wait(ms){ return new Promise(r => setTimeout(r, ms)); }
+  function wait(ms){ return new Promise(r => setTimeout(r, ms)); }
 
-    async function run(){
-      await wait(timings.introHold);
-      intro.classList.add("off");
-      await wait(timings.introFade);
+  async function run(){
+    await wait(timings.introHold);
+    intro.classList.add("off");
+    await wait(timings.introFade);
 
-      const start = performance.now();
+    const start = performance.now();
 
-      function frame(now){
-        const t = Math.min(1, (now - start) / timings.leafApproach);
-        const e = easeOutCubic(t);
+    function frame(now){
+      const t = Math.min(1, (now - start) / timings.leafApproach);
+      const e = easeOutCubic(t);
 
-        const scale = 0.55 + (1.00 - 0.55) * e;
-        const rot = 560 * t;        // ✅ ends upright
-        const tilt = 6 + (0 - 6) * e;
-        const opacity = Math.min(1, t * 1.6);
+      const scale = 0.55 + (1.00 - 0.55) * e;
+      const rot = 560 * t;        // ✅ ends upright
+      const tilt = 6 + (0 - 6) * e;
+      const opacity = Math.min(1, t * 1.6);
 
-        setLeaf(opacity, scale, rot, tilt);
+      setLeaf(opacity, scale, rot, tilt);
 
-        if (t < 1){
-          requestAnimationFrame(frame);
-        } else {
-          setLeaf(1, 1.00, 0, 0);
-          afterLand();
-        }
+      if (t < 1){
+        requestAnimationFrame(frame);
+      } else {
+        setLeaf(1, 1.00, 0, 0);
+        afterLand();
       }
-
-      requestAnimationFrame(frame);
     }
 
-    async function afterLand(){
-      await wait(timings.bubbleDelay);
-      bubble.classList.add("on");
+    requestAnimationFrame(frame);
+  }
 
-      await wait(timings.bubbleHold);
+  async function afterLand(){
+    await wait(timings.bubbleDelay);
+    bubble.classList.add("on");
 
-      // ✅ Fade to black, then redirect
-      overlay.classList.add("on");
+    await wait(timings.bubbleHold);
 
-// redirect a bit sooner (65% through the fade)
-await wait(Math.round(timings.fadeOut * 0.65));
+    // ✅ Fade to black, then redirect
+    overlay.classList.add("on");
 
-window.location.href = EXPERIENCE_URL;
-  </script>
+    // redirect a bit sooner (65% through the fade)
+    await wait(Math.round(timings.fadeOut * 0.65));
+
+    window.location.href = EXPERIENCE_URL;
+  }
+
+  run();
+</script>
 </body>
 </html>
