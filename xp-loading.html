@@ -82,8 +82,8 @@
 
     .bubble{
       position:absolute;
-      top:40%;
-      left:50%;
+      top:35%;
+      left:45%;
       transform: translate(-50%, -50%) scale(.96);
       background:#fff;
       border:2px solid rgba(31,122,58,.18);
@@ -143,7 +143,7 @@
     const EXPERIENCE_URL = "/experience/";
 
     const timings = {
-      introHold: 2000,  // ✅ 2 seconds
+      introHold: 1800,  // ✅ 2 seconds
       introFade: 650,
       leafApproach: 1650,
       leafSettle: 220,
@@ -183,7 +183,7 @@
         const scale = 0.55 + (1.00 - 0.55) * e;
 
         // ✅ adjusted spin so it finishes upright
-        const rot = 560 * t;
+        const rot = 580 * t;
 
         const tilt = 6 + (0 - 6) * e;
         const opacity = Math.min(1, t * 1.6);
