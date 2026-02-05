@@ -81,8 +81,7 @@
       filter: drop-shadow(0 18px 24px rgba(0,0,0,.12));
       will-change: transform;
 
-      /* ✅ TUNE THIS if it still “wobbles”
-         Try: 50% 52%  /  50% 55%  /  50% 58%  /  50% 60% */
+      /* ✅ Your “sweet spot” pivot */
       transform-origin: 55% 65%;
       transform: rotateZ(0deg);
     }
@@ -90,7 +89,7 @@
     /* Speech bubble */
     .bubble{
       position:absolute;
-      top:40%; /* moved up above the image */
+      top:40%; /* above the image */
       left:50%;
       transform: translate(-50%, -50%) scale(.96);
       background:#fff;
@@ -158,7 +157,7 @@
       introHold: 550,
       introFade: 650,
       leafApproach: 1650,
-      leafSettle: 280,
+      leafSettle: 220,   // shorter now (no size settle needed)
       bubbleDelay: 120,
       bubbleHold: 900,
       fadeOut: 700
@@ -224,13 +223,13 @@
         const t = Math.min(1, (now - start) / dur);
         const e = easeOutCubic(t);
 
-        // scale from 0.55 -> 1.08 (slight overshoot)
-        const scale = 0.55 + (1.08 - 0.55) * e;
+        // ✅ scale ends at 1.00 (no overshoot, so no “shrink” on stop)
+        const scale = 0.55 + (1.00 - 0.55) * e;
 
-        // Z-spin from 0 -> 900 degrees (~2.5 spins) for "medium pace"
-        const rot = 900 * t;
+        // ✅ fewer spins so it stops sooner
+        const rot = 720 * t; // 2 spins (change to 540 for 1.5 spins)
 
-        // smaller tilt range = more “circular” looking spin
+        // small tilt range for “circular” look
         const tilt = 6 + (0 - 6) * e;
 
         // opacity from 0 -> 1 quickly in first half
@@ -241,7 +240,7 @@
         if (t < 1){
           requestAnimationFrame(frame);
         } else {
-          // 3) Settle/land upright with a tiny "back" ease
+          // 3) Settle/land upright (NO size change now)
           const settleStart = performance.now();
           const settleDur = timings.leafSettle;
 
@@ -249,10 +248,10 @@
             const tt = Math.min(1, (n2 - settleStart) / settleDur);
             const ee = easeOutBack(tt);
 
-            // bring scale from 1.08 down to 1.00
-            const s = 1.08 + (1.00 - 1.08) * ee;
+            // ✅ keep size locked at 1.00
+            const s = 1.00;
 
-            // land upright (no tilt, no rotation)
+            // tiny “snap” to upright (rotation to 0, tilt to 0)
             setLeaf(1, s, 0, 0);
 
             if (tt < 1) requestAnimationFrame(settleFrame);
