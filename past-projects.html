@@ -513,6 +513,18 @@
 
   <!-- global injector -->
   <script src="global.js?v=5"></script>
-
+<script>
+  document.addEventListener("click", function(e){
+    const estimateTrigger = e.target.closest('[data-contact-open="1"], #contact-btn');
+    if(estimateTrigger){
+      if(typeof gtag === "function"){
+        gtag('event', 'estimate_click', {
+          event_category: 'engagement',
+          event_label: window.location.pathname
+        });
+      }
+    }
+  });
+</script>
 </body>
 </html>
