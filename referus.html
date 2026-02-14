@@ -111,17 +111,21 @@
   <!-- GLOBAL LOGIC -->
   <script src="global.js"></script>
 <script>
-  document.addEventListener("click", function(e){
-    const sendBtn = e.target.closest("#estimate-send");
-    if(sendBtn){
+document.addEventListener("DOMContentLoaded", function() {
+  const sendBtn = document.getElementById("estimate-send");
+
+  if(sendBtn){
+    sendBtn.addEventListener("click", function() {
       if(typeof gtag === "function"){
         gtag('event', 'estimate_submit_click', {
           event_category: 'lead',
           event_label: window.location.pathname
         });
+        console.log("estimate_submit_click sent");
       }
-    }
-  });
+    });
+  }
+});
 </script>
 </body>
 </html>
