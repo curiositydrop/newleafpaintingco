@@ -379,11 +379,11 @@ ${message}`
   </script>
 <script>
   document.addEventListener("click", function(e){
-    const estimateTrigger = e.target.closest('[data-contact-open="1"], #contact-btn');
-    if(estimateTrigger){
+    const sendBtn = e.target.closest("#estimate-send");
+    if(sendBtn){
       if(typeof gtag === "function"){
-        gtag('event', 'estimate_click', {
-          event_category: 'engagement',
+        gtag('event', 'estimate_submit_click', {
+          event_category: 'lead',
           event_label: window.location.pathname
         });
       }
