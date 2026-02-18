@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LeafGram 🍃 | Create Your Message</title>
+
+  <style>
+    :root{
+      /* QUICK-TUNE COLORS */
+      --bg: #f4fbff;
+      --bg2:#eaf7ff;
+      --card:#ffffff;
+      --text:#0b2a3a;
+      --muted:#4a6b7a;
+
+      --leaf:#1f8a4c;
+      --leaf2:#27a95c;
+      --sky:#0a6ea8;
+      --line:#d7edf8;
+
+      --shadow: 0 14px 40px rgba(0,0,0,.08);
+      --radius: 18px;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+      color:var(--text);
+      background: linear-gradient(180deg, var(--bg2), var(--bg));
+      padding: 22px 14px 50px;
+    }
+
+    .wrap{
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .back{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      text-decoration:none;
+      font-weight:800;
+      color: var(--sky);
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(10,110,168,.20);
+      background: rgba(10,110,168,.08);
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 14px;
+      border:1px solid rgba(31,138,76,.18);
+      background: rgba(31,138,76,.08);
+      border-radius: 999px;
+      font-weight:800;
+      color: var(--leaf);
+      white-space: nowrap;
+    }
+
+    .card{
+      background: var(--card);
+      border: 1px solid rgba(0,0,0,.06);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+
+    h1{
+      margin: 6px 0 6px;
+      font-size: clamp(1.7rem, 4.8vw, 2.2rem);
+      letter-spacing: -0.02em;
+    }
+
+    .sub{
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.55;
+    }
+
+    label{
+      display:block;
+      margin: 14px 0 6px;
+      font-weight: 800;
+      color: rgba(11,42,58,.88);
+    }
+
+    input, textarea, select{
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(11,42,58,.18);
+      background: #fff;
+      font-size: 16px;
+      outline: none;
+    }
+
+    input:focus, textarea:focus, select:focus{
+      border-color: rgba(10,110,168,.45);
+      box-shadow: 0 0 0 4px rgba(10,110,168,.12);
+    }
+
+    textarea{ resize: vertical; min-height: 120px; }
+
+    .hint{
+      margin-top: 8px;
+      color: rgba(74,107,122,.9);
+      font-size: .95rem;
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .cta-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 12px;
+      margin-top: 18px;
+      align-items:center;
+    }
+
+    .cta{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding: 14px 18px;
+      border-radius: 12px;
+      border: none;
+      cursor:pointer;
+      text-decoration:none;
+      font-weight: 900;
+      font-size: 1.05rem;
+      transition: transform .08s ease, filter .15s ease, background .15s ease;
+      box-shadow: 0 10px 22px rgba(31,138,76,.20);
+      background: linear-gradient(180deg, var(--leaf2), var(--leaf));
+      color:#fff;
+    }
+    .cta:hover{ filter: brightness(1.04); transform: translateY(-1px); }
+    .cta:active{ transform: translateY(0); }
+
+    .ghost{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding: 13px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(11,42,58,.14);
+      background: rgba(255,255,255,.7);
+      color: rgba(11,42,58,.85);
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .error{
+      display:none;
+      margin-top: 12px;
+      padding: 12px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(220,53,69,.25);
+      background: rgba(220,53,69,.08);
+      color: rgba(140, 20, 35, .95);
+      font-weight: 800;
+    }
+
+    .footer{
+      text-align:center;
+      margin-top: 18px;
+      color: rgba(74,107,122,.85);
+      font-size: .92rem;
+      padding: 18px 8px 0;
+    }
+
+    .powered{
+      margin-top: 6px;
+      font-size: .9rem;
+      color: rgba(74,107,122,.8);
+    }
+
+    @media (max-width: 720px){
+      .row{ grid-template-columns: 1fr; }
+      .topbar{ flex-direction: column; align-items: flex-start; }
+      .badge{ white-space: normal; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <a class="back" href="#" onclick="window.top.location.href='birthday.html'; return false;">← Back</a>
+      <div class="badge">🍃 LeafGram • Create your message</div>
+    </div>
+
+    <div class="card">
+      <h1>Build your LeafGram 🍃</h1>
+      <p class="sub">
+        Keep it simple — name, occasion, and a short message.
+        We’ll generate a shareable page they can open on their phone.
+      </p>
+
+      <div class="row">
+        <div>
+          <label for="recipientName">Recipient’s first name *</label>
+          <input type="text" id="recipientName" placeholder="e.g., Sarah" autocomplete="given-name" />
+        </div>
+
+        <div>
+          <label for="yourName">From (your name)</label>
+          <input type="text" id="yourName" placeholder="e.g., Mike" autocomplete="name" />
+          <div class="hint">Optional — leave blank if you want it anonymous.</div>
+        </div>
+      </div>
+
+      <label for="occasionSelect">Occasion</label>
+      <select id="occasionSelect" onchange="handleSelection(this.value)">
+        <option value="">– Choose an Occasion –</option>
+        <option value="birthday">🎂 Birthday</option>
+        <option value="newhome">🏡 New Home</option>
+        <option value="anniversary">💍 Anniversary</option>
+        <option value="thankyou">🙏 Thank You</option>
+        <option value="congrats">🎉 Congratulations</option>
+        <option value="holiday">🎄 Holiday</option>
+        <option value="justbecause">🍃 Just Because</option>
+        <option value="custom">✍️ Custom Message</option>
+      </select>
+
+      <label for="customMessage">Message</label>
+      <textarea id="customMessage" rows="5" placeholder="Write your message here..."></textarea>
+      <div class="hint">Keep it short — 1–3 sentences is perfect.</div>
+
+      <div id="errorBox" class="error"></div>
+
+      <div class="cta-row">
+        <button class="cta" onclick="createLeafGram()">🎁 Create LeafGram</button>
+        <button class="ghost" onclick="fillExample()">Use an example</button>
+      </div>
+
+      <div class="powered">Powered by: <strong>New Leaf Painting Company</strong></div>
+    </div>
+
+    <div class="footer">
+      © 2026 New Leaf Painting Company
+      <div class="powered">Made with 🍃 in Southern Maine.</div>
+    </div>
+  </div>
+
+<script>
+  function handleSelection(value) {
+    const textarea = document.getElementById("customMessage");
+
+    const messageMap = {
+      birthday: "Wishing you the happiest birthday — hope your day is full of good surprises. 🍃🎉",
+      newhome: "Congrats on the new place! Wishing you fresh starts and good memories in your new home. 🏡🍃",
+      anniversary: "Happy Anniversary! Wishing you both more love, laughs, and great memories ahead. 💍",
+      thankyou: "Just wanted to say thank you — I appreciate you more than you know. 🙏",
+      congrats: "Big congratulations! Seriously proud of you — you earned this. 🎉",
+      holiday: "Wishing you a warm, happy holiday season and a fresh start in the New Year. 🎄🍃",
+      justbecause: "Quick reminder: you matter, you’re appreciated, and you’re doing better than you think. 🍃"
+    };
+
+    if (value === "custom" || value === "") return;
+
+    textarea.value = messageMap[value] || "";
+  }
+
+  function fillExample(){
+    document.getElementById("recipientName").value = "Sarah";
+    document.getElementById("yourName").value = "Mike";
+    document.getElementById("occasionSelect").value = "birthday";
+    document.getElementById("customMessage").value = "Wishing you the happiest birthday — hope your day is full of good surprises. 🍃🎉";
+  }
+
+  function showError(msg){
+    const box = document.getElementById("errorBox");
+    box.textContent = msg;
+    box.style.display = "block";
+  }
+
+  function clearError(){
+    const box = document.getElementById("errorBox");
+    box.textContent = "";
+    box.style.display = "none";
+  }
+
+  function createLeafGram() {
+    clearError();
+
+    const recipientName = (document.getElementById("recipientName").value || "").trim();
+    const yourName = (document.getElementById("yourName").value || "").trim();
+    const occasion = (document.getElementById("occasionSelect").value || "").trim();
+    const message = (document.getElementById("customMessage").value || "").trim();
+
+    if (!recipientName) return showError("Please enter the recipient’s first name.");
+    if (!message) return showError("Please add a short message (or pick an occasion to auto-fill one).");
+
+    // Save to localStorage
+    localStorage.setItem("leafgram_recipientName", recipientName);
+    localStorage.setItem("leafgram_yourName", yourName);
+    localStorage.setItem("leafgram_occasion", occasion);
+    localStorage.setItem("leafgram_message", message);
+
+    // Go to the shareable page
+    window.top.location.href = "recipient.html";
+  }
+</script>
+
+</body>
+</html>
