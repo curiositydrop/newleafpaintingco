@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LeafGram 🍃 | Message</title>
+
+  <style>
+    :root{
+      --bg: #f4fbff;
+      --bg2:#eaf7ff;
+      --card:#ffffff;
+      --text:#0b2a3a;
+      --muted:#4a6b7a;
+
+      --leaf:#1f8a4c;
+      --leaf2:#27a95c;
+      --sky:#0a6ea8;
+
+      --shadow: 0 14px 40px rgba(0,0,0,.08);
+      --radius: 18px;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+      color:var(--text);
+      background: linear-gradient(180deg, var(--bg2), var(--bg));
+      padding: 22px 14px 50px;
+      text-align:center;
+    }
+
+    .wrap{ max-width: 820px; margin: 0 auto; }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 14px;
+      border:1px solid rgba(31,138,76,.18);
+      background: rgba(31,138,76,.08);
+      border-radius: 999px;
+      font-weight:900;
+      color: var(--leaf);
+      margin-top: 8px;
+    }
+
+    h1{
+      margin: 14px 0 8px;
+      font-size: clamp(1.9rem, 5vw, 2.5rem);
+      letter-spacing: -0.02em;
+    }
+
+    .sub{
+      margin: 0 auto 18px;
+      max-width: 680px;
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.55;
+    }
+
+    .card{
+      background: var(--card);
+      border: 1px solid rgba(0,0,0,.06);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      max-width: 860px;
+      margin: 18px auto 0;
+      text-align:left;
+      overflow:hidden;
+    }
+
+    .top{
+      display:flex;
+      gap: 16px;
+      align-items:center;
+      flex-wrap: wrap;
+    }
+
+    .leaf-img{
+      width: 120px;
+      height: 120px;
+      border-radius: 18px;
+      border: 2px solid rgba(10,110,168,.14);
+      background: linear-gradient(180deg, rgba(31,138,76,.10), rgba(10,110,168,.08));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size: 2.2rem;
+      flex: 0 0 auto;
+    }
+
+    .intro{ flex: 1 1 260px; }
+
+    .intro-title{
+      font-weight: 950;
+      font-size: 1.25rem;
+      margin: 0 0 6px;
+      color: rgba(11,42,58,.95);
+    }
+
+    .intro-line{
+      margin: 0;
+      color: rgba(74,107,122,.95);
+      line-height: 1.45;
+      font-size: 1.02rem;
+    }
+
+    .bubble{
+      margin-top: 16px;
+      background: rgba(10,110,168,.06);
+      border: 1px solid rgba(10,110,168,.16);
+      border-radius: 16px;
+      padding: 16px 16px;
+      font-size: 1.12rem;
+      line-height: 1.6;
+      color: rgba(11,42,58,.92);
+    }
+
+    .actions{
+      display:flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items:center;
+      margin-top: 16px;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding: 14px 18px;
+      border-radius: 12px;
+      border: none;
+      cursor:pointer;
+      text-decoration:none;
+      font-weight: 950;
+      font-size: 1.05rem;
+      transition: transform .08s ease, filter .15s ease, background .15s ease;
+    }
+
+    .primary{
+      box-shadow: 0 10px 22px rgba(31,138,76,.20);
+      background: linear-gradient(180deg, var(--leaf2), var(--leaf));
+      color:#fff;
+    }
+
+    .secondary{
+      border: 1px solid rgba(11,42,58,.14);
+      background: rgba(255,255,255,.7);
+      color: rgba(11,42,58,.88);
+    }
+
+    .btn:hover{ filter: brightness(1.04); transform: translateY(-1px); }
+    .btn:active{ transform: translateY(0); }
+
+    .note{
+      margin-top: 14px;
+      color: rgba(74,107,122,.92);
+      font-size: .98rem;
+      line-height: 1.5;
+    }
+
+    .powered{
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(11,42,58,.08);
+      color: rgba(74,107,122,.88);
+      font-size: .92rem;
+      text-align:center;
+    }
+
+    .tiny{
+      font-size: .88rem;
+      color: rgba(74,107,122,.80);
+      margin-top: 6px;
+    }
+
+    @media (max-width: 520px){
+      .leaf-img{ width: 96px; height: 96px; font-size: 2rem; }
+      .card{ padding: 18px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="badge">🍃 LeafGram • Delivered</div>
+    <h1 id="headline">Hey there! 🎉</h1>
+    <p class="sub" id="subhead">Someone asked the Leaf to stop by with a message for you.</p>
+
+    <div class="card">
+      <div class="top">
+        <!-- Replace later with your actual Leaf birthday PNG -->
+        <div class="leaf-img" aria-label="Leaf mascot placeholder">🍰🍃</div>
+
+        <div class="intro">
+          <p class="intro-title" id="fromLine">A LeafGram for you</p>
+          <p class="intro-line" id="introLine">Wishing you something good today. 🍃</p>
+        </div>
+      </div>
+
+      <div class="bubble" id="messageBubble">⏳ Loading message...</div>
+
+      <div class="actions">
+        <button class="btn primary" onclick="copyLink()">🔗 Copy Link</button>
+        <button class="btn secondary" onclick="window.top.location.href='birthday.html'">🍃 Send another</button>
+      </div>
+
+      <div class="note">
+        Tip: a screenshot works great too — especially for birthdays. 🎂
+      </div>
+
+      <div class="powered">
+        Powered by <strong>New Leaf Painting Company</strong>
+        <div class="tiny">Made with 🍃 in Southern Maine.</div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  function safeText(s){ return (s || "").toString().trim(); }
+
+  function getLeafGramData(){
+    const params = new URLSearchParams(window.location.search);
+
+    // Prefer shareable query params (works on any device)
+    const qpRecipient = safeText(params.get("to"));
+    const qpFrom = safeText(params.get("from"));
+    const qpOccasion = safeText(params.get("oc"));
+    const qpMsg = safeText(params.get("msg"));
+
+    // Fallback: localStorage (same-device)
+    const lsRecipient = safeText(localStorage.getItem("leafgram_recipientName"));
+    const lsFrom = safeText(localStorage.getItem("leafgram_yourName"));
+    const lsOccasion = safeText(localStorage.getItem("leafgram_occasion"));
+    const lsMsg = safeText(localStorage.getItem("leafgram_message"));
+
+    return {
+      recipientName: qpRecipient || lsRecipient,
+      yourName: qpFrom || lsFrom,
+      occasion: qpOccasion || lsOccasion,
+      message: qpMsg || lsMsg
+    };
+  }
+
+  function titleForOccasion(oc){
+    const map = {
+      birthday: "Happy Birthday",
+      newhome: "Congrats on the new home",
+      anniversary: "Happy Anniversary",
+      thankyou: "Thank you",
+      congrats: "Congratulations",
+      holiday: "Happy Holidays",
+      justbecause: "Just Because",
+      custom: "A message for you"
+    };
+    return map[oc] || "A message for you";
+  }
+
+  function init(){
+    const data = getLeafGramData();
+
+    const headline = document.getElementById("headline");
+    const subhead = document.getElementById("subhead");
+    const fromLine = document.getElementById("fromLine");
+    const introLine = document.getElementById("introLine");
+    const bubble = document.getElementById("messageBubble");
+
+    const rec = data.recipientName ? data.recipientName : "there";
+    const title = titleForOccasion(data.occasion);
+
+    headline.textContent = `Hi ${rec}! 🎉`;
+    subhead.textContent = `${title} — here’s a LeafGram made just for you.`;
+
+    if (data.yourName){
+      fromLine.textContent = `From: ${data.yourName}`;
+      introLine.textContent = `Your friend ${data.yourName} asked the Leaf to stop by with a message. 🍃`;
+    } else {
+      fromLine.textContent = "A LeafGram for you";
+      introLine.textContent = "Someone asked the Leaf to stop by with a message. 🍃";
+    }
+
+    if (data.message){
+      bubble.innerHTML = data.message
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/\n/g,"<br/>");
+    } else {
+      bubble.textContent = "No message was found. If you want, you can send a new LeafGram.";
+    }
+  }
+
+  async function copyLink(){
+    try{
+      await navigator.clipboard.writeText(window.location.href);
+      alert("Link copied!");
+    }catch(e){
+      alert("Couldn’t auto-copy on this device. You can manually copy the URL from the address bar.");
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>
