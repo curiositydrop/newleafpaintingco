@@ -312,14 +312,19 @@
     if (!recipientName) return showError("Please enter the recipient’s first name.");
     if (!message) return showError("Please add a short message (or pick an occasion to auto-fill one).");
 
-    // Save to localStorage
+    /* 1) Save to localStorage (works for same-device viewing + fallback) */
     localStorage.setItem("leafgram_recipientName", recipientName);
     localStorage.setItem("leafgram_yourName", yourName);
     localStorage.setItem("leafgram_occasion", occasion);
     localStorage.setItem("leafgram_message", message);
 
-    // Go to the shareable page
-    window.top.location.href = "recipient.html";
+    /* 2) Redirect with shareable query params (works on ANY device) */
+    const to = encodeURIComponent(recipientName);
+    const from = encodeURIComponent(yourName);
+    const oc = encodeURIComponent(occasion);
+    const msg = encodeURIComponent(message);
+
+    window.top.location.href = `recipient.html?to=${to}&from=${from}&oc=${oc}&msg=${msg}`;
   }
 </script>
 
