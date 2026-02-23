@@ -36,28 +36,29 @@
       z-index: 1;
     }
 
-    .gate-inner{
-      position: relative;
-      z-index: 2;
-      text-align:center;
-      width:100%;
-      max-width: 720px;
-      padding: 5px 5px;
-    }
+    .gate-inner {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  width: 100%;
+  max-width: 720px;
+  padding: 0 10px;
+}
 
-    .gate-logo{
-      width: min(320px, 78vw);
-      height:auto;
-      display:block;
-      margin: 0 auto 5px auto;
-      filter: drop-shadow(0 0 26px rgba(79,255,146,.55));
-    }
-    .gate-line{
-      margin: 0 auto 5px auto;
-      color: rgba(255,255,255,.92);
-      font-size: 1.05rem;
-      line-height: 1.35;
-    }
+.gate-logo {
+  width: min(300px, 75vw); /* slightly smaller */
+  height: auto;
+  display: block;
+  margin: 0 auto 2px auto; /* tighter */
+  filter: drop-shadow(0 0 18px rgba(79,255,146,.55)); /* slightly reduced glow */
+}
+
+.gate-line {
+  margin: 4px auto;
+  color: rgba(255,255,255,.92);
+  font-size: 1.05rem;
+  line-height: 1.4;
+}
 
     .gate-btn{
       display:inline-flex;
