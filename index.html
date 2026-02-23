@@ -22,7 +22,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: 60px 10px 5px; /* top, left/right, bottom */
+  padding: clamp(24px, 6vh, 60px) 12px 12px;
   background: #000;
   z-index: 9999;
 }
@@ -37,49 +37,56 @@
       z-index: 1;
     }
 
-    .gate-inner {
+   .gate-inner{
   position: relative;
   z-index: 2;
   text-align: center;
   width: 100%;
   max-width: 720px;
   padding: 0 10px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
 
-.gate-logo {
-  width: min(300px, 75vw); /* slightly smaller */
+.gate-logo{
+  width: min(290px, 72vw);
   height: auto;
   display: block;
-  margin: 0 auto 0px auto; /* tighter */
-  filter: drop-shadow(0 0 18px rgba(79,255,146,.55)); /* slightly reduced glow */
+  margin: 0;
+  filter: drop-shadow(0 0 18px rgba(79,255,146,.55));
 }
 
-.gate-line {
-  margin: 2px auto;
+.gate-line{
+  margin: 0;
   color: rgba(255,255,255,.92);
-  font-size: 1.05rem;
+  font-size: 1.02rem;
   line-height: 1.4;
+  max-width: 36ch;
 }
 
-    .gate-btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap: 10px;
-      padding: 16px 18px;
-      border-radius: 999px;
-      border: 2px solid rgba(255,255,255,.22);
-      background: rgba(255,255,255,.92);
-      color: #0f5f33;
-      font-weight: 900;
-      font-size: 1rem;
-      cursor: pointer;
-      width: 100%;
-      max-width: 520px;
-      transition: transform .12s ease, filter .12s ease;
-      user-select:none;
-      -webkit-tap-highlight-color: transparent;
-    }
+.gate-btn{
+  margin-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 999px;
+  border: 2px solid rgba(255,255,255,.22);
+  background: rgba(255,255,255,.92);
+  color: #0f5f33;
+  font-weight: 900;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 100%;
+  max-width: 520px;
+  transition: transform .12s ease, filter .12s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
     .gate-btn:hover{ transform: translateY(-1px); filter: brightness(1.03); }
     .gate-btn:active{ transform: translateY(0px); filter: brightness(.98); }
 
