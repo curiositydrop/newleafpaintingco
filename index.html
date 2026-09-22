@@ -1,306 +1,144 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Interior Painting in Southern Maine | New Leaf Painting Co.</title>
-
-  <!-- IMPORTANT:
-       Do NOT include style.css on the gate page,
-       because your style.css sets a light background and other globals.
-  -->
-
-  <style>
-    html, body { height: 100%; margin: 0; }
-    body { background:#000; overflow:hidden; font-family: Helvetica, Arial, sans-serif; }
-
-    /* Fullscreen Gate */
-    /* Fullscreen Gate */
-#nl-gate{
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: clamp(24px, 6vh, 10px) 12px 5px;
-  background: #000;
-  z-index: 9999;
-}
-
-    /* Fireworks canvas */
-    #nl-fireworks{
-      position:absolute;
-      inset:0;
-      width:100%;
-      height:100%;
-      pointer-events:none;
-      z-index: 1;
-    }
-
-   .gate-inner{
-  position: relative;
-  z-index: 2;
-  text-align: center;
-  width: 100%;
-  max-width: 720px;
-  padding: 0 5px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-}
-
-.gate-logo{
-  width: min(290px, 72vw);
-  height: auto;
-  display: block;
-  margin: 0;
-  filter: drop-shadow(0 0 18px rgba(79,255,146,.55));
-}
-
-.gate-line{
-  margin: 0;
-  color: rgba(255,255,255,.92);
-  font-size: 1.02rem;
-  line-height: 1.4;
-  max-width: 36ch;
-}
-
-.gate-btn{
-  margin-top: 6px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 14px 16px;
-  border-radius: 999px;
-  border: 2px solid rgba(255,255,255,.22);
-  background: rgba(255,255,255,.92);
-  color: #0f5f33;
-  font-weight: 900;
-  font-size: 1rem;
-  cursor: pointer;
-  width: 100%;
-  max-width: 520px;
-  transition: transform .12s ease, filter .12s ease;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-}
-    .gate-btn:hover{ transform: translateY(-1px); filter: brightness(1.03); }
-    .gate-btn:active{ transform: translateY(0px); filter: brightness(.98); }
-
-    /* Pulse glow */
-    .gate-btn.pulse{
-      animation: gatePulse 2.15s ease-in-out infinite;
-      box-shadow: 0 0 14px rgba(15,95,51,.55);
-    }
-    @keyframes gatePulse{
-      0%{
-        box-shadow: 0 0 10px rgba(15,95,51,.55), 0 0 0 rgba(79,255,146,0);
-        filter: brightness(1.00);
-      }
-      50%{
-        box-shadow: 0 0 34px rgba(79,255,146,.90), 0 0 0 10px rgba(79,255,146,.18);
-        filter: brightness(1.08);
-      }
-      100%{
-        box-shadow: 0 0 10px rgba(15,95,51,.55), 0 0 0 rgba(79,255,146,0);
-        filter: brightness(1.00);
-      }
-    }
-    /* ===== KILL ALL HORIZONTAL SCROLL (iOS SAFE) ===== */
-html, body{
-  width:100%;
-  max-width:100%;
-  overflow-x:hidden !important;
-}
-
-body{
-  position:relative;
-}
-
-/* helps when something tries to pan sideways on iOS */
-body, #nl-hub{
-  touch-action: pan-y;
-}
-
-/* make padding not create overflow */
-*, *::before, *::after{
-  box-sizing:border-box;
-}
-  </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Painting, Carpentry, Drywall & Repairs in Southern Maine | New Leaf Painting Co.</title>
+  <meta name="description" content="New Leaf Painting Co. provides painting, carpentry, drywall, interior framing, suspended ceilings, repairs and interior improvements across Southern Maine. Free estimates.">
+  <link rel="stylesheet" href="style.css">
   <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "HousePainter",
-  "name": "New Leaf Painting Co.",
-  "url": "https://www.newleafpaintingco.com/",
-  "telephone": "+1-207-468-5509",
-  "email": "newleafpaintingcompany@gmail.com",
-  "image": "https://www.newleafpaintingco.com/E25C1BF6-8B68-40AD-BC11-2427F37BC179.png",
-  "description": "Interior painting, trim, cabinets, and prep work in Southern Maine. Clean, professional results—different on purpose.",
-  "areaServed": [
-    {
-      "@type": "AdministrativeArea",
-      "name": "Southern Maine"
-    }
-  ],
-  "address": {
-    "@type": "PostalAddress",
-    "addressLocality": "DAYTON",
-    "addressRegion": "ME",
-    "postalCode": "04005",
-    "addressCountry": "US"
-  },
-  "openingHoursSpecification": [
-    {
-      "@type": "OpeningHoursSpecification",
-      "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"],
-      "opens": "08:00",
-      "closes": "17:00"
-    }
-  ],
-  "priceRange": "$$",
-  "sameAs": []
-</script>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-FQ1QT2BK22"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-FQ1QT2BK22');
-</script>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-FQ1QT2BK22"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-FQ1QT2BK22');
-</script>
-</head>
-
-<body>
-  <div id="nl-gate" aria-label="New Leaf Gate">
-    <canvas id="nl-fireworks" aria-hidden="true"></canvas>
-
-    <div class="gate-inner">
-      <!-- Use your correct logo file name here -->
-      <img class="gate-logo" src="E25C1BF6-8B68-40AD-BC11-2427F37BC179.png" alt="New Leaf Painting Co." />
-      <p class="gate-line">Interior Painting • Carpentry • Handyman<br />
-Serving Southern Maine • Trusted by local homeowners & realtors. <br /><br /></p>
-      <p class="gate-line">This isn't just another painter's website...<br /><br />
-        It's an experience.</p>
-
-      <button id="nl-enter" class="gate-btn pulse" type="button">
-        Start your painting experience <span aria-hidden="true">→</span>
-      </button>
-    </div>
-  </div>
-
-  <script>
-    // Enter -> XP Home
-    document.getElementById("nl-enter").addEventListener("click", () => {
-      window.location.href = "xp-home.html";
-    });
-
-    // Simple fireworks (canvas)
-    (function fireworks(){
-      const canvas = document.getElementById("nl-fireworks");
-      const ctx = canvas.getContext("2d");
-
-      let w=0,h=0,dpr=Math.max(1, Math.min(2, window.devicePixelRatio || 1));
-      function resize(){
-        w = canvas.clientWidth;
-        h = canvas.clientHeight;
-        canvas.width = Math.floor(w*dpr);
-        canvas.height = Math.floor(h*dpr);
-        ctx.setTransform(dpr,0,0,dpr,0,0);
-      }
-      resize();
-      window.addEventListener("resize", resize);
-
-      const colors = ["#ff4d4d","#ffd24d","#4dff88","#4dd2ff","#b84dff","#ff4dd2"];
-      const particles = [];
-
-      const rand = (a,b)=>Math.random()*(b-a)+a;
-
-      function burst(){
-        const x = rand(w*0.15, w*0.85);
-        const y = rand(h*0.12, h*0.55);
-        const color = colors[(Math.random()*colors.length)|0];
-        const count = (Math.random()<0.35) ? 110 : 80;
-
-        for(let i=0;i<count;i++){
-          const a = (Math.PI*2)*(i/count) + rand(-0.08,0.08);
-          const sp = rand(1.4, 4.8);
-          particles.push({
-            x,y,
-            vx: Math.cos(a)*sp,
-            vy: Math.sin(a)*sp,
-            g: rand(0.012,0.03),
-            drag: rand(0.985,0.992),
-            alpha: 1,
-            fade: rand(0.008,0.02),
-            r: rand(1.1,2.3),
-            color
-          });
-        }
-      }
-
-      let t=0;
-      function tick(){
-        t++;
-        if (t < 900 && t % 18 === 0) burst();
-
-        ctx.clearRect(0,0,w,h);
-
-        for(let i=particles.length-1;i>=0;i--){
-          const p = particles[i];
-          p.vx *= p.drag;
-          p.vy *= p.drag;
-          p.vy += p.g;
-          p.x += p.vx;
-          p.y += p.vy;
-          p.alpha -= p.fade;
-
-          if(p.alpha <= 0 || p.x < -60 || p.x > w+60 || p.y > h+90){
-            particles.splice(i,1);
-            continue;
-          }
-
-          ctx.globalAlpha = Math.max(0, p.alpha);
-          ctx.fillStyle = p.color;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-          ctx.fill();
-        }
-        ctx.globalAlpha = 1;
-
-        requestAnimationFrame(tick);
-      }
-      requestAnimationFrame(tick);
-    })();
-  </script>
-  <script>
-document.addEventListener("DOMContentLoaded", function() {
-  const sendBtn = document.getElementById("estimate-send");
-
-  if(sendBtn){
-    sendBtn.addEventListener("click", function() {
-      if(typeof gtag === "function"){
-        gtag('event', 'estimate_submit_click', {
-          event_category: 'lead',
-          event_label: window.location.pathname
-        });
-        console.log("estimate_submit_click sent");
-      }
-    });
+  {
+    "@context":"https://schema.org",
+    "@type":["GeneralContractor","HousePainter"],
+    "name":"New Leaf Painting Co.",
+    "url":"https://www.newleafpaintingco.com/",
+    "telephone":"+1-207-468-5509",
+    "email":"newleafpaintingcompany@gmail.com",
+    "image":"https://www.newleafpaintingco.com/E25C1BF6-8B68-40AD-BC11-2427F37BC179.png",
+    "description":"Painting, carpentry, drywall, framing, suspended ceilings, repairs and interior improvements in Southern Maine.",
+    "areaServed":{"@type":"AdministrativeArea","name":"Southern Maine"},
+    "address":{"@type":"PostalAddress","addressLocality":"Dayton","addressRegion":"ME","postalCode":"04005","addressCountry":"US"},
+    "priceRange":"$$"
   }
-});
-</script>
+  </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-FQ1QT2BK22"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-FQ1QT2BK22');</script>
+</head>
+<body>
+  <div id="global-header"></div>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <p class="eyebrow">Southern Maine • Residential & Commercial</p>
+          <h1>More than painting. One reliable contractor for more of your project.</h1>
+          <p>Professional painting, carpentry, drywall, interior framing, suspended ceilings, repairs and interior improvements — completed with care, clear communication and respect for your property.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#" data-contact-open="1">Request a Free Estimate</a>
+            <a class="btn btn-secondary" href="past-projects.html">View Our Work</a>
+          </div>
+          <div class="hero-trust">
+            <span>Local Southern Maine company</span>
+            <span>Real customer reviews</span>
+            <span>Residential & commercial work</span>
+          </div>
+        </div>
+        <div class="hero-mosaic" aria-label="Recent New Leaf projects">
+          <img src="IMG_8599.jpeg" alt="Finished kitchen cabinet painting project" loading="eager">
+          <img src="IMG_8125.jpeg" alt="Completed interior improvement project" loading="eager">
+          <img src="IMG_8601.jpeg" alt="Finished cabinet and interior project" loading="eager">
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">What we do</p>
+          <h2>One call for painting, repairs and interior improvement work.</h2>
+          <p class="lead">New Leaf has grown beyond painting. We help homeowners, real estate professionals and businesses handle the work that turns unfinished, damaged or dated spaces into finished ones.</p>
+        </div>
+        <div class="service-grid">
+          <article class="service-card"><div class="icon">01</div><h3>Interior & Exterior Painting</h3><p>Walls, ceilings, trim, doors, cabinets and finish work with thorough preparation and clean results.</p></article>
+          <article class="service-card"><div class="icon">02</div><h3>Carpentry & Trim</h3><p>Finish carpentry, trim, stairs, storage solutions and practical custom work for existing spaces.</p></article>
+          <article class="service-card"><div class="icon">03</div><h3>Drywall & Sheetrock</h3><p>Installation, patching, repair and finishing for remodels, damage repairs and unfinished areas.</p></article>
+          <article class="service-card"><div class="icon">04</div><h3>Interior Framing</h3><p>Partition walls, room layouts and framing for basement, office and interior improvement projects.</p></article>
+          <article class="service-card"><div class="icon">05</div><h3>Drop & Suspended Ceilings</h3><p>Clean suspended-ceiling installations for basements, utility areas and commercial interiors.</p></article>
+          <article class="service-card"><div class="icon">06</div><h3>Handyman & Repairs</h3><p>Repairs, punch-list work and smaller improvement projects that need a capable set of hands.</p></article>
+        </div>
+        <div style="margin-top:28px"><a class="btn btn-dark" href="services.html">See All Services</a></div>
+      </div>
+    </section>
+
+    <section class="section section-soft">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Why New Leaf</p>
+          <h2>The best proof is what our customers say after the job.</h2>
+        </div>
+        <div class="proof-grid">
+          <article class="quote-card">
+            <div class="stars">★★★★★</div>
+            <blockquote>“Mike has pretty much renovated my house at this point. He’s painted all but two rooms, helped finish my basement by installing dropped ceilings and sheet rock, built a set of stairs, and is building a storage room. He’s trustworthy, friendly, fair, and provides quality work.”</blockquote>
+            <cite>— Deja L., Saco • Local real estate agent</cite>
+          </article>
+          <article class="quote-card">
+            <div class="stars">★★★★★</div>
+            <blockquote>“I have worked with many contractors over the years, but no one like Mike. He transformed our condo — repainting the interior, baseboards and ceilings, sanding and staining the hardwood floors, and even pressure washing the decking.”</blockquote>
+            <cite>— Sara Frank, Saco</cite>
+          </article>
+        </div>
+        <div style="margin-top:26px"><a class="btn btn-secondary" href="testimonials.html">Read More Reviews</a></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Recent work</p>
+          <h2>Real projects. Real homes. Real results.</h2>
+          <p class="lead">A few examples from completed New Leaf projects across Southern Maine.</p>
+        </div>
+        <div class="project-grid">
+          <article class="project-tile"><img src="IMG_8599.jpeg" alt="Refinished kitchen cabinets" loading="lazy"><div class="copy"><h3>Cabinet Refinishing</h3><p>A full cabinet transformation with a durable, clean finish.</p></div></article>
+          <article class="project-tile"><img src="IMG_8125.jpeg" alt="Completed kitchen interior improvements" loading="lazy"><div class="copy"><h3>Kitchen Refresh</h3><p>Interior finish work that brought the space together and gave it a fresh look.</p></div></article>
+          <article class="project-tile"><img src="IMG_8118.jpeg" alt="Completed bedroom painting project" loading="lazy"><div class="copy"><h3>Interior Transformation</h3><p>Fresh walls, ceilings and trim with careful preparation and finish work.</p></div></article>
+        </div>
+        <div style="margin-top:28px"><a class="btn btn-dark" href="past-projects.html">Explore Our Project Gallery</a></div>
+      </div>
+    </section>
+
+    <section class="section section-dark">
+      <div class="container two-col">
+        <div>
+          <p class="eyebrow">A practical contractor relationship</p>
+          <h2>You shouldn’t need five different people for one interior project.</h2>
+          <p class="lead">When a job needs paint, drywall, trim, framing and repair work, coordinating separate trades can turn a straightforward project into a headache. New Leaf can handle more of that scope under one roof.</p>
+        </div>
+        <div>
+          <ul class="check-list">
+            <li>Clear project conversations before work begins</li>
+            <li>Respect for occupied homes and finished spaces</li>
+            <li>Flexible help for both full projects and smaller repairs</li>
+            <li>Experience working with homeowners and real estate professionals</li>
+            <li>Free estimates for projects across Southern Maine</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="cta-band">
+          <div><p class="eyebrow" style="color:#bfe3ca">Have a project in mind?</p><h2 style="margin-bottom:8px">Tell us what needs to get done.</h2><p>Painting, drywall, carpentry, framing, ceilings, repairs or a combination — start with one estimate request.</p></div>
+          <a class="btn btn-secondary" href="#" data-contact-open="1">Get a Free Estimate</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="global-footer"></div>
+  <script src="global.js"></script>
 </body>
 </html>
