@@ -1,131 +1,27 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Refer New Leaf Painting Co. | Interior Painting in Southern Maine</title>
-  <meta name="description" content="Refer New Leaf Painting Co. and earn rewards! We provide premium interior painting services for homes in Cumberland, Falmouth, Cape Elizabeth, Yarmouth, Kennebunkport, and all across Southern Maine. Services include walls, trim, baseboards, cabinets, and doors.">
-  <link rel="stylesheet" href="style.css" />
-
-  <style>
-    .partners {
-      text-align: center;
-      padding: 60px 20px;
-    }
-    .partners h1 {
-      font-size: 2em;
-      color: #116530;
-      margin-bottom: 10px;
-    }
-    .partners p {
-      margin-bottom: 20px;
-      color: #fff;
-      max-width: 900px;
-      margin-left: auto;
-      margin-right: auto;
-      line-height: 1.5;
-    }
-    .cta-button {
-      display: inline-block;
-      background-color: #0b6831;
-      color: white;
-      padding: 12px 25px;
-      text-decoration: none;
-      border-radius: 4px;
-      font-weight: bold;
-      margin: 20px 0;
-      border: none;
-      cursor: pointer;
-    }
-    .cta-button:hover {
-      filter: brightness(0.95);
-    }
-  </style>
-
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-FQ1QT2BK22"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-FQ1QT2BK22');
-</script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Refer New Leaf Painting Co. | Southern Maine Contractor</title>
+<meta name="description" content="Refer a homeowner, property professional or business to New Leaf Painting Co. for painting, carpentry, drywall, repairs and interior improvement work in Southern Maine.">
+<link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-
-  <!-- GLOBAL HEADER -->
-  <div id="global-header"></div>
-
-  <!-- PAGE CONTENT -->
-  <section class="partners">
-    <h1>Community Referral Appreciation</h1>
-
-    <p>
-      We believe in rewarding genuine word-of-mouth support from our neighbors.
-      If you refer someone who hires us and completes a project, we offer a simple
-      thank-you referral reward — no signup or purchase required.
-    </p>
-
-    <p>Great work earns great recommendations, and we appreciate every one of them.</p>
-
-    <button class="cta-button" type="button" onclick="openReferPopup()">Refer Us Now</button>
-  </section>
-
-  <!-- GLOBAL FOOTER -->
-  <div id="global-footer"></div>
-
-  <!-- Referral Email Script -->
-  <script>
-    function openReferPopup() {
-      // Pull through any tracking param on the current page (ref/drop/sample)
-      const urlParams = new URLSearchParams(window.location.search);
-      const refParam = urlParams.get('ref') || urlParams.get('drop') || urlParams.get('sample') || "";
-
-      const subject = encodeURIComponent("Referral - via New Leaf Painting Co.");
-
-      const lines = [
-        "Hi New Leaf,",
-        "",
-        "I’d like to refer someone:",
-        "",
-        "Name:",
-        "Phone:",
-        "Email:",
-        "Service Needed:",
-        ""
-      ];
-
-      // Add tracking line only if present
-      if (refParam) lines.push(`Referral Code / Source: ${refParam}`, "");
-
-      lines.push("Thank you!");
-
-      const body = encodeURIComponent(lines.join("\n"));
-
-      // (keeping your domain email here exactly as you had it)
-      window.location.href = `mailto:info@newleafpaintingco.com?subject=${subject}&body=${body}`;
-    }
-  </script>
-
-  <!-- GLOBAL LOGIC -->
-  <script src="global.js"></script>
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  const sendBtn = document.getElementById("estimate-send");
-
-  if(sendBtn){
-    sendBtn.addEventListener("click", function() {
-      if(typeof gtag === "function"){
-        gtag('event', 'estimate_submit_click', {
-          event_category: 'lead',
-          event_label: window.location.pathname
-        });
-        console.log("estimate_submit_click sent");
-      }
-    });
-  }
-});
-</script>
-</body>
-</html>
+<div id="global-header"></div>
+<main>
+<section class="page-hero"><div class="container"><p class="eyebrow">Referrals</p><h1>Good work should be worth recommending.</h1><p>If you know someone who needs painting, drywall, carpentry, repairs or interior improvement work, send them our way.</p></div></section>
+<section class="section"><div class="container two-col">
+<div><h2>Refer a project</h2><p class="lead">Use this form to introduce someone who may need New Leaf. We will treat their information respectfully and only use it to follow up about the project.</p></div>
+<div><form action="https://formsubmit.co/newleafpaintingcompany@gmail.com" method="POST">
+<input type="hidden" name="_subject" value="New Leaf Referral"><input type="hidden" name="_captcha" value="false"><input type="hidden" name="_template" value="table">
+<div class="field"><label>Your name *</label><input name="Referrer Name" required></div>
+<div class="field"><label>Person / business being referred *</label><input name="Referral Name" required></div>
+<div class="field"><label>Referral phone or email *</label><input name="Referral Contact" required></div>
+<div class="field"><label>Service needed</label><select name="Service"><option>Painting</option><option>Carpentry / Trim</option><option>Drywall / Framing</option><option>Drop Ceiling</option><option>Repairs / Handyman</option><option>Multiple Services / Other</option></select></div>
+<div class="field"><label>Project notes</label><textarea name="Project Notes"></textarea></div>
+<button class="btn btn-primary" type="submit">Send Referral</button>
+</form></div>
+</div></section>
+</main>
+<div id="global-footer"></div><script src="global.js"></script>
+</body></html>
