@@ -267,3 +267,8 @@ body.estimate-dialog-open{overflow:hidden}
 .site-header .brand img{width:76px;height:68px;object-fit:contain}
 .site-header .brand strong{font-size:1.16rem;line-height:1.16}
 @media(max-width:680px){.site-header .brand img{width:67px;height:59px}.site-header .brand strong{font-size:1.02rem}.site-header .header-inner{min-height:78px}.site-header .nav-links{top:78px}}
+
+/* Header identity: second modest size increase requested */
+.site-header .brand img{width:86px;height:76px}
+.site-header .brand strong{font-size:1.28rem}
+@media(max-width:680px){.site-header .brand img{width:76px;height:67px}.site-header .brand strong{font-size:1.12rem}.site-header .header-inner{min-height:84px}.site-header .nav-links{top:84px}}
