@@ -28,7 +28,7 @@
     });
 
     const nav=document.querySelector(".nav-links");
-    document.querySelector(".menu-toggle")?.addEventListener("click",()=>nav?.classList.toggle("open"));
+    document.querySelector(".menu-toggle")?.addEventListener("click",()=>{const isOpen=nav?.classList.toggle("open");document.querySelector(".menu-toggle")?.setAttribute("aria-expanded",String(Boolean(isOpen)));});
 
     const livePopup=document.getElementById("contact-popup");
     const open=ev=>{ev?.preventDefault();if(livePopup) livePopup.style.display="flex";};
