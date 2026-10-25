@@ -199,3 +199,8 @@ html,body{background:var(--bg);color:var(--ink)}
 :focus-visible{outline:3px solid #8eae8e;outline-offset:3px}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}.btn:hover{transform:none}}
 @media(max-width:680px){.hero-actions{grid-template-columns:1fr}.hero-actions .btn{width:100%}.site-header .brand strong{font-size:.9rem}.work-large{min-height:330px}.estimate-form{padding:20px}.page-hero{padding:64px 0 44px}}
+
+/* Mobile contrast and menu polish */
+.lux-hero .btn-secondary{color:#fff;border-color:rgba(255,255,255,.72);background:rgba(10,28,18,.36)}
+.lux-hero .btn-secondary:hover{background:rgba(255,255,255,.14);border-color:#fff}
+@media(max-width:960px){.nav-links{box-shadow:0 16px 28px rgba(20,45,27,.12);gap:0;padding:10px 20px}.nav-links li{width:100%}.nav-links a{display:block;padding:12px 0;border-bottom:1px solid var(--line)}}
