@@ -216,3 +216,18 @@ html,body{background:var(--bg);color:var(--ink)}
 
 /* Preview final-pass contrast corrections */
 .site-header .brand strong{color:#243c2d}.site-header .menu-toggle{color:#243c2d;border-color:rgba(40,70,50,.28)}.site-header .header-cta{color:#fff}.topbar{border-bottom-color:rgba(255,255,255,.12)}.topbar .container{color:#e0e9df}.topbar a{color:#fff}.nav-links a.active{color:#285f3b}
+
+/* Accessible tap-to-expand service details */
+.service-row-expand{grid-template-columns:72px minmax(0,1fr);align-items:start}
+.service-details{min-width:0;grid-column:2}
+.service-details summary{display:flex;align-items:center;justify-content:space-between;gap:16px;cursor:pointer;list-style:none;font-weight:650;font-size:1.3rem;line-height:1.2}
+.service-details summary::-webkit-details-marker{display:none}
+.service-details summary:focus-visible{outline:3px solid #315b43;outline-offset:5px}
+.service-chevron{flex:none;display:inline-flex;align-items:center;justify-content:center;border:1px solid #a9bdb0;border-radius:50%;width:30px;height:30px;font-size:1.3rem;font-weight:400;color:#315b43}
+.service-details[open] .service-chevron{transform:rotate(45deg)}
+.service-details .service-short{margin:12px 0 0;color:#55655a}
+.service-expanded{padding:14px 0 6px;max-width:760px}
+.service-expanded p{color:#35483b;margin-bottom:12px}
+.service-contact{color:#285a3a;font-weight:750;text-underline-offset:3px}
+@media(max-width:960px){.service-row-expand{grid-template-columns:54px minmax(0,1fr)}.service-row-expand .service-details{grid-column:2}}
+@media(max-width:680px){.service-row-expand{grid-template-columns:42px minmax(0,1fr)}.service-details summary{font-size:1.16rem}}
