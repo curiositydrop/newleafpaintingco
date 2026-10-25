@@ -10,11 +10,12 @@
     temp.innerHTML=html;
 
     const header=temp.querySelector("header");
+    const topbar=temp.querySelector(".topbar");
     const footer=temp.querySelector("footer");
     const contactBtn=temp.querySelector("#contact-btn");
     const popup=temp.querySelector("#contact-popup");
 
-    if(headerMount && header) headerMount.replaceChildren(header);
+    if(headerMount && header) headerMount.replaceChildren(...[topbar,header].filter(Boolean));
     if(footerMount && footer) footerMount.replaceChildren(footer);
 
     document.querySelectorAll("#contact-btn,#contact-popup").forEach(el=>el.remove());
@@ -24,7 +25,7 @@
     const current=(location.pathname.split("/").pop()||"index.html").toLowerCase();
     document.querySelectorAll(".nav-links a").forEach(a=>{
       const href=(a.getAttribute("href")||"").split("?")[0].toLowerCase();
-      if(href===current || (current==="" && href==="index.html")) a.classList.add("active");
+      if(href===current || (current==="" && href==="index.html")){a.classList.add("active");a.setAttribute("aria-current","page");}
     });
 
     const nav=document.querySelector(".nav-links");
@@ -35,7 +36,7 @@
     const livePopup=document.getElementById("contact-popup");
     let priorFocus=null;
     const open=ev=>{ev?.preventDefault();priorFocus=document.activeElement;if(livePopup){livePopup.style.display="flex";livePopup.querySelector(".close")?.focus();}};
-    const close=()=>{if(livePopup) livePopup.style.display="none";priorFocus?.focus?.();};
+    const close=()=>{if(livePopup?.style.display==="flex"){livePopup.style.display="none";priorFocus?.focus?.();}};
     document.querySelectorAll('[data-contact-open="1"],#contact-btn').forEach(el=>el.addEventListener("click",open));
     livePopup?.querySelector(".close")?.addEventListener("click",close);
     window.addEventListener("click",e=>{if(e.target===livePopup) close();});
