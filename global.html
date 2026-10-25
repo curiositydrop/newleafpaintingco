@@ -5,9 +5,9 @@
 <nav><ul class="nav-links" id="primary-navigation"><li><a href="index.html">Home</a></li><li><a href="services.html">Services</a></li><li><a href="past-projects.html">Our Work</a></li><li><a href="testimonials.html">Reviews</a></li><li><a href="faq.html">FAQ</a></li><li><a href="realtors.html">For Realtors</a></li></ul></nav>
 <a class="btn btn-primary header-cta" href="#" data-contact-open="1">Free Estimate</a>
 </div></header>
-<button id="contact-btn" type="button">Free Estimate</button>
-<div id="contact-popup" class="popup"><div class="popup-content"><button class="close" type="button">×</button><p class="eyebrow">Estimate request</p><h2>Tell us about the project.</h2><p class="lead">Request a date and time that works for you. We’ll follow up to confirm the appointment.</p>
-<form action="https://formsubmit.co/newleafpaintingcompany@gmail.com" method="POST"><input type="hidden" name="Lead Source" value="Website quick estimate popup">
+<button id="contact-btn" type="button" aria-haspopup="dialog" aria-controls="contact-popup">Free Estimate</button>
+<div id="contact-popup" class="popup" role="dialog" aria-modal="true" aria-labelledby="estimate-dialog-title"><div class="popup-content"><button class="close" type="button" aria-label="Close estimate form">×</button><p class="eyebrow">Estimate request</p><h2 id="estimate-dialog-title">Tell us about the project.</h2><p class="lead">Request a date and time that works for you. We’ll follow up to confirm the appointment.</p>
+<form action="https://formsubmit.co/newleafpaintingcompany@gmail.com" method="POST"><input type="hidden" name="Lead Source" value="Website quick estimate popup"><input type="hidden" name="_honey" value="">
 <input type="hidden" name="_subject" value="New Leaf Estimate Request"><input type="hidden" name="_captcha" value="false"><input type="hidden" name="_template" value="table">
 <div class="form-grid"><div class="field"><label>Name *</label><input name="Name" required></div><div class="field"><label>Phone *</label><input name="Phone" type="tel" required></div></div>
 <div class="form-grid"><div class="field"><label>Email</label><input name="Email" type="email"></div><div class="field"><label>Town / City *</label><input name="Town" required></div></div>
