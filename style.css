@@ -194,3 +194,8 @@ html,body{background:var(--bg);color:var(--ink)}
 .popup{background:rgba(15,32,21,.72)}.popup-content{background:#fff;border-color:var(--line);border-radius:14px}.popup-content .close{color:#52695a}
 @media(max-width:960px){.nav-links{background:#fafaf6}}
 @media(max-width:680px){.section{padding:58px 0}.hero-actions{grid-template-columns:1fr 1fr}.lux-hero{min-height:70vh}.lux-hero h1{font-size:clamp(2.6rem,10vw,3.5rem)}.lux-hero-content{padding:70px 0 48px}}
+
+/* Additional usability refinements */
+:focus-visible{outline:3px solid #8eae8e;outline-offset:3px}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}.btn:hover{transform:none}}
+@media(max-width:680px){.hero-actions{grid-template-columns:1fr}.hero-actions .btn{width:100%}.site-header .brand strong{font-size:.9rem}.work-large{min-height:330px}.estimate-form{padding:20px}.page-hero{padding:64px 0 44px}}
