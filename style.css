@@ -272,3 +272,8 @@ body.estimate-dialog-open{overflow:hidden}
 .site-header .brand img{width:86px;height:76px}
 .site-header .brand strong{font-size:1.28rem}
 @media(max-width:680px){.site-header .brand img{width:76px;height:67px}.site-header .brand strong{font-size:1.12rem}.site-header .header-inner{min-height:84px}.site-header .nav-links{top:84px}}
+
+/* Header identity: slightly larger again, with room for mobile menu */
+.site-header .brand img{width:94px;height:82px}
+.site-header .brand strong{font-size:1.38rem}
+@media(max-width:680px){.site-header .brand img{width:82px;height:72px}.site-header .brand strong{font-size:1.19rem}.site-header .header-inner{min-height:90px}.site-header .nav-links{top:90px}}
