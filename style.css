@@ -210,3 +210,6 @@ html,body{background:var(--bg);color:var(--ink)}
 
 /* Homeowner and realtor resource entry points */
 .resource-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin-top:28px}.resource-card{display:block;text-decoration:none;background:#fff;border:1px solid var(--line);border-radius:12px;padding:32px;transition:border-color .2s,transform .2s}.resource-card:hover{border-color:#6d997b;transform:translateY(-2px)}.resource-card h3{font-size:1.6rem}.resource-card p{color:var(--muted)}.resource-link{font-weight:750;color:#315b43}@media(max-width:680px){.resource-grid{grid-template-columns:1fr}.resource-card{padding:24px}}@media(prefers-reduced-motion:reduce){.resource-card{transition:none}.resource-card:hover{transform:none}}
+
+/* Accessibility and mobile refinement */
+.estimate-form label,.popup label{cursor:pointer}.popup-content{box-shadow:0 20px 70px rgba(0,0,0,.25)}.nav-links a:focus-visible,.faq-item summary:focus-visible{outline:3px solid #7f9e84;outline-offset:4px}@media(max-width:680px){.faq-item summary{font-size:1.04rem;line-height:1.4;padding-right:36px}.faq-item p{font-size:.98rem;line-height:1.7}.page-hero h1{font-size:clamp(2.3rem,9vw,3.5rem)}}
