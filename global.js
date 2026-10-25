@@ -28,6 +28,8 @@
       if(href===current || (current==="" && href==="index.html")){a.classList.add("active");a.setAttribute("aria-current","page");}
     });
 
+    document.querySelectorAll('input[type="date"][name="Preferred Date"]').forEach(input=>{const d=new Date();const localDate=new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10);input.min=localDate;});
+
     const nav=document.querySelector(".nav-links");
     const menuToggle=document.querySelector(".menu-toggle");
     menuToggle?.addEventListener("click",()=>{const isOpen=nav?.classList.toggle("open");menuToggle.setAttribute("aria-expanded",String(Boolean(isOpen)));});
