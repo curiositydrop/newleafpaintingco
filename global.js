@@ -28,7 +28,9 @@
     });
 
     const nav=document.querySelector(".nav-links");
-    document.querySelector(".menu-toggle")?.addEventListener("click",()=>{const isOpen=nav?.classList.toggle("open");document.querySelector(".menu-toggle")?.setAttribute("aria-expanded",String(Boolean(isOpen)));});
+    const menuToggle=document.querySelector(".menu-toggle");
+    menuToggle?.addEventListener("click",()=>{const isOpen=nav?.classList.toggle("open");menuToggle.setAttribute("aria-expanded",String(Boolean(isOpen)));});
+    nav?.querySelectorAll("a").forEach(link=>link.addEventListener("click",()=>{nav.classList.remove("open");menuToggle?.setAttribute("aria-expanded","false");}));
 
     const livePopup=document.getElementById("contact-popup");
     const open=ev=>{ev?.preventDefault();if(livePopup) livePopup.style.display="flex";};
