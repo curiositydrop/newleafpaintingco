@@ -30,6 +30,8 @@
 
     document.querySelectorAll('input[type="date"][name="Preferred Date"]').forEach(input=>{const d=new Date();const localDate=new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10);input.min=localDate;});
 
+    const selectedService=location.hash.slice(1);if(selectedService){const target=document.getElementById(selectedService);if(target?.classList.contains("service-row-expand")){const details=target.querySelector("details");if(details)details.open=true;}}
+
     const nav=document.querySelector(".nav-links");
     const menuToggle=document.querySelector(".menu-toggle");
     menuToggle?.addEventListener("click",()=>{const isOpen=nav?.classList.toggle("open");menuToggle.setAttribute("aria-expanded",String(Boolean(isOpen)));});
@@ -37,8 +39,8 @@
 
     const livePopup=document.getElementById("contact-popup");
     let priorFocus=null;
-    const open=ev=>{ev?.preventDefault();priorFocus=document.activeElement;if(livePopup){livePopup.style.display="flex";livePopup.querySelector(".close")?.focus();}};
-    const close=()=>{if(livePopup?.style.display==="flex"){livePopup.style.display="none";priorFocus?.focus?.();}};
+    const open=ev=>{ev?.preventDefault();priorFocus=document.activeElement;if(livePopup){const serviceRow=ev?.currentTarget?.closest?.(".service-row-expand");const serviceName=serviceRow?.querySelector(".service-heading")?.textContent?.trim();const serviceSelect=livePopup.querySelector('select[name="Service"]');if(serviceName&&serviceSelect){const aliases={"Finish Carpentry & Trim":"Carpentry / Trim","Drywall & Sheetrock":"Drywall / Sheetrock","Drop / Suspended Ceilings":"Drop / Suspended Ceiling","Handyman & Repairs":"Handyman / Repairs","Basement Improvements":"Basement / Interior Improvements","Commercial Interior Work":"Commercial Work","Real Estate Punch Lists":"Multiple Services / Other"};const choice=aliases[serviceName]||serviceName;if([...serviceSelect.options].some(o=>o.value===choice))serviceSelect.value=choice;}livePopup.style.display="flex";document.body.classList.add("estimate-dialog-open");livePopup.querySelector(".close")?.focus();}};
+    const close=()=>{if(livePopup?.style.display==="flex"){livePopup.style.display="none";document.body.classList.remove("estimate-dialog-open");priorFocus?.focus?.();}};
     document.querySelectorAll('[data-contact-open="1"],#contact-btn').forEach(el=>el.addEventListener("click",open));
     livePopup?.querySelector(".close")?.addEventListener("click",close);
     window.addEventListener("click",e=>{if(e.target===livePopup) close();});
