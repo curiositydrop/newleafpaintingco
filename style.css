@@ -262,3 +262,8 @@ html,body{background:var(--bg);color:var(--ink)}
 body.estimate-dialog-open{overflow:hidden}
 .service-details[open] .service-short{display:block}
 @media(max-width:680px){#contact-btn{bottom:max(14px,env(safe-area-inset-bottom));right:12px}.popup{padding:12px}.popup-content{max-height:calc(100dvh - 24px);padding:24px 18px}.content-wrap{padding:48px 0}.page-hero{padding:52px 0 40px}}
+
+/* Slightly larger header identity, preserving navigation layout */
+.site-header .brand img{width:76px;height:68px;object-fit:contain}
+.site-header .brand strong{font-size:1.16rem;line-height:1.16}
+@media(max-width:680px){.site-header .brand img{width:67px;height:59px}.site-header .brand strong{font-size:1.02rem}.site-header .header-inner{min-height:78px}.site-header .nav-links{top:78px}}
