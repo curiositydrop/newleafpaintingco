@@ -257,3 +257,8 @@ html,body{background:var(--bg);color:var(--ink)}
 .service-home-link:hover span,.service-home-link:focus-visible span{transform:translate(2px,-2px)}
 .service-row-expand{scroll-margin-top:105px}
 .service-row-expand:target{border-left:3px solid #315b43;padding-left:12px}
+
+/* Final preview interaction polish */
+body.estimate-dialog-open{overflow:hidden}
+.service-details[open] .service-short{display:block}
+@media(max-width:680px){#contact-btn{bottom:max(14px,env(safe-area-inset-bottom));right:12px}.popup{padding:12px}.popup-content{max-height:calc(100dvh - 24px);padding:24px 18px}.content-wrap{padding:48px 0}.page-hero{padding:52px 0 40px}}
