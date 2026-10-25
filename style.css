@@ -231,3 +231,15 @@ html,body{background:var(--bg);color:var(--ink)}
 .service-contact{color:#285a3a;font-weight:750;text-underline-offset:3px}
 @media(max-width:960px){.service-row-expand{grid-template-columns:54px minmax(0,1fr)}.service-row-expand .service-details{grid-column:2}}
 @media(max-width:680px){.service-row-expand{grid-template-columns:42px minmax(0,1fr)}.service-details summary{font-size:1.16rem}}
+
+/* Touch-friendly, keyboard-accessible project comparison (for verified same-job photos) */
+.before-after{--reveal:50%;position:relative;overflow:hidden;aspect-ratio:4/3;border-radius:14px;background:#e6ebe5;isolation:isolate}
+.before-after .comparison-after,.before-after .comparison-before img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
+.before-after .comparison-before{position:absolute;inset:0;clip-path:inset(0 calc(100% - var(--reveal)) 0 0)}
+.before-after input[type=range]{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:ew-resize;z-index:5;touch-action:pan-y}
+.before-after .comparison-handle{position:absolute;top:0;bottom:0;left:var(--reveal);width:3px;background:#fff;transform:translateX(-50%);pointer-events:none;z-index:3;box-shadow:0 0 4px #0007}
+.before-after .comparison-handle:after{content:'↔';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:#fff;color:#244c35;font-size:26px;font-weight:700;box-shadow:0 2px 12px #0005}
+.before-after:focus-within{outline:3px solid #39724d;outline-offset:3px}
+.before-after .comparison-label{position:absolute;top:14px;z-index:2;padding:5px 12px;background:#17291fd9;color:white;border-radius:30px;font-weight:650;pointer-events:none}
+.before-after .comparison-label-before{left:14px}.before-after .comparison-label-after{right:14px}
+.project-gallery figure{margin:0}.project-gallery figcaption{font-size:.9rem;color:#526155;padding:9px 2px 16px}
