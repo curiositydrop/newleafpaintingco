@@ -243,3 +243,9 @@ html,body{background:var(--bg);color:var(--ink)}
 .before-after .comparison-label{position:absolute;top:14px;z-index:2;padding:5px 12px;background:#17291fd9;color:white;border-radius:30px;font-weight:650;pointer-events:none}
 .before-after .comparison-label-before{left:14px}.before-after .comparison-label-after{right:14px}
 .project-gallery figure{margin:0}.project-gallery figcaption{font-size:.9rem;color:#526155;padding:9px 2px 16px}
+
+/* Three confirmed before/after projects */
+.comparison-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:26px;margin-top:26px}
+.comparison-project{margin:0;min-width:0}
+.comparison-project figcaption{padding:10px 2px 0;font-size:.94rem;color:#526155}
+@media(max-width:700px){.comparison-grid{grid-template-columns:1fr;gap:28px}}
