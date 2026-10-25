@@ -277,3 +277,7 @@ body.estimate-dialog-open{overflow:hidden}
 .site-header .brand img{width:94px;height:82px}
 .site-header .brand strong{font-size:1.38rem}
 @media(max-width:680px){.site-header .brand img{width:82px;height:72px}.site-header .brand strong{font-size:1.19rem}.site-header .header-inner{min-height:90px}.site-header .nav-links{top:90px}}
+
+/* Logo-only adjustment: leave company name and header sizing unchanged */
+.site-header .brand img{width:104px;height:90px}
+@media(max-width:680px){.site-header .brand img{width:92px;height:80px}}
