@@ -33,11 +33,12 @@
     nav?.querySelectorAll("a").forEach(link=>link.addEventListener("click",()=>{nav.classList.remove("open");menuToggle?.setAttribute("aria-expanded","false");}));
 
     const livePopup=document.getElementById("contact-popup");
-    const open=ev=>{ev?.preventDefault();if(livePopup) livePopup.style.display="flex";};
-    const close=()=>{if(livePopup) livePopup.style.display="none";};
+    let priorFocus=null;
+    const open=ev=>{ev?.preventDefault();priorFocus=document.activeElement;if(livePopup){livePopup.style.display="flex";livePopup.querySelector(".close")?.focus();}};
+    const close=()=>{if(livePopup) livePopup.style.display="none";priorFocus?.focus?.();};
     document.querySelectorAll('[data-contact-open="1"],#contact-btn').forEach(el=>el.addEventListener("click",open));
     livePopup?.querySelector(".close")?.addEventListener("click",close);
     window.addEventListener("click",e=>{if(e.target===livePopup) close();});
-    window.addEventListener("keydown",e=>{if(e.key==="Escape") close();});
+    window.addEventListener("keydown",e=>{if(e.key==="Escape") close();if(e.key==="Tab"&&livePopup?.style.display==="flex"){const focusable=[...livePopup.querySelectorAll("button,input,select,textarea,a[href]")].filter(el=>!el.disabled);if(focusable.length){const first=focusable[0],last=focusable[focusable.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}}});
   }catch(err){console.error(err);}
 })();
