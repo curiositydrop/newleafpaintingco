@@ -9,12 +9,18 @@
     const temp=document.createElement("div");
     temp.innerHTML=html;
 
+    const topbar=temp.querySelector(".topbar");
     const header=temp.querySelector("header");
     const footer=temp.querySelector("footer");
     const contactBtn=temp.querySelector("#contact-btn");
     const popup=temp.querySelector("#contact-popup");
 
-    if(headerMount && header) headerMount.replaceChildren(header);
+    if(headerMount && header){
+      const frag=document.createDocumentFragment();
+      if(topbar) frag.appendChild(topbar);
+      frag.appendChild(header);
+      headerMount.replaceChildren(frag);
+    }
     if(footerMount && footer) footerMount.replaceChildren(footer);
 
     document.querySelectorAll("#contact-btn,#contact-popup").forEach(el=>el.remove());
