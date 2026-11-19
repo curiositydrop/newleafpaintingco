@@ -19,7 +19,7 @@
       "name": "How much does it cost to paint a room in Southern Maine?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "New Leaf Painting Co. has not published a flat price per room. Cost depends on floor area, ceiling height, what gets painted, and how much surface prep is needed. A photo estimate uses your photos and measurements, and there is no dollar amount until Mike replies."
+        "text": "Standard interior painting includes labor, paint, light prep, and two coats. Walls are $2.05 per square foot of gross wall area. A flat ceiling is $2.25 per square foot. A 12 by 12 foot bedroom with 8 foot walls is $787.20 for the walls, or $1,111.20 with the ceiling. Forty-five feet of baseboard at $4.20 per foot adds $189.00, for $1,300.20. The form total is an estimate until Mike reviews the photos."
       }
     },
     {
@@ -116,11 +116,35 @@
     </div>
   </div>
   <p><strong>What should Mike paint?</strong></p>
-  <div class="checks"><label><input type="checkbox" name="room-1-paint" value="Walls"> Walls</label>
-<label><input type="checkbox" name="room-1-paint" value="Ceiling"> Ceiling</label>
-<label><input type="checkbox" name="room-1-paint" value="Trim/baseboards"> Trim/baseboards</label>
-<label><input type="checkbox" name="room-1-paint" value="Doors"> Doors</label>
-<label><input type="checkbox" name="room-1-paint" value="Window trim"> Window trim</label></div>
+  <div class="checks">
+    <label><input type="checkbox" name="room-1-paint" value="Walls"> Walls</label>
+    <label><input type="checkbox" name="room-1-paint" value="Ceiling"> Ceiling</label>
+    <label><input type="checkbox" name="room-1-paint" value="Baseboards"> Baseboards</label>
+    <label><input type="checkbox" name="room-1-paint" value="Casing"> Door and window casing</label>
+    <label><input type="checkbox" name="room-1-paint" value="Door slabs"> Door slabs: separate quote after photo review</label>
+  </div>
+  <div class="extra-line" data-extra="baseboards" hidden>
+    <div class="measure">
+      <div class="field">
+        <label for="room-1-baseboard-feet">Baseboard, linear feet</label>
+        <input class="measure-input" id="room-1-baseboard-feet" name="room-1-baseboard-feet" inputmode="decimal" autocomplete="off">
+      </div>
+      <label class="unsure-label"><input class="unsure" type="checkbox"> Unsure</label>
+    </div>
+    <p class="fine">Starts at the room perimeter, 2 × (length + width). Subtract doorway gaps and any wall without baseboard.</p>
+  </div>
+  <div class="extra-line" data-extra="casing" hidden>
+    <div class="measure">
+      <div class="field">
+        <label for="room-1-casing-feet">Casing, linear feet</label>
+        <input class="measure-input" id="room-1-casing-feet" name="room-1-casing-feet" inputmode="decimal" autocomplete="off">
+      </div>
+      <label class="unsure-label"><input class="unsure" type="checkbox"> Unsure</label>
+    </div>
+    <p class="fine">Count each painted side once.</p>
+  </div>
+  <label class="checks single"><input type="checkbox" name="room-1-large-openings" value="Yes"> Large openings or cabinets cover part of the walls</label>
+
   <p><strong>Paint inside a closet?</strong></p>
   <div class="yesno">
     <label><input type="radio" name="room-1-closet" value="No" checked> No</label>
@@ -168,8 +192,11 @@
   <input type="hidden" name="room-1-wall-area">
   <input type="hidden" name="room-1-ceiling-area">
   <input type="hidden" name="room-1-closet-area">
+  <input type="hidden" name="room-1-price-customer">
+  <input type="hidden" name="room-1-price-breakdown">
   <input type="hidden" name="room-1-summary">
   <p class="room-math fine"></p>
+  <p class="room-price"></p>
 </fieldset>
 <fieldset class="room" data-room="2" hidden>
   <div class="room-head">
@@ -219,11 +246,35 @@
     </div>
   </div>
   <p><strong>What should Mike paint?</strong></p>
-  <div class="checks"><label><input type="checkbox" name="room-2-paint" value="Walls"> Walls</label>
-<label><input type="checkbox" name="room-2-paint" value="Ceiling"> Ceiling</label>
-<label><input type="checkbox" name="room-2-paint" value="Trim/baseboards"> Trim/baseboards</label>
-<label><input type="checkbox" name="room-2-paint" value="Doors"> Doors</label>
-<label><input type="checkbox" name="room-2-paint" value="Window trim"> Window trim</label></div>
+  <div class="checks">
+    <label><input type="checkbox" name="room-2-paint" value="Walls"> Walls</label>
+    <label><input type="checkbox" name="room-2-paint" value="Ceiling"> Ceiling</label>
+    <label><input type="checkbox" name="room-2-paint" value="Baseboards"> Baseboards</label>
+    <label><input type="checkbox" name="room-2-paint" value="Casing"> Door and window casing</label>
+    <label><input type="checkbox" name="room-2-paint" value="Door slabs"> Door slabs: separate quote after photo review</label>
+  </div>
+  <div class="extra-line" data-extra="baseboards" hidden>
+    <div class="measure">
+      <div class="field">
+        <label for="room-2-baseboard-feet">Baseboard, linear feet</label>
+        <input class="measure-input" id="room-2-baseboard-feet" name="room-2-baseboard-feet" inputmode="decimal" autocomplete="off">
+      </div>
+      <label class="unsure-label"><input class="unsure" type="checkbox"> Unsure</label>
+    </div>
+    <p class="fine">Starts at the room perimeter, 2 × (length + width). Subtract doorway gaps and any wall without baseboard.</p>
+  </div>
+  <div class="extra-line" data-extra="casing" hidden>
+    <div class="measure">
+      <div class="field">
+        <label for="room-2-casing-feet">Casing, linear feet</label>
+        <input class="measure-input" id="room-2-casing-feet" name="room-2-casing-feet" inputmode="decimal" autocomplete="off">
+      </div>
+      <label class="unsure-label"><input class="unsure" type="checkbox"> Unsure</label>
+    </div>
+    <p class="fine">Count each painted side once.</p>
+  </div>
+  <label class="checks single"><input type="checkbox" name="room-2-large-openings" value="Yes"> Large openings or cabinets cover part of the walls</label>
+
   <p><strong>Paint inside a closet?</strong></p>
   <div class="yesno">
     <label><input type="radio" name="room-2-closet" value="No" checked disabled> No</label>
@@ -271,8 +322,11 @@
   <input type="hidden" name="room-2-wall-area" disabled>
   <input type="hidden" name="room-2-ceiling-area" disabled>
   <input type="hidden" name="room-2-closet-area" disabled>
+  <input type="hidden" name="room-2-price-customer">
+  <input type="hidden" name="room-2-price-breakdown">
   <input type="hidden" name="room-2-summary" disabled>
   <p class="room-math fine"></p>
+  <p class="room-price"></p>
 </fieldset>
 <fieldset class="room" data-room="3" hidden>
   <div class="room-head">
@@ -322,11 +376,35 @@
     </div>
   </div>
   <p><strong>What should Mike paint?</strong></p>
-  <div class="checks"><label><input type="checkbox" name="room-3-paint" value="Walls"> Walls</label>
-<label><input type="checkbox" name="room-3-paint" value="Ceiling"> Ceiling</label>
-<label><input type="checkbox" name="room-3-paint" value="Trim/baseboards"> Trim/baseboards</label>
-<label><input type="checkbox" name="room-3-paint" value="Doors"> Doors</label>
-<label><input type="checkbox" name="room-3-paint" value="Window trim"> Window trim</label></div>
+  <div class="checks">
+    <label><input type="checkbox" name="room-3-paint" value="Walls"> Walls</label>
+    <label><input type="checkbox" name="room-3-paint" value="Ceiling"> Ceiling</label>
+    <label><input type="checkbox" name="room-3-paint" value="Baseboards"> Baseboards</label>
+    <label><input type="checkbox" name="room-3-paint" value="Casing"> Door and window casing</label>
+    <label><input type="checkbox" name="room-3-paint" value="Door slabs"> Door slabs: separate quote after photo review</label>
+  </div>
+  <div class="extra-line" data-extra="baseboards" hidden>
+    <div class="measure">
+      <div class="field">
+        <label for="room-3-baseboard-feet">Baseboard, linear feet</label>
+        <input class="measure-input" id="room-3-baseboard-feet" name="room-3-baseboard-feet" inputmode="decimal" autocomplete="off">
+      </div>
+      <label class="unsure-label"><input class="unsure" type="checkbox"> Unsure</label>
+    </div>
+    <p class="fine">Starts at the room perimeter, 2 × (length + width). Subtract doorway gaps and any wall without baseboard.</p>
+  </div>
+  <div class="extra-line" data-extra="casing" hidden>
+    <div class="measure">
+      <div class="field">
+        <label for="room-3-casing-feet">Casing, linear feet</label>
+        <input class="measure-input" id="room-3-casing-feet" name="room-3-casing-feet" inputmode="decimal" autocomplete="off">
+      </div>
+      <label class="unsure-label"><input class="unsure" type="checkbox"> Unsure</label>
+    </div>
+    <p class="fine">Count each painted side once.</p>
+  </div>
+  <label class="checks single"><input type="checkbox" name="room-3-large-openings" value="Yes"> Large openings or cabinets cover part of the walls</label>
+
   <p><strong>Paint inside a closet?</strong></p>
   <div class="yesno">
     <label><input type="radio" name="room-3-closet" value="No" checked disabled> No</label>
@@ -374,8 +452,11 @@
   <input type="hidden" name="room-3-wall-area" disabled>
   <input type="hidden" name="room-3-ceiling-area" disabled>
   <input type="hidden" name="room-3-closet-area" disabled>
+  <input type="hidden" name="room-3-price-customer">
+  <input type="hidden" name="room-3-price-breakdown">
   <input type="hidden" name="room-3-summary" disabled>
   <p class="room-math fine"></p>
+  <p class="room-price"></p>
 </fieldset>
 <fieldset class="room" data-room="4" hidden>
   <div class="room-head">
@@ -425,11 +506,35 @@
     </div>
   </div>
   <p><strong>What should Mike paint?</strong></p>
-  <div class="checks"><label><input type="checkbox" name="room-4-paint" value="Walls"> Walls</label>
-<label><input type="checkbox" name="room-4-paint" value="Ceiling"> Ceiling</label>
-<label><input type="checkbox" name="room-4-paint" value="Trim/baseboards"> Trim/baseboards</label>
-<label><input type="checkbox" name="room-4-paint" value="Doors"> Doors</label>
-<label><input type="checkbox" name="room-4-paint" value="Window trim"> Window trim</label></div>
+  <div class="checks">
+    <label><input type="checkbox" name="room-4-paint" value="Walls"> Walls</label>
+    <label><input type="checkbox" name="room-4-paint" value="Ceiling"> Ceiling</label>
+    <label><input type="checkbox" name="room-4-paint" value="Baseboards"> Baseboards</label>
+    <label><input type="checkbox" name="room-4-paint" value="Casing"> Door and window casing</label>
+    <label><input type="checkbox" name="room-4-paint" value="Door slabs"> Door slabs: separate quote after photo review</label>
+  </div>
+  <div class="extra-line" data-extra="baseboards" hidden>
+    <div class="measure">
+      <div class="field">
+        <label for="room-4-baseboard-feet">Baseboard, linear feet</label>
+        <input class="measure-input" id="room-4-baseboard-feet" name="room-4-baseboard-feet" inputmode="decimal" autocomplete="off">
+      </div>
+      <label class="unsure-label"><input class="unsure" type="checkbox"> Unsure</label>
+    </div>
+    <p class="fine">Starts at the room perimeter, 2 × (length + width). Subtract doorway gaps and any wall without baseboard.</p>
+  </div>
+  <div class="extra-line" data-extra="casing" hidden>
+    <div class="measure">
+      <div class="field">
+        <label for="room-4-casing-feet">Casing, linear feet</label>
+        <input class="measure-input" id="room-4-casing-feet" name="room-4-casing-feet" inputmode="decimal" autocomplete="off">
+      </div>
+      <label class="unsure-label"><input class="unsure" type="checkbox"> Unsure</label>
+    </div>
+    <p class="fine">Count each painted side once.</p>
+  </div>
+  <label class="checks single"><input type="checkbox" name="room-4-large-openings" value="Yes"> Large openings or cabinets cover part of the walls</label>
+
   <p><strong>Paint inside a closet?</strong></p>
   <div class="yesno">
     <label><input type="radio" name="room-4-closet" value="No" checked disabled> No</label>
@@ -477,8 +582,11 @@
   <input type="hidden" name="room-4-wall-area" disabled>
   <input type="hidden" name="room-4-ceiling-area" disabled>
   <input type="hidden" name="room-4-closet-area" disabled>
+  <input type="hidden" name="room-4-price-customer">
+  <input type="hidden" name="room-4-price-breakdown">
   <input type="hidden" name="room-4-summary" disabled>
   <p class="room-math fine"></p>
+  <p class="room-price"></p>
 </fieldset>
       <button class="btn btn-sage btn-block" id="add-room" type="button">Add another room</button>
       <h2 class="serif" style="text-align:left;font-size:2rem;margin-top:28px">Where should Mike send the estimate?</h2>
@@ -486,6 +594,7 @@
       <div class="field"><label for="cust-email">Email *</label><input id="cust-email" name="email" type="email" required autocomplete="email"></div>
       <div class="field"><label for="cust-town">Town *</label><input id="cust-town" name="town" required autocomplete="address-level2"></div>
       <div class="field"><label for="cust-phone">Phone</label><input id="cust-phone" name="phone" type="tel" autocomplete="tel"></div>
+      <p class="price-line" id="estimate-total"></p>
       <p class="notice">Your estimate is based on the photos, measurements, and work you request. If the scope or condition is different in person, Mike will review any price change with you before work begins.</p>
       <p id="size-note" class="file-meta"></p>
       <p id="form-error" class="error" role="alert"></p>
@@ -496,7 +605,7 @@
       <h2 class="serif">Painting questions</h2>
       <details open>
         <summary>How much does it cost to paint a room in Southern Maine?</summary>
-        <p>A flat room price isn’t published yet. Floor area, ceiling height, the surfaces you want painted, and the prep those surfaces need all change the number. This form asks for those details so Mike can price your rooms. Nothing on this page is a quote until he emails you.</p>
+        <p>Standard interior painting includes labor, paint, light prep, and two coats. Walls are $2.05 per square foot of gross wall area: 2 × (length + width) × wall height. A flat ceiling is $2.25 per square foot. A 12 × 12 foot bedroom with 8 foot walls is $787.20 for the walls, or $1,111.20 with the ceiling. Forty-five feet of baseboard at $4.20 per foot adds $189.00, for $1,300.20. The total on this form is an estimate until Mike reviews your photos.</p>
       </details>
       <details>
         <summary>Can I get a painting estimate by sending photos?</summary>
@@ -510,6 +619,8 @@
     <p><strong>New Leaf Painting Co.</strong><br>Dayton, ME<br><a href="tel:+12074685509">(207) 468-5509</a><br><a href="mailto:newleafpaintingcompany@gmail.com">newleafpaintingcompany@gmail.com</a></p>
   </div>
 </footer>
+<script src="js/pricing-config.js"></script>
+<script src="js/pricing.js"></script>
 <script src="js/photo-estimate.js"></script>
 </body>
 </html>

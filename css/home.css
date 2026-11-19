@@ -125,6 +125,9 @@ button, input, select, textarea { font: inherit; }
 .slider-label { display: flex; justify-content: space-between; font-weight: 700; margin: 22px 0 8px; }
 input[type="range"] { width: 100%; accent-color: var(--forest); }
 .price-line { text-align: center; font-size: 1.25rem; font-weight: 800; margin: 18px 0; }
+.room-price { font-weight: 800; color: var(--forest); }
+.extra-line { margin: 8px 0 14px; }
+.checks.single { display: flex; align-items: center; gap: 10px; min-height: 48px; background: var(--sage); border-radius: 14px; padding: 8px 12px; font-weight: 700; margin: 10px 0; }
 .card .btn { margin-top: 8px; }
 
 .preview-grid { display: grid; gap: 18px; }

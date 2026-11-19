@@ -26,7 +26,6 @@
 
   const pricing = window.NEW_LEAF_PRICING || {};
   const area = pricing.floorAreaSqFt || { min: 40, max: 3000, step: 10, start: 150 };
-  const rates = pricing.ratesPerSqFt || {};
   const slider = document.getElementById("floor-area");
   const areaOut = document.getElementById("floor-area-value");
   const priceOut = document.getElementById("ballpark-price");
@@ -41,21 +40,6 @@
     slider.value = String(area.start);
   }
 
-  function money(n) {
-    return "$" + Math.round(n).toLocaleString("en-US");
-  }
-
-  function publishedRange(key, sqft) {
-    const rate = rates[key];
-    if (!rate || rate.low == null || rate.high == null) return null;
-    const low = Number(rate.low);
-    const high = Number(rate.high);
-    if (!Number.isFinite(low) || !Number.isFinite(high) || low <= 0 || high <= 0) return null;
-    const a = Math.min(low, high) * sqft;
-    const b = Math.max(low, high) * sqft;
-    return money(a) + " – " + money(b);
-  }
-
   function selectedLabel() {
     const btn = roomButtons.find((b) => b.dataset.roomRate === roomKey);
     return btn ? btn.textContent.trim() : "Bedroom";
@@ -63,12 +47,15 @@
 
   function renderQuote() {
     const sqft = Number(slider?.value || area.start);
-    if (areaOut) areaOut.textContent = sqft.toLocaleString("en-US") + " sq ft";
-    const range = publishedRange(roomKey, sqft);
+    const height = pricing.assumedCeilingHeightFt || 8;
+    if (areaOut) areaOut.textContent = sqft.toLocaleString("en-US") + " sq ft · " + height + " ft ceiling";
     if (priceOut) {
-      priceOut.textContent = range
-        ? "Estimated Price: " + range
-        : "Ballpark pricing coming soon. Get a Photo Estimate for your number";
+      if (roomKey === "wholeHouse") {
+        priceOut.textContent = "Mike reviews whole-home projects before confirming a price.";
+      } else if (window.NewLeafPricing) {
+        const range = window.NewLeafPricing.roughRange(sqft);
+        priceOut.textContent = "Rough range: " + window.NewLeafPricing.money(range.low) + " – " + window.NewLeafPricing.money(range.high);
+      }
     }
     if (quoteLink) {
       const params = new URLSearchParams({ room: selectedLabel(), sqft: String(sqft) });

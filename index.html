@@ -19,7 +19,7 @@
       "name": "How much does it cost to paint a room in Southern Maine?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "New Leaf Painting Co. has not published a flat price per room. What a room costs depends on floor area, ceiling height, whether you are painting walls, the ceiling, trim, or doors, and how much prep the surfaces need. Send photos and measurements for a photo estimate, or book a free in-person estimate. Published rates will be listed on the pricing page when they are set."
+        "text": "Standard interior painting includes labor, paint, light prep, and two coats. Walls are $2.05 per square foot of gross wall area, 2 times (length + width) times wall height, without deducting ordinary doors and windows. A flat ceiling is $2.25 per square foot. A 12 by 12 foot bedroom with 8 foot walls is $787.20 for the walls, or $1,111.20 with the ceiling. Forty-five feet of standard baseboard at $4.20 per foot adds $189.00, for $1,300.20. Door and window casing is $4.20 per linear foot. Door slabs, repairs, and specialty coatings are quoted after photos are reviewed."
       }
     },
     {
@@ -94,7 +94,9 @@
       </div>
       <label class="slider-label" for="floor-area">Floor area <span id="floor-area-value">150 sq ft</span></label>
       <input id="floor-area" type="range" min="40" max="3000" step="10" value="150" aria-describedby="ballpark-price">
-      <p class="price-line" id="ballpark-price">Ballpark pricing coming soon. Get a Photo Estimate for your number</p>
+      <p class="price-line" id="ballpark-price">Rough range</p>
+      <p class="preview-note">Includes labor, standard interior paint, light prep, and two coats on the surfaces you select. Mike will review your photos and confirm the price by email within 24–48 hours. Any repairs, specialty coatings, or extra coats will be listed separately for your approval.</p>
+      <p class="preview-note">Rough range assumes a square room and an 8 ft ceiling, from walls only up to walls plus ceiling. It is not a final price.</p>
       <a class="btn btn-forest btn-block" id="ballpark-link" href="photo-estimate.html?room=Bedroom&amp;sqft=150">Get a Photo Estimate</a>
     </div>
   </div>
@@ -125,14 +127,17 @@
 <section class="section" style="padding-top:0">
   <div class="wrap">
     <h2 class="serif">Recent Projects</h2>
+    <!-- PHOTO SLOTS. These are separate jobs, not a before/after pair. Replace src when Mike sends matched photos.
+         recent-gray-kitchen — IMG_8428.jpeg
+         recent-navy-cabinets — IMG_8599.jpeg -->
     <div class="projects">
-      <figure>
-        <img src="IMG_8428.jpeg" alt="Before cabinet refinishing">
-        <figcaption>Before</figcaption>
+      <figure data-slot="recent-gray-kitchen">
+        <img src="IMG_8428.jpeg" alt="Kitchen with light gray cabinets">
+        <figcaption>Kitchen cabinets</figcaption>
       </figure>
-      <figure>
-        <img src="IMG_8599.jpeg" alt="After cabinet refinishing">
-        <figcaption>After</figcaption>
+      <figure data-slot="recent-navy-cabinets">
+        <img src="IMG_8599.jpeg" alt="Navy blue painted kitchen cabinets">
+        <figcaption>Cabinet refinishing</figcaption>
       </figure>
     </div>
     <p style="text-align:center;margin-top:16px"><a class="btn btn-sage" href="past-projects.html">See more of our work</a></p>
@@ -177,7 +182,7 @@
     <h2 class="serif">Painting questions</h2>
     <details open>
       <summary>How much does it cost to paint a room in Southern Maine?</summary>
-      <p>There isn’t a published flat price per room yet. The number depends on the floor area, the ceiling height, whether the work includes walls, the ceiling, trim, or doors, and how much prep peeling paint or damage needs. Send photos and measurements for a number on your rooms, or book a free visit. When rates are ready, they will be on the <a href="pricing.html">pricing page</a>.</p>
+      <p>Standard interior painting includes labor, paint, light prep, and two coats. Walls are $2.05 per square foot of gross wall area: 2 × (length + width) × wall height, without deducting ordinary doors and windows. A flat ceiling is $2.25 per square foot. A 12 × 12 foot bedroom with 8 foot walls is $787.20 for the walls, or $1,111.20 with the ceiling. Forty-five feet of standard baseboard at $4.20 per foot adds $189.00, for $1,300.20. Door and window casing is also $4.20 per linear foot. Door slabs, repairs, and specialty coatings are quoted after Mike reviews photos. See the <a href="pricing.html">pricing page</a> or send a photo estimate.</p>
     </details>
     <details>
       <summary>Can I get a painting estimate by sending photos?</summary>
@@ -270,6 +275,7 @@
   </div>
 </div>
 <script src="js/pricing-config.js"></script>
+<script src="js/pricing.js"></script>
 <script src="js/home.js"></script>
 </body>
 </html>

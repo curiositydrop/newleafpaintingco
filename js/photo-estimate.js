@@ -98,7 +98,13 @@
       });
     });
 
-    room.addEventListener("input", () => updateRoom(room));
+    room.addEventListener("input", (event) => {
+      const target = event.target;
+      if (target && target.name && /-baseboard-feet$/.test(target.name) && target.value !== "Unsure") {
+        target.dataset.edited = "1";
+      }
+      updateRoom(room);
+    });
     room.addEventListener("change", () => updateRoom(room));
   });
 
@@ -155,6 +161,53 @@
     });
 
     const paint = Array.from(room.querySelectorAll('input[name="room-' + n + '-paint"]:checked')).map((el) => el.value);
+    const baseOn = paint.includes("Baseboards");
+    const casingOn = paint.includes("Casing");
+    const baseWrap = room.querySelector('[data-extra="baseboards"]');
+    const casingWrap = room.querySelector('[data-extra="casing"]');
+    if (baseWrap) baseWrap.hidden = !baseOn;
+    if (casingWrap) casingWrap.hidden = !casingOn;
+    const baseInput = field(room, "room-" + n + "-baseboard-feet");
+    const casingInput = field(room, "room-" + n + "-casing-feet");
+    if (baseInput && baseOn && baseInput.dataset.edited !== "1" && baseInput.value !== "Unsure") {
+      const len = Number(field(room, "room-" + n + "-length")?.value);
+      const wid = Number(field(room, "room-" + n + "-width")?.value);
+      if (len > 0 && wid > 0) baseInput.value = String(2 * (len + wid));
+    }
+    [baseWrap, casingWrap].forEach((wrap, index) => {
+      const on = index === 0 ? baseOn : casingOn;
+      wrap?.querySelectorAll("input").forEach((input) => {
+        input.disabled = !on || room.hidden;
+      });
+    });
+
+    function feetState(on, input) {
+      if (!on) return null;
+      const value = input?.value.trim() || "";
+      if (value === "Unsure" || value === "") return "unsure";
+      const num = Number(value);
+      return num > 0 ? num : "unsure";
+    }
+    const quote = window.NewLeafPricing ? window.NewLeafPricing.quoteRoom({
+      length: length === "Unsure" ? "unsure" : length,
+      width: width === "Unsure" ? "unsure" : width,
+      height: height === "Unsure" ? "unsure" : height,
+      walls: paint.includes("Walls"),
+      ceiling: paint.includes("Ceiling"),
+      baseboardFeet: feetState(baseOn, baseInput),
+      casingFeet: feetState(casingOn, casingInput),
+      doorSlabs: paint.includes("Door slabs"),
+      largeOpenings: !!room.querySelector('input[name="room-' + n + '-large-openings"]')?.checked
+    }) : { status: "empty", customerText: "", breakdown: "", total: null };
+    room.dataset.priceStatus = quote.status;
+    room.dataset.priceTotal = quote.total == null ? "" : String(quote.total);
+    const priceCustomer = field(room, "room-" + n + "-price-customer");
+    const priceBreakdown = field(room, "room-" + n + "-price-breakdown");
+    if (priceCustomer) priceCustomer.value = quote.customerText || "";
+    if (priceBreakdown) priceBreakdown.value = quote.breakdown || "";
+    const priceVisible = room.querySelector(".room-price");
+    if (priceVisible) priceVisible.textContent = quote.customerText || "";
+
     const type = field(room, "room-" + n + "-type")?.value || "";
     const windows = field(room, "room-" + n + "-windows")?.value || "0";
     const doors = field(room, "room-" + n + "-doors")?.value || "0";
@@ -166,9 +219,14 @@
       "Windows: " + windows,
       "Doors: " + doors,
       "Paint: " + (paint.length ? paint.join(", ") : "not selected"),
+      "Large openings or cabinets: " + (room.querySelector('input[name="room-' + n + '-large-openings"]')?.checked ? "Yes — review photos; wall area was not reduced" : "No"),
       "Gross wall area: " + (wallInput?.value || ""),
       "Ceiling area: " + (ceilInput?.value || ""),
-      "Closet area: " + closetText
+      "Closet area: " + closetText,
+      "Baseboard feet: " + (baseOn ? (baseInput?.value || "blank") : "not selected"),
+      "Casing feet: " + (casingOn ? (casingInput?.value || "blank") : "not selected"),
+      quote.customerText,
+      quote.breakdown
     ].join("\n");
     const summaryInput = field(room, "room-" + n + "-summary");
     if (summaryInput) summaryInput.value = summary;
@@ -176,7 +234,29 @@
     if (visible) {
       visible.textContent = "Gross wall area " + (wallInput?.value || "") + ". Ceiling area " + (ceilInput?.value || "") + ". Closet: " + closetText + ".";
     }
+    updateTotal();
     updateSize();
+  }
+
+  function updateTotal() {
+    const el = document.getElementById("estimate-total");
+    if (!el || !window.NewLeafPricing) return;
+    let sum = 0;
+    let priced = 0;
+    let waiting = 0;
+    rooms.forEach((room) => {
+      if (room.hidden) return;
+      if (room.dataset.priceStatus === "priced") {
+        sum += Number(room.dataset.priceTotal);
+        priced += 1;
+      } else if (room.dataset.priceStatus === "confirm" || room.dataset.priceStatus === "review") {
+        waiting += 1;
+      }
+    });
+    const parts = [];
+    if (priced) parts.push("Estimated total: " + window.NewLeafPricing.money(sum) + ". Pending photo review.");
+    if (waiting) parts.push("Mike will confirm any room marked that way.");
+    el.textContent = parts.join(" ");
   }
 
   function updateSize() {
