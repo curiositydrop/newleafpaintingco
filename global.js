@@ -40,7 +40,15 @@
     });
 
     const livePopup=document.getElementById("contact-popup");
-    const open=ev=>{ev?.preventDefault();if(livePopup) livePopup.style.display="flex";};
+    const open=ev=>{
+      ev?.preventDefault();
+      if(!livePopup) return;
+      const message=ev?.currentTarget?.getAttribute?.("data-book-message");
+      const details=livePopup.querySelector('[name="Project Details"]');
+      if(details && message) details.value=message;
+      livePopup.style.display="flex";
+    };
+    if(location.hash==="#walkthrough") open({preventDefault(){}, currentTarget:{getAttribute:()=>"Whole-home walkthrough"}});
     const close=()=>{if(livePopup) livePopup.style.display="none";};
     document.querySelectorAll('[data-contact-open="1"],#contact-btn').forEach(el=>el.addEventListener("click",open));
     livePopup?.querySelector(".close")?.addEventListener("click",close);

@@ -132,5 +132,12 @@
     return { low, high, side, height, wallArea, ceilingArea: area };
   }
 
-  return { quoteRoom, roughRange, money, cents, combined };
+  function aboutRange(low, high) {
+    return {
+      low: Math.floor(Number(low) / 50) * 50,
+      high: Math.ceil(Number(high) / 50) * 50
+    };
+  }
+
+  return { quoteRoom, roughRange, aboutRange, money, cents, combined };
 });

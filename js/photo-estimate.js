@@ -59,6 +59,13 @@
 
     room.querySelectorAll("[data-room-type]").forEach((btn) => {
       btn.addEventListener("click", () => {
+        if (btn.dataset.roomType === "Whole House") {
+          room.querySelectorAll("[data-room-type]").forEach((b) => b.setAttribute("aria-pressed", "false"));
+          const hidden = room.querySelector(".room-type-value");
+          if (hidden) hidden.value = "";
+          showWholeHouse();
+          return;
+        }
         room.querySelectorAll("[data-room-type]").forEach((b) => b.setAttribute("aria-pressed", b === btn ? "true" : "false"));
         const hidden = room.querySelector(".room-type-value");
         if (hidden) hidden.value = btn.dataset.roomType;
@@ -207,6 +214,8 @@
     if (priceBreakdown) priceBreakdown.value = quote.breakdown || "";
     const priceVisible = room.querySelector(".room-price");
     if (priceVisible) priceVisible.textContent = quote.customerText || "";
+    const includes = room.querySelector(".room-includes");
+    if (includes) includes.hidden = !quote.customerText;
 
     const type = field(room, "room-" + n + "-type")?.value || "";
     const windows = field(room, "room-" + n + "-windows")?.value || "0";
@@ -297,17 +306,38 @@
     return new File([blob], name, { type: "image/jpeg" });
   }
 
+  function showWholeHouse() {
+    const panel = document.getElementById("whole-house-choices");
+    if (panel) panel.hidden = false;
+    document.getElementById("add-room")?.classList.add("is-prominent");
+    const note = document.getElementById("add-room-note");
+    if (note) note.hidden = false;
+  }
+  document.getElementById("whole-add-rooms")?.addEventListener("click", () => {
+    const panel = document.getElementById("whole-house-choices");
+    if (panel) panel.hidden = true;
+    const add = document.getElementById("add-room");
+    add?.classList.add("is-prominent");
+    const note = document.getElementById("add-room-note");
+    if (note) note.hidden = false;
+    add?.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+
   const params = new URLSearchParams(location.search);
   const incomingRoom = params.get("room");
   const incomingSqft = params.get("sqft");
+  const whole = params.get("whole") === "1" || incomingRoom === "Whole House";
   const ballparkRoom = form.querySelector('[name="ballpark-room"]');
   const ballparkArea = form.querySelector('[name="ballpark-floor-area"]');
-  if (incomingRoom) {
+  if (whole) {
+    if (ballparkRoom) ballparkRoom.value = "Whole House";
+    showWholeHouse();
+  } else if (incomingRoom) {
     if (ballparkRoom) ballparkRoom.value = incomingRoom;
     const match = rooms[0].querySelector('[data-room-type="' + incomingRoom + '"]');
     if (match) match.click();
   }
-  if (incomingSqft && ballparkArea) {
+  if (!whole && incomingSqft && ballparkArea) {
     ballparkArea.value = incomingSqft + " sq ft";
     const note = document.getElementById("ballpark-carry");
     if (note) {

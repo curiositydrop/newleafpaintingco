@@ -38,7 +38,8 @@ button, input, select, textarea { font: inherit; }
   gap: 10px;
 }
 .top-row { min-height: 64px; }
-.top-actions { justify-content: space-between; padding: 0 0 12px; }
+.top-actions { justify-content: space-between; padding: 0 0 12px; flex-wrap: wrap; }
+.top-actions .btn-small { max-width: 100%; white-space: normal; line-height: 1.2; text-align: center; }
 .brand { display: flex; align-items: center; gap: 8px; text-decoration: none; min-width: 0; }
 .brand img { width: 36px; height: 42px; object-fit: contain; }
 .brand-name { font-family: var(--serif); font-size: 1.05rem; font-weight: 560; color: var(--forest); line-height: 1.1; }
@@ -96,7 +97,7 @@ button, input, select, textarea { font: inherit; }
 .hero h1 { margin: 0 0 12px; font-size: clamp(2.7rem, 12vw, 5.4rem); color: #fff; }
 .hero .sub { margin: 0 0 22px; font-size: 1.05rem; max-width: 34rem; }
 .hero-primary { display: grid; gap: 10px; justify-items: start; }
-.hero .btn { width: min(100%, 320px); }
+.hero .btn { width: min(100%, 22rem); height: auto; }
 .hero-note { margin: 0; font-size: 0.95rem; max-width: 28rem; }
 .sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
 .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
@@ -125,6 +126,12 @@ button, input, select, textarea { font: inherit; }
 .slider-label { display: flex; justify-content: space-between; font-weight: 700; margin: 22px 0 8px; }
 input[type="range"] { width: 100%; accent-color: var(--forest); }
 .price-line { text-align: center; font-size: 1.25rem; font-weight: 800; margin: 18px 0; }
+.whole-house { background: var(--sage); border-radius: 20px; padding: 18px 16px; margin: 8px 0 16px; display: grid; gap: 10px; }
+.whole-house[hidden] { display: none; }
+.whole-house .btn-sage { background: #fff; }
+.whole-house h3, .whole-house h2 { text-align: left; margin: 0; }
+.whole-house p { margin: 0; }
+#add-room.is-prominent { outline: 3px solid var(--forest); outline-offset: 3px; font-size: 1.05rem; }
 .room-price { font-weight: 800; color: var(--forest); }
 .extra-line { margin: 8px 0 14px; }
 .checks.single { display: flex; align-items: center; gap: 10px; min-height: 48px; background: var(--sage); border-radius: 14px; padding: 8px 12px; font-weight: 700; margin: 10px 0; }

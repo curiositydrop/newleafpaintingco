@@ -45,6 +45,11 @@ assert.ok(rough.low < rough.high);
 assert.strictEqual(rough.low.toFixed(2), "787.20");
 assert.strictEqual(rough.high.toFixed(2), "1111.20");
 
+const about = pricing.aboutRange(803.43, 1140.93);
+assert.strictEqual(about.low, 800);
+assert.strictEqual(about.high, 1150);
+assert.strictEqual(withCeiling.total.toFixed(2), "1111.20");
+
 console.log("pricing.test.js passed");
 console.log("walls only", wallsOnly.total.toFixed(2));
 console.log("walls + ceiling", withCeiling.total.toFixed(2));

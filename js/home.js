@@ -6,11 +6,16 @@
     menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
   });
 
+  function openBook(message) {
+    const book = document.getElementById("book-popup");
+    const details = book?.querySelector('[name="Project Details"]');
+    if (details && message) details.value = message;
+    if (book) book.hidden = false;
+  }
   document.querySelectorAll("[data-book]").forEach((el) => {
     el.addEventListener("click", (event) => {
       event.preventDefault();
-      const popup = document.getElementById("book-popup");
-      if (popup) popup.hidden = false;
+      openBook(el.getAttribute("data-book-message") || "");
     });
   });
   const popup = document.getElementById("book-popup");
@@ -30,8 +35,12 @@
   const areaOut = document.getElementById("floor-area-value");
   const priceOut = document.getElementById("ballpark-price");
   const quoteLink = document.getElementById("ballpark-link");
+  const roomQuote = document.getElementById("room-quote");
+  const wholeHouse = document.getElementById("whole-house");
   const roomButtons = Array.from(document.querySelectorAll("[data-room-rate]"));
   let roomKey = roomButtons[0]?.dataset.roomRate || "bedroom";
+  let sliderTouched = false;
+  let roomPicked = false;
 
   if (slider) {
     slider.min = String(area.min);
@@ -48,29 +57,39 @@
   function renderQuote() {
     const sqft = Number(slider?.value || area.start);
     const height = pricing.assumedCeilingHeightFt || 8;
+    const whole = roomKey === "wholeHouse";
+    if (roomQuote) roomQuote.hidden = whole;
+    if (wholeHouse) wholeHouse.hidden = !whole;
     if (areaOut) areaOut.textContent = sqft.toLocaleString("en-US") + " sq ft · " + height + " ft ceiling";
-    if (priceOut) {
-      if (roomKey === "wholeHouse") {
-        priceOut.textContent = "Mike reviews whole-home projects before confirming a price.";
-      } else if (window.NewLeafPricing) {
-        const range = window.NewLeafPricing.roughRange(sqft);
-        priceOut.textContent = "Rough range: " + window.NewLeafPricing.money(range.low) + " – " + window.NewLeafPricing.money(range.high);
-      }
+    if (priceOut && window.NewLeafPricing) {
+      const range = window.NewLeafPricing.roughRange(sqft);
+      const about = window.NewLeafPricing.aboutRange(range.low, range.high);
+      const low = about.low.toLocaleString("en-US");
+      const high = about.high.toLocaleString("en-US");
+      priceOut.textContent = "Rough range: About $" + low + "–$" + high;
     }
     if (quoteLink) {
-      const params = new URLSearchParams({ room: selectedLabel(), sqft: String(sqft) });
-      quoteLink.href = "photo-estimate.html?" + params.toString();
+      if (sliderTouched || roomPicked) {
+        const params = new URLSearchParams({ room: selectedLabel(), sqft: String(sqft) });
+        quoteLink.href = "photo-estimate.html?" + params.toString();
+      } else {
+        quoteLink.href = "photo-estimate.html";
+      }
     }
   }
 
   roomButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
       roomKey = btn.dataset.roomRate;
+      roomPicked = true;
       roomButtons.forEach((b) => b.setAttribute("aria-pressed", b === btn ? "true" : "false"));
       renderQuote();
     });
   });
-  slider?.addEventListener("input", renderQuote);
+  slider?.addEventListener("input", () => {
+    sliderTouched = true;
+    renderQuote();
+  });
   renderQuote();
 
   const before = document.getElementById("color-before");
@@ -166,9 +185,8 @@
   }
   split.addEventListener("input", setSplit);
   setSplit();
-  if (location.hash === "#book") {
-    const book = document.getElementById("book-popup");
-    if (book) book.hidden = false;
+  if (location.hash === "#book" || location.hash === "#walkthrough") {
+    openBook(location.hash === "#walkthrough" ? "Whole-home walkthrough" : "");
   }
   swatches.forEach((btn) => {
     btn.addEventListener("click", () => {

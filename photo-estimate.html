@@ -43,7 +43,7 @@
     </div>
     <div class="top-actions">
       <a class="phone-link" href="tel:+12074685509">(207) 468-5509</a>
-      <a class="btn btn-forest btn-small" href="index.html#book">Free Estimate</a>
+      <a class="btn btn-forest btn-small" href="index.html#book">Book a Free In-Person Estimate</a>
     </div>
     <nav>
       <ul class="nav-links">
@@ -62,6 +62,13 @@
   <div class="wrap">
     <h1 class="serif" style="font-size:clamp(2.4rem,9vw,4rem);margin-top:0">Photo estimate</h1>
     <p>Send a few room photos and measurements. Mike will email you a painting estimate within 24–48 hours.</p>
+    <div id="whole-house-choices" class="whole-house" hidden>
+      <p class="eyebrow">Winter priority</p>
+      <h2 class="serif">A whole house is more than one room.</h2>
+      <p>Don’t enter one length and width for the whole home. Add each room, or book a walkthrough. Full-home repaints are a winter priority. Mike emails a painting estimate within 24–48 hours after he has the photos.</p>
+      <button class="btn btn-forest btn-block" id="whole-add-rooms" type="button">Add rooms one at a time</button>
+      <a class="btn btn-sage btn-block" href="index.html#walkthrough">Book a whole-home walkthrough</a>
+    </div>
     <p id="ballpark-carry" class="notice" hidden></p>
     <form id="photo-estimate" name="photo-estimate" method="POST" action="/photo-estimate-thanks" data-netlify="true" netlify netlify-honeypot="bot-field" enctype="multipart/form-data">
       <input type="hidden" name="form-name" value="photo-estimate">
@@ -197,6 +204,7 @@
   <input type="hidden" name="room-1-summary">
   <p class="room-math fine"></p>
   <p class="room-price"></p>
+  <p class="fine room-includes">Includes labor, standard paint, light prep, and two coats.</p>
 </fieldset>
 <fieldset class="room" data-room="2" hidden>
   <div class="room-head">
@@ -327,6 +335,7 @@
   <input type="hidden" name="room-2-summary" disabled>
   <p class="room-math fine"></p>
   <p class="room-price"></p>
+  <p class="fine room-includes">Includes labor, standard paint, light prep, and two coats.</p>
 </fieldset>
 <fieldset class="room" data-room="3" hidden>
   <div class="room-head">
@@ -457,6 +466,7 @@
   <input type="hidden" name="room-3-summary" disabled>
   <p class="room-math fine"></p>
   <p class="room-price"></p>
+  <p class="fine room-includes">Includes labor, standard paint, light prep, and two coats.</p>
 </fieldset>
 <fieldset class="room" data-room="4" hidden>
   <div class="room-head">
@@ -587,7 +597,9 @@
   <input type="hidden" name="room-4-summary" disabled>
   <p class="room-math fine"></p>
   <p class="room-price"></p>
+  <p class="fine room-includes">Includes labor, standard paint, light prep, and two coats.</p>
 </fieldset>
+      <p id="add-room-note" class="fine" hidden>Full-home repaint: finish this room, then use Add another room for the next one.</p>
       <button class="btn btn-sage btn-block" id="add-room" type="button">Add another room</button>
       <h2 class="serif" style="text-align:left;font-size:2rem;margin-top:28px">Where should Mike send the estimate?</h2>
       <div class="field"><label for="cust-name">Name *</label><input id="cust-name" name="name" required autocomplete="name"></div>
@@ -595,6 +607,7 @@
       <div class="field"><label for="cust-town">Town *</label><input id="cust-town" name="town" required autocomplete="address-level2"></div>
       <div class="field"><label for="cust-phone">Phone</label><input id="cust-phone" name="phone" type="tel" autocomplete="tel"></div>
       <p class="price-line" id="estimate-total"></p>
+      <p class="fine" id="estimate-includes">Includes labor, standard paint, light prep, and two coats.</p>
       <p class="notice">Your estimate is based on the photos, measurements, and work you request. If the scope or condition is different in person, Mike will review any price change with you before work begins.</p>
       <p id="size-note" class="file-meta"></p>
       <p id="form-error" class="error" role="alert"></p>

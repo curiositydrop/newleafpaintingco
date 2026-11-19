@@ -51,7 +51,7 @@ p{margin-top:0}
 .nav-links a:hover,.nav-links a.active{color:#143226}
 .menu-toggle{margin-left:auto;width:44px;height:44px;border:1px solid var(--line);background:transparent;border-radius:12px;display:grid;gap:5px;place-content:center}
 .menu-toggle span{display:block;width:18px;height:2px;background:var(--green)}
-.header-cta{margin-left:0}
+.header-cta{margin-left:0;max-width:100%;white-space:normal;line-height:1.2;text-align:center;height:auto}
 /* HERO */
 .lux-hero{position:relative;min-height:78vh;display:grid;align-items:end;overflow:hidden}
 .lux-hero-bg{position:absolute;inset:0}

@@ -45,7 +45,7 @@
     </div>
     <div class="top-actions">
       <a class="phone-link" href="tel:+12074685509">(207) 468-5509</a>
-      <a class="btn btn-forest btn-small" href="#" data-book>Free Estimate</a>
+      <a class="btn btn-forest btn-small" href="#" data-book>Book a Free In-Person Estimate</a>
     </div>
     <nav>
       <ul class="nav-links">
@@ -71,7 +71,7 @@
     <p class="sub">Full-home and room repaints across Southern Maine. Clean prep, tidy jobsite, on time.</p>
     <div class="hero-primary">
       <a class="btn btn-forest" href="photo-estimate.html">Get a Photo Estimate</a>
-      <a class="btn btn-sage" href="#" data-book>Book a Free Estimate</a>
+      <a class="btn btn-sage" href="#" data-book>Book a Free In-Person Estimate</a>
       <p class="hero-note">Send a few room photos and measurements. Mike will email you a painting estimate within 24–48 hours.</p>
     </div>
     <div class="badges">
@@ -92,12 +92,21 @@
         <button class="choice" type="button" data-room-rate="kitchen" aria-pressed="false">Kitchen</button>
         <button class="choice" type="button" data-room-rate="wholeHouse" aria-pressed="false">Whole House</button>
       </div>
-      <label class="slider-label" for="floor-area">Floor area <span id="floor-area-value">150 sq ft</span></label>
-      <input id="floor-area" type="range" min="40" max="3000" step="10" value="150" aria-describedby="ballpark-price">
-      <p class="price-line" id="ballpark-price">Rough range</p>
-      <p class="preview-note">Includes labor, standard interior paint, light prep, and two coats on the surfaces you select. Mike will review your photos and confirm the price by email within 24–48 hours. Any repairs, specialty coatings, or extra coats will be listed separately for your approval.</p>
-      <p class="preview-note">Rough range assumes a square room and an 8 ft ceiling, from walls only up to walls plus ceiling. It is not a final price.</p>
-      <a class="btn btn-forest btn-block" id="ballpark-link" href="photo-estimate.html?room=Bedroom&amp;sqft=150">Get a Photo Estimate</a>
+      <div id="whole-house" class="whole-house" hidden>
+        <p class="eyebrow">Winter priority</p>
+        <h3 class="serif">Full-home repaints</h3>
+        <p>A whole house is not one length and width. Mike walks the home before confirming a price. Add each room yourself, or book a walkthrough.</p>
+        <a class="btn btn-forest btn-block" href="photo-estimate.html?whole=1">Add rooms one at a time</a>
+        <button class="btn btn-sage btn-block" type="button" data-book data-book-message="Whole-home walkthrough">Book a whole-home walkthrough</button>
+      </div>
+      <div id="room-quote">
+        <label class="slider-label" for="floor-area">Floor area <span id="floor-area-value">150 sq ft</span></label>
+        <input id="floor-area" type="range" min="40" max="3000" step="10" value="150" aria-describedby="ballpark-price">
+        <p class="price-line" id="ballpark-price">Rough range</p>
+        <p class="preview-note">Includes labor, standard interior paint, light prep, and two coats on the surfaces you select. Mike will review your photos and confirm the price by email within 24–48 hours. Any repairs, specialty coatings, or extra coats will be listed separately for your approval.</p>
+        <p class="preview-note">Rough range assumes a square room and an 8 ft ceiling, from walls only up to walls plus ceiling. It is not a final price.</p>
+        <a class="btn btn-forest btn-block" id="ballpark-link" href="photo-estimate.html">Get a Photo Estimate</a>
+      </div>
     </div>
   </div>
 </section>
