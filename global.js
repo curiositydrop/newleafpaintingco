@@ -51,6 +51,14 @@
     if(location.hash==="#walkthrough") open({preventDefault(){}, currentTarget:{getAttribute:()=>"Whole-home walkthrough"}});
     const close=()=>{if(livePopup) livePopup.style.display="none";};
     document.querySelectorAll('[data-contact-open="1"],#contact-btn').forEach(el=>el.addEventListener("click",open));
+    document.querySelectorAll("form[name='in-person-estimate']").forEach(form=>{
+      form.addEventListener("submit", event=>{
+        const picked=form.querySelectorAll('input[name="Service"]:checked');
+        const note=form.querySelector(".service-error");
+        if(!picked.length){ event.preventDefault(); if(note) note.hidden=false; }
+        else if(note) note.hidden=true;
+      });
+    });
     livePopup?.querySelector(".close")?.addEventListener("click",close);
     window.addEventListener("click",e=>{if(e.target===livePopup) close();});
     window.addEventListener("keydown",e=>{if(e.key==="Escape") close();});

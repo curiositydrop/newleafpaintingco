@@ -12,6 +12,16 @@
     if (details && message) details.value = message;
     if (book) book.hidden = false;
   }
+  document.querySelectorAll("form[name='in-person-estimate']").forEach((form) => {
+    form.addEventListener("submit", (event) => {
+      const picked = form.querySelectorAll('input[name="Service"]:checked');
+      const note = form.querySelector(".service-error");
+      if (!picked.length) {
+        event.preventDefault();
+        if (note) note.hidden = false;
+      } else if (note) note.hidden = true;
+    });
+  });
   document.querySelectorAll("[data-book]").forEach((el) => {
     el.addEventListener("click", (event) => {
       event.preventDefault();
@@ -107,65 +117,47 @@
     return [parseInt(n.slice(0, 2), 16), parseInt(n.slice(2, 4), 16), parseInt(n.slice(4, 6), 16)];
   }
 
-  function wallMask(data, w, h) {
-    const mask = new Uint8Array(w * h);
-    for (let y = 0; y < h; y++) {
-      for (let x = 0; x < w; x++) {
-        const i = (y * w + x) * 4;
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-        const isWall = b > r + 8 && b >= g && b > 28 && b < 150 && r < 95 && g < 115 && b - r > 10;
-        mask[y * w + x] = isWall ? 1 : 0;
-      }
-    }
-    const smooth = (src) => {
-      const next = new Uint8Array(src.length);
-      for (let y = 2; y < h - 2; y++) {
-        for (let x = 2; x < w - 2; x++) {
-          let n = 0;
-          for (let dy = -2; dy <= 2; dy++) {
-            for (let dx = -2; dx <= 2; dx++) n += src[(y + dy) * w + (x + dx)];
-          }
-          const i = y * w + x;
-          next[i] = n >= 14 ? 1 : n <= 5 ? 0 : src[i];
-        }
-      }
-      return next;
-    };
-    let current = mask;
-    current = smooth(current);
-    current = smooth(current);
-    for (let y = 0; y < h; y++) {
-      for (let x = 0; x < w; x++) {
-        if (y > h * 0.73 && x > w * 0.2) current[y * w + x] = 0;
-      }
-    }
-    return current;
-  }
+  const maskImage = new Image();
+  maskImage.src = "images/bedroom-wall-mask.png";
+  maskImage.onload = () => paint();
 
   function paint() {
-    if (!source) return;
-    const maxW = 900;
-    const scale = Math.min(1, maxW / source.width);
-    const w = Math.round(source.width * scale);
-    const h = Math.round(source.height * scale);
-    canvas.width = w;
-    canvas.height = h;
-    ctx.drawImage(source, 0, 0, w, h);
-    const frame = ctx.getImageData(0, 0, w, h);
+    if (!source || !maskImage.complete || !maskImage.naturalWidth) return;
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const cssW = before.clientWidth || source.width;
+    const cssH = Math.round(cssW * (source.height / source.width));
+    canvas.width = Math.max(1, Math.round(cssW * dpr));
+    canvas.height = Math.max(1, Math.round(cssH * dpr));
+    ctx.drawImage(source, 0, 0, canvas.width, canvas.height);
+    const frame = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const data = frame.data;
-    const mask = wallMask(data, w, h);
+    const maskCanvas = document.createElement("canvas");
+    maskCanvas.width = canvas.width;
+    maskCanvas.height = canvas.height;
+    const maskCtx = maskCanvas.getContext("2d", { willReadFrequently: true });
+    maskCtx.drawImage(maskImage, 0, 0, canvas.width, canvas.height);
+    const mask = maskCtx.getImageData(0, 0, canvas.width, canvas.height).data;
     const [sr, sg, sb] = hexToRgb(swatch);
-    const swLum = 0.299 * sr + 0.587 * sg + 0.114 * sb || 1;
-    for (let p = 0; p < mask.length; p++) {
-      if (!mask[p]) continue;
-      const i = p * 4;
+    let lumSum = 0;
+    let lumCount = 0;
+    const lums = new Float32Array(data.length / 4);
+    for (let i = 0, p = 0; i < data.length; i += 4, p++) {
+      if (mask[i] < 128) continue;
       const lum = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
-      const factor = Math.min(1.25, Math.max(0.7, lum / swLum));
-      data[i] = Math.min(255, sr * factor);
-      data[i + 1] = Math.min(255, sg * factor);
-      data[i + 2] = Math.min(255, sb * factor);
+      lums[p] = lum;
+      lumSum += lum;
+      lumCount += 1;
+    }
+    const avg = lumCount ? lumSum / lumCount : 1;
+    for (let i = 0, p = 0; i < data.length; i += 4, p++) {
+      if (mask[i] < 128) continue;
+      const shade = Math.min(1.35, Math.max(0.42, lums[p] / avg));
+      const grainR = (data[i] * sr) / 255;
+      const grainG = (data[i + 1] * sg) / 255;
+      const grainB = (data[i + 2] * sb) / 255;
+      data[i] = Math.min(255, sr * shade * 0.92 + grainR * 0.08);
+      data[i + 1] = Math.min(255, sg * shade * 0.92 + grainG * 0.08);
+      data[i + 2] = Math.min(255, sb * shade * 0.92 + grainB * 0.08);
     }
     ctx.putImageData(frame, 0, 0);
   }
@@ -188,11 +180,48 @@
   if (location.hash === "#book" || location.hash === "#walkthrough") {
     openBook(location.hash === "#walkthrough" ? "Whole-home walkthrough" : "");
   }
+  const chart = document.getElementById("color-chart");
+  const colorNow = document.getElementById("color-now");
+  function applyColor(hex, label) {
+    swatch = hex;
+    if (colorNow) colorNow.textContent = label;
+    swatches.forEach((s) => s.setAttribute("aria-pressed", s.dataset.swatch.toLowerCase() === hex.toLowerCase() ? "true" : "false"));
+    paint();
+  }
+  function openChart() {
+    if (!chart || chart.childElementCount) {
+      if (chart) chart.hidden = false;
+      return;
+    }
+    const groups = {};
+    (window.SW_COLORS || []).forEach((color) => {
+      (groups[color.group] = groups[color.group] || []).push(color);
+    });
+    Object.keys(groups).forEach((group) => {
+      const block = document.createElement("div");
+      const title = document.createElement("h3");
+      title.textContent = group;
+      const grid = document.createElement("div");
+      grid.className = "swatch-grid";
+      groups[group].forEach((color) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.innerHTML = "<i style=\"background:" + color.hex + "\"></i><span>" + color.name + "<br>" + color.code + "</span>";
+        button.addEventListener("click", () => applyColor(color.hex, color.name + " · " + color.code));
+        grid.appendChild(button);
+      });
+      block.appendChild(title);
+      block.appendChild(grid);
+      chart.appendChild(block);
+    });
+    chart.hidden = false;
+  }
   swatches.forEach((btn) => {
     btn.addEventListener("click", () => {
-      swatch = btn.dataset.swatch;
-      swatches.forEach((s) => s.setAttribute("aria-pressed", s === btn ? "true" : "false"));
-      paint();
+      applyColor(btn.dataset.swatch, btn.getAttribute("aria-label"));
+      openChart();
     });
   });
+  document.getElementById("open-colors")?.addEventListener("click", openChart);
+  window.addEventListener("resize", paint);
 })();

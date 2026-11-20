@@ -53,7 +53,7 @@
       return {
         status: "review",
         total: null,
-        customerText: "Mike reviews trim-only jobs before confirming a price.",
+        customerText: "We'll review trim-only jobs before confirming a price.",
         breakdown: "Trim-only room. No automatic price.\n" + (input.doorSlabs ? "Door slabs: separate quote after photo review.\n" : "")
       };
     }
@@ -70,8 +70,8 @@
       return {
         status: "confirm",
         total: null,
-        customerText: "Mike will confirm",
-        breakdown: "Mike will confirm. Unsure: " + unsure.join(", ") + "."
+        customerText: "We'll confirm",
+        breakdown: "We'll confirm. Unsure: " + unsure.join(", ") + "."
           + (input.largeOpenings ? "\nFLAG: Large openings or cabinets cover part of the walls. Review the photos." : "")
           + (input.doorSlabs ? "\nDoor slabs: separate quote after photo review." : "")
       };
@@ -83,23 +83,24 @@
     const lines = [];
     if (walls) {
       if (!(length > 0) || !(width > 0) || !(height > 0)) {
-        return { status: "confirm", total: null, customerText: "Mike will confirm", breakdown: "Wall dimensions are incomplete." };
+        return { status: "confirm", total: null, customerText: "We'll confirm", breakdown: "Wall dimensions are incomplete." };
       }
       const area = cents(2 * (length + width) * height);
       lines.push(line("Walls", area, "sq ft", cfg.walls.laborPerSqFt, cfg.walls.paintPerSqFt));
     }
     if (ceiling) {
       if (!(length > 0) || !(width > 0)) {
-        return { status: "confirm", total: null, customerText: "Mike will confirm", breakdown: "Ceiling dimensions are incomplete." };
+        return { status: "confirm", total: null, customerText: "We'll confirm", breakdown: "Ceiling dimensions are incomplete." };
       }
-      lines.push(line("Ceiling", cents(length * width), "sq ft", cfg.ceiling.laborPerSqFt, cfg.ceiling.paintPerSqFt));
+      const ceilCfg = walls ? cfg.ceilingWithWalls : cfg.ceiling;
+      lines.push(line(walls ? "Ceiling with walls" : "Ceiling", cents(length * width), "sq ft", ceilCfg.laborPerSqFt, ceilCfg.paintPerSqFt));
     }
     if (typeof base === "number") {
-      if (!(base > 0)) return { status: "confirm", total: null, customerText: "Mike will confirm", breakdown: "Baseboard length is incomplete." };
+      if (!(base > 0)) return { status: "confirm", total: null, customerText: "We'll confirm", breakdown: "Baseboard length is incomplete." };
       lines.push(line("Baseboards", cents(base), "lf", cfg.baseboard.laborPerLf, cfg.baseboard.paintPerLf));
     }
     if (typeof casing === "number") {
-      if (!(casing > 0)) return { status: "confirm", total: null, customerText: "Mike will confirm", breakdown: "Casing length is incomplete." };
+      if (!(casing > 0)) return { status: "confirm", total: null, customerText: "We'll confirm", breakdown: "Casing length is incomplete." };
       lines.push(line("Door and window casing", cents(casing), "lf", cfg.casing.laborPerLf, cfg.casing.paintPerLf));
     }
 
@@ -126,10 +127,25 @@
     const height = cfg.assumedCeilingHeightFt;
     const wallArea = 2 * (side + side) * height;
     const wallRate = combined(cfg.walls, "laborPerSqFt", "paintPerSqFt");
-    const ceilingRate = combined(cfg.ceiling, "laborPerSqFt", "paintPerSqFt");
+    const ceilingRate = combined(cfg.ceilingWithWalls, "laborPerSqFt", "paintPerSqFt");
     const low = cents(wallArea * wallRate);
     const high = cents(low + area * ceilingRate);
     return { low, high, side, height, wallArea, ceilingArea: area };
+  }
+
+  function quoteLaminate(input, rates) {
+    const cfg = (rates || config()).laminate;
+    const length = Number(input.length);
+    const width = Number(input.width);
+    const given = Number(input.sqft);
+    const floor = given > 0 ? given : (length > 0 && width > 0 ? length * width : 0);
+    const steps = Number(input.steps) > 0 ? Number(input.steps) : 0;
+    const landing = Number(input.landingSqft) > 0 ? Number(input.landingSqft) : 0;
+    const floorCost = cents(floor * cfg.floorPerSqFt);
+    const stepCost = cents(steps * cfg.stepEach);
+    const landingCost = cents(landing * cfg.landingPerSqFt);
+    const total = cents(floorCost + stepCost + landingCost);
+    return { floor, steps, landing, floorCost, stepCost, landingCost, total, winding: !!input.winding };
   }
 
   function aboutRange(low, high) {
@@ -139,5 +155,5 @@
     };
   }
 
-  return { quoteRoom, roughRange, aboutRange, money, cents, combined };
+  return { quoteRoom, quoteLaminate, roughRange, aboutRange, money, cents, combined };
 });

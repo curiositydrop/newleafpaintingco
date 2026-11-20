@@ -134,7 +134,16 @@ input[type="range"] { width: 100%; accent-color: var(--forest); }
 #add-room.is-prominent { outline: 3px solid var(--forest); outline-offset: 3px; font-size: 1.05rem; }
 .room-price { font-weight: 800; color: var(--forest); }
 .extra-line { margin: 8px 0 14px; }
-.checks.single { display: flex; align-items: center; gap: 10px; min-height: 48px; background: var(--sage); border-radius: 14px; padding: 8px 12px; font-weight: 700; margin: 10px 0; }
+.checks.single, .service-checks label { display: flex; align-items: center; gap: 10px; min-height: 48px; background: var(--sage); border-radius: 14px; padding: 8px 12px; font-weight: 700; margin: 8px 0; }
+.service-checks { display: grid; }
+.service-checks input { width: 22px; height: 22px; flex: 0 0 auto; }
+.service-error { color: #8a3b32; font-weight: 700; }
+.color-chart { display: grid; gap: 14px; margin-top: 12px; max-height: 70vh; overflow: auto; background: #fff; border-radius: 18px; padding: 12px; }
+.color-chart[hidden] { display: none; }
+.swatch-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.swatch-grid button { display: flex; gap: 8px; align-items: center; min-height: 48px; border: 1px solid var(--line); background: #fff; border-radius: 12px; text-align: left; padding: 6px; cursor: pointer; }
+.swatch-grid i { width: 28px; height: 28px; border-radius: 8px; display: block; flex: 0 0 auto; border: 1px solid rgba(0,0,0,.12); }
+.color-now { font-weight: 700; margin: 8px 0; }
 .card .btn { margin-top: 8px; }
 
 .preview-grid { display: grid; gap: 18px; }
@@ -212,6 +221,7 @@ input[type="range"] { width: 100%; accent-color: var(--forest); }
   background: #fff;
 }
 .field textarea { min-height: 110px; }
+.service-checks label input[type="checkbox"] { width: 22px; height: 22px; min-height: 22px; padding: 0; flex: 0 0 22px; border-radius: 4px; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .fine { font-size: 0.8rem; color: #5c6d62; }
 

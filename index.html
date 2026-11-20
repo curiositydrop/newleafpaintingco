@@ -19,7 +19,7 @@
       "name": "How much does it cost to paint a room in Southern Maine?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Standard interior painting includes labor, paint, light prep, and two coats. Walls are $2.05 per square foot of gross wall area, 2 times (length + width) times wall height, without deducting ordinary doors and windows. A flat ceiling is $2.25 per square foot. A 12 by 12 foot bedroom with 8 foot walls is $787.20 for the walls, or $1,111.20 with the ceiling. Forty-five feet of standard baseboard at $4.20 per foot adds $189.00, for $1,300.20. Door and window casing is $4.20 per linear foot. Door slabs, repairs, and specialty coatings are quoted after photos are reviewed."
+        "text": "Standard interior painting includes labor, paint, light prep, and two coats. Walls are $2.05 per square foot of gross wall area, 2 times (length + width) times wall height, without deducting ordinary doors and windows. A ceiling painted on its own is $2.25 per square foot, or $1.75 per square foot when the walls in that room are painted too. A 12 by 12 foot bedroom with 8 foot walls is $787.20 for the walls, or $1,039.20 with the ceiling. Forty-five feet of standard baseboard at $4.20 per foot adds $189.00, for $1,228.20. Door and window casing is $4.20 per linear foot. Door slabs, repairs, and specialty coatings are quoted after photos are reviewed."
       }
     },
     {
@@ -27,7 +27,7 @@
       "name": "Can I get a painting estimate by sending photos?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes. Use Get a Photo Estimate, add each room’s photos and measurements, and Mike will email a painting estimate within 24 to 48 hours. The estimate is based on the photos, measurements, and work you request. If the scope or condition is different in person, Mike will review any price change with you before work begins."
+        "text": "Yes. Use Get a Photo Estimate, add each room’s photos and measurements, and we'll review your photos and confirm the price by email within 24–48 hours. The estimate is based on the photos, measurements, and work you request. If the scope or condition is different in person, we'll review any price change with you before work begins."
       }
     }
   ]
@@ -72,7 +72,7 @@
     <div class="hero-primary">
       <a class="btn btn-forest" href="photo-estimate.html">Get a Photo Estimate</a>
       <a class="btn btn-sage" href="#" data-book>Book a Free In-Person Estimate</a>
-      <p class="hero-note">Send a few room photos and measurements. Mike will email you a painting estimate within 24–48 hours.</p>
+      <p class="hero-note">Send a few room photos and measurements. We'll review your photos and confirm the price by email within 24–48 hours.</p>
     </div>
     <div class="badges">
       <span class="badge">Locally owned in Dayton, ME</span>
@@ -95,7 +95,7 @@
       <div id="whole-house" class="whole-house" hidden>
         <p class="eyebrow">Winter priority</p>
         <h3 class="serif">Full-home repaints</h3>
-        <p>A whole house is not one length and width. Mike walks the home before confirming a price. Add each room yourself, or book a walkthrough.</p>
+        <p>A whole house is not one length and width. We walk the home before confirming a price. Add each room yourself, or book a walkthrough.</p>
         <a class="btn btn-forest btn-block" href="photo-estimate.html?whole=1">Add rooms one at a time</a>
         <button class="btn btn-sage btn-block" type="button" data-book data-book-message="Whole-home walkthrough">Book a whole-home walkthrough</button>
       </div>
@@ -103,7 +103,7 @@
         <label class="slider-label" for="floor-area">Floor area <span id="floor-area-value">150 sq ft</span></label>
         <input id="floor-area" type="range" min="40" max="3000" step="10" value="150" aria-describedby="ballpark-price">
         <p class="price-line" id="ballpark-price">Rough range</p>
-        <p class="preview-note">Includes labor, standard interior paint, light prep, and two coats on the surfaces you select. Mike will review your photos and confirm the price by email within 24–48 hours. Any repairs, specialty coatings, or extra coats will be listed separately for your approval.</p>
+        <p class="preview-note">Includes labor, standard interior paint, light prep, and two coats on the surfaces you select. We'll review your photos and confirm the price by email within 24–48 hours. Any repairs, specialty coatings, or extra coats will be listed separately for your approval.</p>
         <p class="preview-note">Rough range assumes a square room and an 8 ft ceiling, from walls only up to walls plus ceiling. It is not a final price.</p>
         <a class="btn btn-forest btn-block" id="ballpark-link" href="photo-estimate.html">Get a Photo Estimate</a>
       </div>
@@ -126,8 +126,12 @@
           <button class="swatch" type="button" data-swatch="#d7e6d6" aria-pressed="true" aria-label="Pale sage"></button>
           <button class="swatch" type="button" data-swatch="#f4efe4" aria-pressed="false" aria-label="Off-white cream"></button>
         </div>
-        <p class="preview-note">This is only a preview of a sample room. It does not send anything to Mike.</p>
-        <p class="btn btn-sage btn-block btn-static" role="note">Preview only. Nothing is sent to Mike.</p>
+        <p class="color-now" id="color-now">Pale sage</p>
+        <button class="btn btn-sage btn-block" id="open-colors" type="button">Sherwin-Williams colors</button>
+        <div id="color-chart" class="color-chart" hidden></div>
+        <p class="fine">Colors shown are approximate on screen. Sherwin-Williams color names are trademarks of The Sherwin-Williams Company. Ask us for real paint chips.</p>
+        <p class="preview-note">This is only a preview of a sample room. Nothing is sent to us.</p>
+        <p class="btn btn-sage btn-block btn-static" role="note">Preview only. Nothing is sent to us.</p>
       </div>
     </div>
   </div>
@@ -160,12 +164,12 @@
       <div>
         <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="12" y="8" width="24" height="32" rx="3"/><path d="M18 16h12M18 22h12M18 28h8"/></svg>
         <h3>1. Request</h3>
-        <p>Send room photos and measurements, or ask Mike to come by.</p>
+        <p>Send room photos and measurements, or book a visit.</p>
       </div>
       <div>
         <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 8h14l8 8v24H14z"/><path d="M28 8v8h8M18 24h12M18 30h12"/></svg>
         <h3>2. Estimate</h3>
-        <p>Mike emails a painting estimate within 24–48 hours.</p>
+        <p>We'll review your photos and confirm the price by email within 24–48 hours.</p>
       </div>
       <div>
         <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M10 34c8-2 12-10 14-18 4 6 10 10 16 10-2 8-10 12-18 10"/><path d="M14 30l-4 8"/></svg>
@@ -191,11 +195,11 @@
     <h2 class="serif">Painting questions</h2>
     <details open>
       <summary>How much does it cost to paint a room in Southern Maine?</summary>
-      <p>Standard interior painting includes labor, paint, light prep, and two coats. Walls are $2.05 per square foot of gross wall area: 2 × (length + width) × wall height, without deducting ordinary doors and windows. A flat ceiling is $2.25 per square foot. A 12 × 12 foot bedroom with 8 foot walls is $787.20 for the walls, or $1,111.20 with the ceiling. Forty-five feet of standard baseboard at $4.20 per foot adds $189.00, for $1,300.20. Door and window casing is also $4.20 per linear foot. Door slabs, repairs, and specialty coatings are quoted after Mike reviews photos. See the <a href="pricing.html">pricing page</a> or send a photo estimate.</p>
+      <p>Standard interior painting includes labor, paint, light prep, and two coats. Walls are $2.05 per square foot of gross wall area: 2 × (length + width) × wall height, without deducting ordinary doors and windows. A ceiling painted on its own is $2.25 per square foot, or $1.75 per square foot when the walls in that room are painted too. A 12 × 12 foot bedroom with 8 foot walls is $787.20 for the walls, or $1,039.20 with the ceiling. Forty-five feet of standard baseboard at $4.20 per foot adds $189.00, for $1,228.20. Door and window casing is also $4.20 per linear foot. Door slabs, repairs, and specialty coatings are quoted after we review the photos. See the <a href="pricing.html">pricing page</a> or send a photo estimate.</p>
     </details>
     <details>
       <summary>Can I get a painting estimate by sending photos?</summary>
-      <p>Yes. <a href="photo-estimate.html">Get a Photo Estimate</a>, add each room’s photos and measurements, and Mike will email a painting estimate within 24–48 hours. That estimate is based on the photos, measurements, and work you request. If the scope or condition is different in person, Mike will review any price change with you before work begins.</p>
+      <p>Yes. <a href="photo-estimate.html">Get a Photo Estimate</a>, add each room’s photos and measurements, and we'll review your photos and confirm the price by email within 24–48 hours. That estimate is based on the photos, measurements, and work you request. If the scope or condition is different in person, we'll review any price change with you before work begins.</p>
     </details>
   </div>
 </section>
@@ -240,10 +244,8 @@
     <p class="fine">Estimate request</p>
     <h2 class="serif">Tell us about the project.</h2>
     <p>Request a date and time that works for you. We’ll follow up to confirm the appointment.</p>
-    <form action="https://formsubmit.co/newleafpaintingcompany@gmail.com" method="POST">
-      <input type="hidden" name="_subject" value="New Leaf Estimate Request">
-      <input type="hidden" name="_captcha" value="false">
-      <input type="hidden" name="_template" value="table">
+    <form name="in-person-estimate" method="POST" action="/index.html" data-netlify="true" netlify>
+      <input type="hidden" name="form-name" value="in-person-estimate">
       <div class="form-grid">
         <div class="field"><label>Name *</label><input name="Name" required></div>
         <div class="field"><label>Phone *</label><input name="Phone" type="tel" required></div>
@@ -252,18 +254,19 @@
         <div class="field"><label>Email</label><input name="Email" type="email"></div>
         <div class="field"><label>Town / City *</label><input name="Town" required></div>
       </div>
-      <div class="field"><label>Service *</label>
-        <select name="Service" required>
-          <option value="">Choose one</option>
-          <option>Interior painting</option>
-          <option>Exterior painting</option>
-          <option>Trim and doors</option>
-          <option>Cabinet painting</option>
-          <option>Laminate flooring</option>
-          <option>Laminate stairs</option>
-          <option>Commercial painting</option>
-          <option>Multiple services / other</option>
-        </select>
+      <div class="field">
+        <span id="service-label">Services *</span>
+        <div class="service-checks" role="group" aria-labelledby="service-label">
+          <label><input type="checkbox" name="Service" value="Interior painting"> Interior painting</label>
+          <label><input type="checkbox" name="Service" value="Exterior painting"> Exterior painting</label>
+          <label><input type="checkbox" name="Service" value="Trim and doors"> Trim and doors</label>
+          <label><input type="checkbox" name="Service" value="Cabinet painting"> Cabinet painting</label>
+          <label><input type="checkbox" name="Service" value="Laminate flooring"> Laminate flooring</label>
+          <label><input type="checkbox" name="Service" value="Laminate stairs"> Laminate stairs</label>
+          <label><input type="checkbox" name="Service" value="Commercial painting"> Commercial painting</label>
+          <label><input type="checkbox" name="Service" value="Other"> Other</label>
+        </div>
+        <p class="service-error" hidden>Choose at least one service.</p>
       </div>
       <div class="form-grid">
         <div class="field"><label>Preferred date</label><input name="Preferred Date" type="date"></div>
@@ -283,6 +286,7 @@
     </form>
   </div>
 </div>
+<script src="js/sw-colors.js"></script>
 <script src="js/pricing-config.js"></script>
 <script src="js/pricing.js"></script>
 <script src="js/home.js"></script>

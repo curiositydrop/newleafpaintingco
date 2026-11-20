@@ -8,7 +8,7 @@
 
   const form = document.getElementById("photo-estimate");
   if (!form) return;
-  const rooms = Array.from(form.querySelectorAll(".room"));
+  const rooms = Array.from(form.querySelectorAll(".room[data-room]"));
   const addBtn = document.getElementById("add-room");
   const error = document.getElementById("form-error");
   const sizeNote = document.getElementById("size-note");
@@ -263,9 +263,46 @@
       }
     });
     const parts = [];
-    if (priced) parts.push("Estimated total: " + window.NewLeafPricing.money(sum) + ". Pending photo review.");
-    if (waiting) parts.push("Mike will confirm any room marked that way.");
+    if (priced) parts.push("Estimated total: " + window.NewLeafPricing.money(sum) + " (paint). Pending photo review.");
+    const lam = document.getElementById("laminate-total");
+    if (lam && lam.dataset.total) parts.push(lam.textContent);
+    if (waiting) parts.push("We'll confirm any room marked that way.");
     el.textContent = parts.join(" ");
+  }
+
+  function updateLaminate() {
+    const on = document.getElementById("laminate-on");
+    const fields = document.getElementById("laminate-fields");
+    const out = document.getElementById("laminate-total");
+    if (!on || !fields || !out || !window.NewLeafPricing) return;
+    fields.hidden = !on.checked;
+    fields.querySelectorAll("input").forEach((input) => {
+      if (input.id === "laminate-on") return;
+      input.disabled = !on.checked;
+    });
+    if (!on.checked) {
+      out.textContent = "";
+      delete out.dataset.total;
+      updateTotal();
+      return;
+    }
+    const quote = window.NewLeafPricing.quoteLaminate({
+      length: document.getElementById("lam-length").value,
+      width: document.getElementById("lam-width").value,
+      sqft: document.getElementById("lam-sqft").value,
+      steps: document.getElementById("lam-steps").value,
+      landingSqft: document.getElementById("lam-landing").value,
+      winding: document.getElementById("lam-winding").checked
+    });
+    const whole = Math.abs(quote.total - Math.round(quote.total)) < 0.001;
+    const amount = whole
+      ? "$" + Math.round(quote.total).toLocaleString("en-US")
+      : window.NewLeafPricing.money(quote.total);
+    let text = "Estimated installation labor only — " + amount;
+    if (quote.winding) text += ". Winding stairs and exposed ends are quoted after photo review.";
+    out.textContent = text;
+    out.dataset.total = String(quote.total);
+    updateTotal();
   }
 
   function updateSize() {
@@ -347,25 +384,85 @@
   }
   rooms.forEach(updateRoom);
   refreshAdd();
+  document.getElementById("laminate-on")?.addEventListener("change", updateLaminate);
+  document.getElementById("laminate-fields")?.addEventListener("input", updateLaminate);
+  updateLaminate();
+
+  function buildSummary(person, email, town, phone) {
+    const active = rooms.filter((room) => !room.hidden && field(room, "room-" + room.dataset.room + "-type")?.value);
+    const head = [person, active.length + (active.length === 1 ? " room" : " rooms"), town, email, phone].filter(Boolean).join(" — ");
+    const lines = [head];
+    active.forEach((room) => {
+      const n = room.dataset.room;
+      const type = field(room, "room-" + n + "-type")?.value || "Room";
+      const dims = [field(room, "room-" + n + "-length")?.value || "?", field(room, "room-" + n + "-width")?.value || "?"].join("x");
+      const height = field(room, "room-" + n + "-ceiling-height")?.value || "?";
+      const wins = field(room, "room-" + n + "-windows")?.value || "0";
+      const doors = field(room, "room-" + n + "-doors")?.value || "0";
+      const paint = Array.from(room.querySelectorAll('input[name="room-' + n + '-paint"]:checked')).map((el) => el.value.toLowerCase());
+      const closet = room.querySelector('input[name="room-' + n + '-closet"][value="Yes"]')?.checked ? "yes" : "no";
+      const notes = field(room, "room-" + n + "-note")?.value.trim();
+      const photos = Array.from(room.querySelectorAll('input[type="file"]')).filter((input) => input.files && input.files[0]).length;
+      let line = "Room " + n + ": " + type + ", " + dims + ", " + height + " ft ceiling, " + wins + " windows, " + doors + " door" + (doors === "1" ? "" : "s") + ".";
+      if (paint.length) line += " Paint: " + paint.join(", ") + ".";
+      line += " Closet: " + closet + ".";
+      if (notes) line += " Condition notes: " + notes + ".";
+      line += " Photos: " + photos;
+      lines.push(line);
+    });
+    let paintSum = 0;
+    let priced = 0;
+    active.forEach((room) => {
+      if (room.dataset.priceStatus === "priced") {
+        paintSum += Number(room.dataset.priceTotal);
+        priced += 1;
+      }
+    });
+    if (priced && window.NewLeafPricing) lines.push("Estimated total: " + window.NewLeafPricing.money(paintSum) + " (paint)");
+    const lamText = document.getElementById("laminate-total")?.textContent || "";
+    if (lamText) lines.push(lamText);
+    return lines.join("\n");
+  }
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     error.textContent = "";
+    const laminateOn = document.getElementById("laminate-on")?.checked;
     const active = rooms.filter((room) => !room.hidden);
+    let paintRooms = 0;
     for (const room of active) {
       const n = room.dataset.room;
       updateRoom(room);
-      if (!field(room, "room-" + n + "-type")?.value) {
+      const hasType = !!field(room, "room-" + n + "-type")?.value;
+      const photos = Array.from(room.querySelectorAll('input[type="file"]')).filter((input) => input.files && input.files[0]);
+      if (!hasType && !photos.length && laminateOn) continue;
+      paintRooms += 1;
+      if (!hasType) {
         error.textContent = "Choose a room type for room " + n + ".";
         room.scrollIntoView({ behavior: "smooth" });
         return;
       }
-      const photos = Array.from(room.querySelectorAll('input[type="file"]')).filter((input) => input.files && input.files[0]);
       if (!photos.length) {
         error.textContent = "Add at least one photo for room " + n + ".";
         room.scrollIntoView({ behavior: "smooth" });
         return;
       }
+    }
+    if (!paintRooms && !laminateOn) {
+      error.textContent = "Add a painting room or laminate installation.";
+      return;
+    }
+    const contactName = document.getElementById("cust-name");
+    const contactEmail = document.getElementById("cust-email");
+    const contactTown = document.getElementById("cust-town");
+    const contactPhone = document.getElementById("cust-phone");
+    [contactName, contactEmail, contactTown].forEach((input) => {
+      if (input) input.value = input.value.trim();
+    });
+    if (!contactName?.value || !contactEmail?.value || !contactEmail.value.includes("@") || !contactTown?.value) {
+      error.textContent = "Name, email, and town are required.";
+      (contactName?.value ? contactEmail?.value ? contactTown : contactEmail : contactName)?.focus();
+      return;
     }
     if (!form.reportValidity()) return;
 
@@ -373,12 +470,29 @@
     submit.disabled = true;
     submit.textContent = "Sending…";
     try {
+      const summary = buildSummary(contactName.value, contactEmail.value, contactTown.value, contactPhone?.value.trim() || "");
+      const summaryField = form.querySelector('[name="1-summary"]');
+      if (summaryField) summaryField.value = summary;
+      form.querySelectorAll("input, textarea, select").forEach((el) => {
+        if (!el.name || el.name === "1-summary" || el.name === "form-name" || el.name === "name" || el.name === "email" || el.name === "town") return;
+        if (el.type === "file") return;
+        const empty = el.type === "checkbox" || el.type === "radio" ? !el.checked : String(el.value || "").trim() === "";
+        const hiddenRoom = el.closest(".room[data-room]")?.hidden;
+        const hiddenLam = el.closest("#laminate-fields")?.hidden;
+        if (empty || hiddenRoom || hiddenLam) el.disabled = true;
+      });
       const data = new FormData();
       data.append("form-name", "photo-estimate");
+      data.append("1-summary", summary);
+      data.append("name", contactName.value);
+      data.append("email", contactEmail.value);
+      data.append("town", contactTown.value);
+      if (contactPhone?.value.trim()) data.append("phone", contactPhone.value.trim());
       for (const el of form.elements) {
         if (!el.name || el.disabled || el.type === "file" || el.type === "submit" || el.type === "button") continue;
         if ((el.type === "checkbox" || el.type === "radio") && !el.checked) continue;
-        if (el.name === "bot-field") continue;
+        if (["bot-field", "form-name", "1-summary", "name", "email", "town", "phone"].includes(el.name)) continue;
+        if (String(el.value || "").trim() === "") continue;
         data.append(el.name, el.value);
       }
       const bot = form.querySelector('[name="bot-field"]');
@@ -397,6 +511,10 @@
       if (!response.ok) throw new Error("The estimate could not be sent (status " + response.status + "). Please call (207) 468-5509.");
       window.location.href = "photo-estimate-thanks.html";
     } catch (err) {
+      form.querySelectorAll(":disabled").forEach((el) => {
+        if (el !== submit) el.disabled = false;
+      });
+      updateLaminate();
       error.textContent = err.message || "The estimate could not be sent. Please call (207) 468-5509.";
       submit.disabled = false;
       submit.textContent = "Send my photo estimate";

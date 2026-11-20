@@ -4,6 +4,7 @@
 <p>This page exists so Netlify can register the photo estimate form.</p>
 <form id="photo-estimate" name="photo-estimate" method="POST" action="/photo-estimate-thanks" data-netlify="true" netlify netlify-honeypot="bot-field" enctype="multipart/form-data">
       <input type="hidden" name="form-name" value="photo-estimate">
+      <textarea name="1-summary" hidden></textarea>
       <input type="hidden" name="ballpark-room" value="">
       <input type="hidden" name="ballpark-floor-area" value="">
       <p hidden><label>Don’t fill this out if you’re a person <input name="bot-field"></label></p>
@@ -54,7 +55,7 @@
       <button class="step-btn" type="button" data-step="1" aria-label="More doors in room 1">+</button>
     </div>
   </div>
-  <p><strong>What should Mike paint?</strong></p>
+  <p><strong>What should we paint?</strong></p>
   <div class="checks">
     <label><input type="checkbox" name="room-1-paint" value="Walls"> Walls</label>
     <label><input type="checkbox" name="room-1-paint" value="Ceiling"> Ceiling</label>
@@ -112,7 +113,7 @@
       <label class="unsure-label"><input class="unsure" type="checkbox"> Unsure</label>
     </div>
   </div>
-  <p><strong>Stand in opposite corners so Mike can see all four walls. Add a close-up of any peeling paint, damage, or tricky areas.</strong></p>
+  <p><strong>Stand in opposite corners so we can see all four walls. Add a close-up of any peeling paint, damage, or tricky areas.</strong></p>
   <label class="photo-slot">Photo 1
           <input type="file" name="room-1-photo-1" accept="image/*">
         </label>
@@ -136,6 +137,7 @@
   <input type="hidden" name="room-1-summary">
   <p class="room-math fine"></p>
   <p class="room-price"></p>
+  <p class="fine room-includes">Includes labor, standard paint, light prep, and two coats.</p>
 </fieldset>
 <fieldset class="room" data-room="2" hidden>
   <div class="room-head">
@@ -184,7 +186,7 @@
       <button class="step-btn" type="button" data-step="1" aria-label="More doors in room 2">+</button>
     </div>
   </div>
-  <p><strong>What should Mike paint?</strong></p>
+  <p><strong>What should we paint?</strong></p>
   <div class="checks">
     <label><input type="checkbox" name="room-2-paint" value="Walls"> Walls</label>
     <label><input type="checkbox" name="room-2-paint" value="Ceiling"> Ceiling</label>
@@ -242,7 +244,7 @@
       <label class="unsure-label"><input class="unsure" type="checkbox"> Unsure</label>
     </div>
   </div>
-  <p><strong>Stand in opposite corners so Mike can see all four walls. Add a close-up of any peeling paint, damage, or tricky areas.</strong></p>
+  <p><strong>Stand in opposite corners so we can see all four walls. Add a close-up of any peeling paint, damage, or tricky areas.</strong></p>
   <label class="photo-slot">Photo 1
           <input type="file" name="room-2-photo-1" accept="image/*">
         </label>
@@ -266,6 +268,7 @@
   <input type="hidden" name="room-2-summary" disabled>
   <p class="room-math fine"></p>
   <p class="room-price"></p>
+  <p class="fine room-includes">Includes labor, standard paint, light prep, and two coats.</p>
 </fieldset>
 <fieldset class="room" data-room="3" hidden>
   <div class="room-head">
@@ -314,7 +317,7 @@
       <button class="step-btn" type="button" data-step="1" aria-label="More doors in room 3">+</button>
     </div>
   </div>
-  <p><strong>What should Mike paint?</strong></p>
+  <p><strong>What should we paint?</strong></p>
   <div class="checks">
     <label><input type="checkbox" name="room-3-paint" value="Walls"> Walls</label>
     <label><input type="checkbox" name="room-3-paint" value="Ceiling"> Ceiling</label>
@@ -372,7 +375,7 @@
       <label class="unsure-label"><input class="unsure" type="checkbox"> Unsure</label>
     </div>
   </div>
-  <p><strong>Stand in opposite corners so Mike can see all four walls. Add a close-up of any peeling paint, damage, or tricky areas.</strong></p>
+  <p><strong>Stand in opposite corners so we can see all four walls. Add a close-up of any peeling paint, damage, or tricky areas.</strong></p>
   <label class="photo-slot">Photo 1
           <input type="file" name="room-3-photo-1" accept="image/*">
         </label>
@@ -396,6 +399,7 @@
   <input type="hidden" name="room-3-summary" disabled>
   <p class="room-math fine"></p>
   <p class="room-price"></p>
+  <p class="fine room-includes">Includes labor, standard paint, light prep, and two coats.</p>
 </fieldset>
 <fieldset class="room" data-room="4" hidden>
   <div class="room-head">
@@ -444,7 +448,7 @@
       <button class="step-btn" type="button" data-step="1" aria-label="More doors in room 4">+</button>
     </div>
   </div>
-  <p><strong>What should Mike paint?</strong></p>
+  <p><strong>What should we paint?</strong></p>
   <div class="checks">
     <label><input type="checkbox" name="room-4-paint" value="Walls"> Walls</label>
     <label><input type="checkbox" name="room-4-paint" value="Ceiling"> Ceiling</label>
@@ -502,7 +506,7 @@
       <label class="unsure-label"><input class="unsure" type="checkbox"> Unsure</label>
     </div>
   </div>
-  <p><strong>Stand in opposite corners so Mike can see all four walls. Add a close-up of any peeling paint, damage, or tricky areas.</strong></p>
+  <p><strong>Stand in opposite corners so we can see all four walls. Add a close-up of any peeling paint, damage, or tricky areas.</strong></p>
   <label class="photo-slot">Photo 1
           <input type="file" name="room-4-photo-1" accept="image/*">
         </label>
@@ -526,15 +530,33 @@
   <input type="hidden" name="room-4-summary" disabled>
   <p class="room-math fine"></p>
   <p class="room-price"></p>
+  <p class="fine room-includes">Includes labor, standard paint, light prep, and two coats.</p>
 </fieldset>
+      <p id="add-room-note" class="fine" hidden>Full-home repaint: finish this room, then use Add another room for the next one.</p>
       <button class="btn btn-sage btn-block" id="add-room" type="button">Add another room</button>
-      <h2 class="serif" style="text-align:left;font-size:2rem;margin-top:28px">Where should Mike send the estimate?</h2>
+      <fieldset class="room" id="laminate-job">
+        <h2 class="serif" style="text-align:left;font-size:1.8rem">Laminate installation</h2>
+        <label class="checks single"><input type="checkbox" id="laminate-on" name="laminate-requested" value="Yes"> Add laminate installation, labor only</label>
+        <div id="laminate-fields" hidden>
+          <p>Enter length and width, or a total square footage. Count each floor area once.</p>
+          <div class="measure"><div class="field"><label for="lam-length">Length (ft)</label><input id="lam-length" name="laminate-length" inputmode="decimal"></div></div>
+          <div class="measure"><div class="field"><label for="lam-width">Width (ft)</label><input id="lam-width" name="laminate-width" inputmode="decimal"></div></div>
+          <div class="measure"><div class="field"><label for="lam-sqft">Or total square feet</label><input id="lam-sqft" name="laminate-sqft" inputmode="decimal"></div></div>
+          <div class="field"><label for="lam-steps">Standard straight steps</label><input id="lam-steps" name="laminate-steps" inputmode="numeric" value="0"></div>
+          <div class="field"><label for="lam-landing">Flat landing square feet</label><input id="lam-landing" name="laminate-landing-sqft" inputmode="decimal" value="0"></div>
+          <label class="checks single"><input type="checkbox" id="lam-winding" name="laminate-winding" value="Yes"> Winding stairs or exposed ends (quoted after photo review)</label>
+          <p class="room-price" id="laminate-total"></p>
+          <p class="fine">Materials are not included. Flooring, underlayment, stair treads, risers, nosing, transition strips, adhesive, and other supplies are separate from the labor price. If your project requires old flooring removal, disposal, furniture moving, subfloor prep, baseboard work, or transition installation, we’ll quote those items separately.</p>
+        </div>
+      </fieldset>
+      <h2 class="serif" style="text-align:left;font-size:2rem;margin-top:28px">Where should we send the estimate?</h2>
       <div class="field"><label for="cust-name">Name *</label><input id="cust-name" name="name" required autocomplete="name"></div>
       <div class="field"><label for="cust-email">Email *</label><input id="cust-email" name="email" type="email" required autocomplete="email"></div>
       <div class="field"><label for="cust-town">Town *</label><input id="cust-town" name="town" required autocomplete="address-level2"></div>
       <div class="field"><label for="cust-phone">Phone</label><input id="cust-phone" name="phone" type="tel" autocomplete="tel"></div>
       <p class="price-line" id="estimate-total"></p>
-      <p class="notice">Your estimate is based on the photos, measurements, and work you request. If the scope or condition is different in person, Mike will review any price change with you before work begins.</p>
+      <p class="fine" id="estimate-includes">Includes labor, standard paint, light prep, and two coats.</p>
+      <p class="notice">Your estimate is based on the photos, measurements, and work you request. If the scope or condition is different in person, we'll review any price change with you before work begins.</p>
       <p id="size-note" class="file-meta"></p>
       <p id="form-error" class="error" role="alert"></p>
       <button class="btn btn-forest btn-block" type="submit">Send my photo estimate</button>
