@@ -9,12 +9,18 @@
     const temp=document.createElement("div");
     temp.innerHTML=html;
 
+    const topbar=temp.querySelector(".topbar");
     const header=temp.querySelector("header");
     const footer=temp.querySelector("footer");
     const contactBtn=temp.querySelector("#contact-btn");
     const popup=temp.querySelector("#contact-popup");
 
-    if(headerMount && header) headerMount.replaceChildren(header);
+    if(headerMount && header){
+      const frag=document.createDocumentFragment();
+      if(topbar) frag.appendChild(topbar);
+      frag.appendChild(header);
+      headerMount.replaceChildren(frag);
+    }
     if(footerMount && footer) footerMount.replaceChildren(footer);
 
     document.querySelectorAll("#contact-btn,#contact-popup").forEach(el=>el.remove());
@@ -28,12 +34,31 @@
     });
 
     const nav=document.querySelector(".nav-links");
-    document.querySelector(".menu-toggle")?.addEventListener("click",()=>nav?.classList.toggle("open"));
+    document.querySelector(".menu-toggle")?.addEventListener("click",()=>{
+      const open=nav?.classList.toggle("open");
+      document.querySelector(".menu-toggle")?.setAttribute("aria-expanded", open ? "true" : "false");
+    });
 
     const livePopup=document.getElementById("contact-popup");
-    const open=ev=>{ev?.preventDefault();if(livePopup) livePopup.style.display="flex";};
+    const open=ev=>{
+      ev?.preventDefault();
+      if(!livePopup) return;
+      const message=ev?.currentTarget?.getAttribute?.("data-book-message");
+      const details=livePopup.querySelector('[name="Project Details"]');
+      if(details && message) details.value=message;
+      livePopup.style.display="flex";
+    };
+    if(location.hash==="#walkthrough") open({preventDefault(){}, currentTarget:{getAttribute:()=>"Whole-home walkthrough"}});
     const close=()=>{if(livePopup) livePopup.style.display="none";};
     document.querySelectorAll('[data-contact-open="1"],#contact-btn').forEach(el=>el.addEventListener("click",open));
+    document.querySelectorAll("form[name='in-person-estimate']").forEach(form=>{
+      form.addEventListener("submit", event=>{
+        const picked=form.querySelectorAll('input[name="Service"]:checked');
+        const note=form.querySelector(".service-error");
+        if(!picked.length){ event.preventDefault(); if(note) note.hidden=false; }
+        else if(note) note.hidden=true;
+      });
+    });
     livePopup?.querySelector(".close")?.addEventListener("click",close);
     window.addEventListener("click",e=>{if(e.target===livePopup) close();});
     window.addEventListener("keydown",e=>{if(e.key==="Escape") close();});
